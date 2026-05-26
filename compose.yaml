@@ -1,4 +1,41 @@
 services:
+  app:
+    image: flowit-main-server:local
+    container_name: flowit-local-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8081:8081"
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: project_flowit
+      MYSQL_USERNAME: flowit_dev
+      MYSQL_PASSWORD: flowitDevPass
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: flowitLocalDev
+      SERVER_PORT: 8080
+      MANAGEMENT_SERVER_PORT: 8081
+      MANAGEMENT_SERVER_ADDRESS: 0.0.0.0
+      MANAGEMENT_HEALTH_MAIL_ENABLED: false
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 3 bash -c \"exec 3<>/dev/tcp/127.0.0.1/8081 && printf 'GET /actuator/health HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n 1 <&3 | grep -q ' 200 '\""]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+    networks:
+      - flowit-local
+
   mysql:
     image: mysql:8.4
     container_name: flowit-local-mysql
@@ -18,6 +55,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - flowit-local
 
   redis:
     image: redis:7.4-alpine
@@ -37,6 +76,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - flowit-local
 
   prometheus:
     image: prom/prometheus:v3.11.2
@@ -52,6 +93,8 @@ services:
       - --web.console.libraries=/usr/share/prometheus/console_libraries
       - --web.console.templates=/usr/share/prometheus/consoles
       - --web.enable-lifecycle
+    networks:
+      - flowit-local
 
   grafana:
     image: grafana/grafana:12.3.6-security-04-ubuntu
@@ -67,6 +110,13 @@ services:
       - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - prometheus
+    networks:
+      - flowit-local
+
+networks:
+  flowit-local:
+    name: flowit-local
+    driver: bridge
 
 volumes:
   flowit_local_mysql_data:

@@ -1,3 +1,5 @@
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.6'
@@ -25,11 +27,11 @@ ext {
 def apiDocsStaticDir = layout.buildDirectory.dir('resources/main/static/docs')
 def composeFile = layout.projectDirectory.file('compose.yaml')
 def composeLinuxFile = layout.projectDirectory.file('compose.linux.yaml')
-def localRuntimeDir = layout.buildDirectory.dir('local')
-def localAppMetadataFile = layout.buildDirectory.file('local/flowit.properties')
-def localAppLogFile = layout.buildDirectory.file('local/flowit.log')
+def localAppImage = 'flowit-main-server:local'
+def localInfrastructureServices = ['mysql', 'redis', 'prometheus', 'grafana']
+def localStackServices = ['app'] + localInfrastructureServices
+def localAppHealthUrl = 'http://127.0.0.1:8081/actuator/health'
 def osName = System.getProperty('os.name').toLowerCase()
-def isWindows = osName.contains('windows')
 def isLinux = osName.contains('linux')
 
 def dockerComposeCommand = { List<String> args ->
@@ -38,6 +40,19 @@ def dockerComposeCommand = { List<String> args ->
 		command += ['-f', composeLinuxFile.asFile.absolutePath]
 	}
 	command + args
+}
+
+def dockerBuildCommand = {
+	[
+		'docker',
+		'build',
+		'--progress=plain',
+		'-t',
+		localAppImage,
+		'-f',
+		layout.projectDirectory.file('Dockerfile').asFile.absolutePath,
+		projectDir.absolutePath
+	]
 }
 
 def runCommand = { List<String> command, boolean ignoreExit = false ->
@@ -61,6 +76,34 @@ def runCommand = { List<String> command, boolean ignoreExit = false ->
 	}
 }
 
+def runLoggedCommand = { List<String> command ->
+	try {
+		def process = new ProcessBuilder(command)
+			.directory(projectDir)
+			.redirectErrorStream(true)
+			.start()
+
+		process.inputStream.withReader { reader ->
+			String line
+			while ((line = reader.readLine()) != null) {
+				logger.lifecycle(line)
+			}
+		}
+
+		def exitValue = process.waitFor()
+		if (exitValue != 0) {
+			throw new GradleException("Command failed with exit code ${exitValue}: ${command.join(' ')}")
+		}
+		exitValue
+	}
+	catch (Exception ex) {
+		if (ex instanceof GradleException) {
+			throw ex
+		}
+		throw new GradleException("Command failed: ${command.join(' ')}", ex)
+	}
+}
+
 def captureCommand = { List<String> command ->
 	try {
 		def output = new ByteArrayOutputStream()
@@ -77,46 +120,6 @@ def captureCommand = { List<String> command ->
 	}
 }
 
-def readLocalAppMetadata = {
-	def metadataFile = localAppMetadataFile.get().asFile
-	if (!metadataFile.exists()) {
-		return new Properties()
-	}
-
-	def properties = new Properties()
-	metadataFile.withInputStream { properties.load(it) }
-	properties
-}
-
-def isLocalAppProcess = { String pid, String jarPath ->
-	if (!(pid ==~ /\d+/) || !jarPath) {
-		return false
-	}
-
-	def result = captureCommand(isWindows
-		? ['powershell', '-NoProfile', '-Command',
-			'$p = Get-CimInstance Win32_Process -Filter "ProcessId = ' + pid
-				+ '"; if ($p) { [Console]::Out.Write($p.CommandLine) } else { exit 1 }']
-		: ['sh', '-c', "ps -p ${pid} -o command="])
-
-	if (result.exitValue == 0 && result.output.contains(jarPath)) {
-		return true
-	}
-
-	if (isWindows) {
-		def taskList = captureCommand([
-			'powershell',
-			'-NoProfile',
-			'-Command',
-			'$p = Get-Process -Id ' + pid
-				+ ' -ErrorAction SilentlyContinue; if ($p) { [Console]::Out.Write($p.Id) } else { exit 1 }'
-		])
-		return taskList.exitValue == 0 && taskList.output.contains(pid)
-	}
-
-	false
-}
-
 def healthStatus = { String healthUrl ->
 	try {
 		def connection = new URI(healthUrl).toURL().openConnection()
@@ -128,6 +131,37 @@ def healthStatus = { String healthUrl ->
 	catch (Exception ignored) {
 		return 'unavailable'
 	}
+}
+
+def waitForHealth = { String healthUrl, int timeoutSeconds ->
+	def deadline = System.currentTimeMillis() + (timeoutSeconds * 1000L)
+	while (System.currentTimeMillis() < deadline) {
+		if (healthStatus(healthUrl) == 'HTTP 200') {
+			return true
+		}
+		Thread.sleep(1000)
+	}
+	false
+}
+
+def runningComposeServices = {
+	def result = captureCommand(dockerComposeCommand(['ps', '--services', '--status', 'running']))
+	if (result.exitValue != 0) {
+		return []
+	}
+	result.output.readLines()
+		.collect { it.trim() }
+		.findAll { !it.isEmpty() }
+}
+
+def localAppImageExists = {
+	captureCommand(['docker', 'image', 'inspect', localAppImage]).exitValue == 0
+}
+
+def buildLocalAppImage = {
+	logger.lifecycle("Building Docker image: ${localAppImage}")
+	logger.lifecycle('Docker build progress will be printed below. The first build can take a few minutes.')
+	runLoggedCommand(dockerBuildCommand())
 }
 
 dependencies {
@@ -172,115 +206,78 @@ tasks.register('localInfraStart') {
 	description = 'Starts the local Docker Compose infrastructure.'
 
 	doLast {
-		def exitValue = runCommand(dockerComposeCommand(['up', '-d', '--wait']), true)
+		def exitValue = runCommand(dockerComposeCommand(['up', '-d', '--wait'] + localInfrastructureServices), true)
 		if (exitValue != 0) {
 			logger.lifecycle('Docker Compose did not accept or complete --wait. Falling back to: docker compose up -d')
-			runCommand(dockerComposeCommand(['up', '-d']))
+			runCommand(dockerComposeCommand(['up', '-d'] + localInfrastructureServices))
 		}
 	}
 }
 
 tasks.register('localInfraStop') {
 	group = 'local'
-	description = 'Stops the local Docker Compose infrastructure while preserving volumes.'
+	description = 'Stops only the local Docker Compose infrastructure services while preserving volumes.'
 
 	doLast {
-		def exitValue = runCommand(dockerComposeCommand(['down']), true)
+		def exitValue = runCommand(dockerComposeCommand(['stop'] + localInfrastructureServices), true)
 		if (exitValue != 0) {
-			logger.lifecycle('Docker Compose down did not complete. Check whether Docker is installed and running.')
+			logger.lifecycle('Docker Compose stop did not complete. Check whether Docker is installed and running.')
 		}
+	}
+}
+
+tasks.register('localBuildImage') {
+	group = 'local'
+	description = 'Builds the local Spring Boot Docker image with plain progress output.'
+
+	doLast {
+		buildLocalAppImage()
 	}
 }
 
 tasks.register('localStart') {
 	group = 'local'
-	description = 'Starts local infrastructure and the Spring Boot application in the background.'
-	dependsOn 'localInfraStart', 'bootJar'
+	description = 'Builds and starts the full local Docker Compose stack.'
 
 	doLast {
-		def currentMetadata = readLocalAppMetadata()
-		def currentPid = currentMetadata.getProperty('pid')
-		def currentJar = currentMetadata.getProperty('jar')
-
-		if (isLocalAppProcess(currentPid, currentJar)) {
-			logger.lifecycle("Flowit application is already running. pid=${currentPid}")
-			logger.lifecycle("Log: ${localAppLogFile.get().asFile.absolutePath}")
+		def runningServices = runningComposeServices()
+		if (runningServices.containsAll(localStackServices) && healthStatus(localAppHealthUrl) == 'HTTP 200') {
+			logger.lifecycle('Flowit local Docker Compose stack is already running.')
+			logger.lifecycle('Application: http://127.0.0.1:8080')
+			logger.lifecycle("Health: ${localAppHealthUrl} (HTTP 200)")
+			logger.lifecycle('Logs: docker compose logs -f app')
 			return
 		}
 
-		localRuntimeDir.get().asFile.mkdirs()
-
-		def jarFile = tasks.named('bootJar').get().archiveFile.get().asFile
-		def javaExecutable = javaToolchains.launcherFor {
-			languageVersion = JavaLanguageVersion.of(17)
-		}.get().executablePath.asFile
-		def logFile = localAppLogFile.get().asFile
-
-		def processBuilder = new ProcessBuilder(
-			javaExecutable.absolutePath,
-			'-jar',
-			jarFile.absolutePath
-		)
-		processBuilder.directory(projectDir)
-		processBuilder.redirectErrorStream(true)
-		processBuilder.redirectOutput(ProcessBuilder.Redirect.appendTo(logFile))
-
-		def process = processBuilder.start()
-		def pid = process.pid().toString()
-
-		def metadata = new Properties()
-		metadata.setProperty('pid', pid)
-		metadata.setProperty('jar', jarFile.absolutePath)
-		metadata.setProperty('log', logFile.absolutePath)
-		metadata.setProperty('startedAt', new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
-		localAppMetadataFile.get().asFile.withOutputStream {
-			metadata.store(it, 'Flowit local application process')
-		}
-
-		def deadline = System.currentTimeMillis() + 60_000
-		def ready = false
-		while (System.currentTimeMillis() < deadline) {
-			if (!process.isAlive()) {
-				localAppMetadataFile.get().asFile.delete()
-				throw new GradleException("Flowit application exited during startup. Check log: ${logFile.absolutePath}")
-			}
-			if (healthStatus('http://127.0.0.1:8081/actuator/health') != 'unavailable') {
-				ready = true
-				break
-			}
-			Thread.sleep(1000)
-		}
-
-		logger.lifecycle("Flowit application started. pid=${pid}")
-		logger.lifecycle("Log: ${logFile.absolutePath}")
-		if (ready) {
-			logger.lifecycle('Health: http://127.0.0.1:8081/actuator/health')
+		if (localAppImageExists()) {
+			logger.lifecycle("Using existing Docker image: ${localAppImage}")
+			logger.lifecycle('Run ./gradlew localBuildImage when you need to rebuild the application image from source.')
 		}
 		else {
-			logger.lifecycle('Health endpoint is not ready yet. Use ./gradlew localStatus or check the log.')
+			logger.lifecycle("Docker image not found: ${localAppImage}")
+			buildLocalAppImage()
 		}
+
+		runCommand(dockerComposeCommand(['up', '-d']))
+
+		logger.lifecycle('Flowit local Docker Compose stack start requested.')
+		logger.lifecycle('Application: http://127.0.0.1:8080')
+		logger.lifecycle('Waiting up to 90 seconds for application health...')
+		if (waitForHealth(localAppHealthUrl, 90)) {
+			logger.lifecycle("Health: ${localAppHealthUrl} (HTTP 200)")
+		}
+		else {
+			logger.lifecycle("Health endpoint is not ready yet: ${localAppHealthUrl} (${healthStatus(localAppHealthUrl)})")
+		}
+		logger.lifecycle('Logs: docker compose logs -f app')
 	}
 }
 
 tasks.register('localStop') {
 	group = 'local'
-	description = 'Stops the local Spring Boot application and Docker Compose infrastructure.'
+	description = 'Stops the local Docker Compose application and infrastructure while preserving volumes.'
 
 	doLast {
-		def metadata = readLocalAppMetadata()
-		def pid = metadata.getProperty('pid')
-		def jarPath = metadata.getProperty('jar')
-
-		if (isLocalAppProcess(pid, jarPath)) {
-			runCommand(isWindows ? ['taskkill', '/PID', pid, '/T', '/F'] : ['kill', pid], true)
-			logger.lifecycle("Stopped Flowit application. pid=${pid}")
-		}
-		else {
-			logger.lifecycle('Flowit application is not running.')
-		}
-
-		localAppMetadataFile.get().asFile.delete()
-
 		def exitValue = runCommand(dockerComposeCommand(['down']), true)
 		if (exitValue != 0) {
 			logger.lifecycle('Docker Compose down did not complete. Check whether Docker is installed and running.')
@@ -293,19 +290,8 @@ tasks.register('localStatus') {
 	description = 'Shows local application and Docker Compose infrastructure status.'
 
 	doLast {
-		def metadata = readLocalAppMetadata()
-		def pid = metadata.getProperty('pid')
-		def jarPath = metadata.getProperty('jar')
-		def logPath = metadata.getProperty('log') ?: localAppLogFile.get().asFile.absolutePath
-
-		if (isLocalAppProcess(pid, jarPath)) {
-			logger.lifecycle("Application: RUNNING pid=${pid}")
-			logger.lifecycle("Health: ${healthStatus('http://127.0.0.1:8081/actuator/health')}")
-		}
-		else {
-			logger.lifecycle('Application: STOPPED')
-		}
-		logger.lifecycle("Log: ${logPath}")
+		logger.lifecycle("Application health: ${healthStatus(localAppHealthUrl)}")
+		logger.lifecycle('Application logs: docker compose logs -f app')
 		logger.lifecycle('')
 		logger.lifecycle('Docker Compose services:')
 
@@ -328,7 +314,7 @@ tasks.register('restdocsTest', Test) {
 	}
 }
 
-tasks.named('asciidoctor') {
+tasks.named('asciidoctor', AsciidoctorTask) {
 	inputs.dir snippetsDir
 	dependsOn restdocsTest
 	attributes 'snippets': snippetsDir
