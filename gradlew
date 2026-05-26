@@ -102,6 +102,24 @@ die () {
     exit 1
 } >&2
 
+try_docker_local_task_without_java () {
+    if [ "$#" -ne 1 ]; then
+        return 1
+    fi
+
+    case "$1" in
+      localStart | localBuildImage | localInfraStart | localInfraStop | localStop | localStatus) ;;
+      *) return 1 ;;
+    esac
+
+    fallback_script=$APP_HOME/scripts/local-gradle-docker-fallback.sh
+    if [ ! -f "$fallback_script" ]; then
+        return 1
+    fi
+
+    exec /bin/sh "$fallback_script" "$1"
+}
+
 # OS specific support (must be 'true' or 'false').
 cygwin=false
 msys=false
@@ -125,6 +143,7 @@ if [ -n "$JAVA_HOME" ] ; then
         JAVACMD=$JAVA_HOME/bin/java
     fi
     if [ ! -x "$JAVACMD" ] ; then
+        try_docker_local_task_without_java "$@"
         die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
 
 Please set the JAVA_HOME variable in your environment to match the
@@ -134,6 +153,7 @@ else
     JAVACMD=java
     if ! command -v java >/dev/null 2>&1
     then
+        try_docker_local_task_without_java "$@"
         die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
 Please set the JAVA_HOME variable in your environment to match the

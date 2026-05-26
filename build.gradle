@@ -34,6 +34,58 @@ def localAppHealthUrl = 'http://127.0.0.1:8081/actuator/health'
 def osName = System.getProperty('os.name').toLowerCase()
 def isLinux = osName.contains('linux')
 
+def isTruthy = { String value ->
+	value != null && ['true', '1', 'yes', 'y', 'on'].contains(value.trim().toLowerCase())
+}
+
+def isProductionValue = { String value ->
+	value != null && ['prod', 'production'].contains(value.trim().toLowerCase())
+}
+
+def hasProductionProfile = { String value ->
+	value != null && value.split(/[,\s;]+/).any { isProductionValue(it) }
+}
+
+def localDockerBlockSignals = {
+	def env = System.getenv()
+	def signals = []
+	if (isTruthy(env['CI'])) {
+		signals += 'CI'
+	}
+	if (isTruthy(env['GITHUB_ACTIONS'])) {
+		signals += 'GITHUB_ACTIONS'
+	}
+	if (isTruthy(env['GITLAB_CI'])) {
+		signals += 'GITLAB_CI'
+	}
+	if (env['JENKINS_URL']) {
+		signals += 'JENKINS_URL'
+	}
+	if (env['KUBERNETES_SERVICE_HOST']) {
+		signals += 'KUBERNETES_SERVICE_HOST'
+	}
+	if (isProductionValue(env['FLOWIT_ENV'])) {
+		signals += "FLOWIT_ENV=${env['FLOWIT_ENV']}"
+	}
+	if (hasProductionProfile(env['SPRING_PROFILES_ACTIVE'])) {
+		signals += "SPRING_PROFILES_ACTIVE=${env['SPRING_PROFILES_ACTIVE']}"
+	}
+	if (hasProductionProfile(env['SPRING_PROFILES_INCLUDE'])) {
+		signals += "SPRING_PROFILES_INCLUDE=${env['SPRING_PROFILES_INCLUDE']}"
+	}
+	signals
+}
+
+def assertLocalDockerAllowed = { String taskName ->
+	def signals = localDockerBlockSignals()
+	if (!signals.isEmpty()) {
+		throw new GradleException("Refusing to run ${taskName}: local Docker tasks are for client/API local development only and are blocked in production or CI environments. Signal(s): ${signals.join(', ')}")
+	}
+	if (isLinux && !isTruthy(System.getenv('FLOWIT_ALLOW_LOCAL_DOCKER'))) {
+		throw new GradleException("Refusing to run ${taskName} on Linux without FLOWIT_ALLOW_LOCAL_DOCKER=true. This keeps local Docker tasks out of server environments.")
+	}
+}
+
 def dockerComposeCommand = { List<String> args ->
 	def command = ['docker', 'compose', '-f', composeFile.asFile.absolutePath]
 	if (isLinux) {
@@ -206,6 +258,7 @@ tasks.register('localInfraStart') {
 	description = 'Starts the local Docker Compose infrastructure.'
 
 	doLast {
+		assertLocalDockerAllowed('localInfraStart')
 		def exitValue = runCommand(dockerComposeCommand(['up', '-d', '--wait'] + localInfrastructureServices), true)
 		if (exitValue != 0) {
 			logger.lifecycle('Docker Compose did not accept or complete --wait. Falling back to: docker compose up -d')
@@ -219,6 +272,7 @@ tasks.register('localInfraStop') {
 	description = 'Stops only the local Docker Compose infrastructure services while preserving volumes.'
 
 	doLast {
+		assertLocalDockerAllowed('localInfraStop')
 		def exitValue = runCommand(dockerComposeCommand(['stop'] + localInfrastructureServices), true)
 		if (exitValue != 0) {
 			logger.lifecycle('Docker Compose stop did not complete. Check whether Docker is installed and running.')
@@ -231,6 +285,7 @@ tasks.register('localBuildImage') {
 	description = 'Builds the local Spring Boot Docker image with plain progress output.'
 
 	doLast {
+		assertLocalDockerAllowed('localBuildImage')
 		buildLocalAppImage()
 	}
 }
@@ -240,6 +295,7 @@ tasks.register('localStart') {
 	description = 'Builds and starts the full local Docker Compose stack.'
 
 	doLast {
+		assertLocalDockerAllowed('localStart')
 		def runningServices = runningComposeServices()
 		if (runningServices.containsAll(localStackServices) && healthStatus(localAppHealthUrl) == 'HTTP 200') {
 			logger.lifecycle('Flowit local Docker Compose stack is already running.')
@@ -278,6 +334,7 @@ tasks.register('localStop') {
 	description = 'Stops the local Docker Compose application and infrastructure while preserving volumes.'
 
 	doLast {
+		assertLocalDockerAllowed('localStop')
 		def exitValue = runCommand(dockerComposeCommand(['down']), true)
 		if (exitValue != 0) {
 			logger.lifecycle('Docker Compose down did not complete. Check whether Docker is installed and running.')
@@ -290,6 +347,7 @@ tasks.register('localStatus') {
 	description = 'Shows local application and Docker Compose infrastructure status.'
 
 	doLast {
+		assertLocalDockerAllowed('localStatus')
 		logger.lifecycle("Application health: ${healthStatus(localAppHealthUrl)}")
 		logger.lifecycle('Application logs: docker compose logs -f app')
 		logger.lifecycle('')

@@ -45,6 +45,9 @@ set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
 if %ERRORLEVEL% equ 0 goto execute
 
+call :tryDockerLocalTaskWithoutJava %*
+if "%DOCKER_FALLBACK_RAN%"=="1" goto end
+
 echo. 1>&2
 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
 echo. 1>&2
@@ -53,11 +56,30 @@ echo location of your Java installation. 1>&2
 
 goto fail
 
+:tryDockerLocalTaskWithoutJava
+set DOCKER_FALLBACK_RAN=
+if not "%~2"=="" exit /b 0
+if "%~1"=="localStart" goto runDockerLocalTask
+if "%~1"=="localBuildImage" goto runDockerLocalTask
+if "%~1"=="localInfraStart" goto runDockerLocalTask
+if "%~1"=="localInfraStop" goto runDockerLocalTask
+if "%~1"=="localStop" goto runDockerLocalTask
+if "%~1"=="localStatus" goto runDockerLocalTask
+exit /b 0
+
+:runDockerLocalTask
+set DOCKER_FALLBACK_RAN=1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%APP_HOME%\scripts\local-gradle-docker-fallback.ps1" "%~1"
+exit /b %ERRORLEVEL%
+
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
 set JAVA_EXE=%JAVA_HOME%/bin/java.exe
 
 if exist "%JAVA_EXE%" goto execute
+
+call :tryDockerLocalTaskWithoutJava %*
+if "%DOCKER_FALLBACK_RAN%"=="1" goto end
 
 echo. 1>&2
 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
