@@ -1,4 +1,8 @@
 services:
+  app:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   prometheus:
     extra_hosts:
       - "host.docker.internal:host-gateway"
