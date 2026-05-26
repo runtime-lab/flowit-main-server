@@ -100,35 +100,37 @@ The documentation is generated through Spring REST Docs tests and Asciidoctor, t
 > 필수: Docker Desktop을 반드시 실행하십시오.<br>
 > Required: Docker Desktop must be running.
 
-프론트엔드 개발자는 로컬에 Java/JDK를 설치하지 않고 Docker만으로 API 서버를 실행할 수 있습니다.<br>
-Frontend developers can run the API server with Docker only, without installing Java/JDK locally.
+권장 실행 경로는 프로젝트 루트에서 아래 명령을 사용하는 것입니다.<br>
+The recommended path is to run the following command from the project root.
+
+```bash
+./gradlew localStart
+```
+
+`localStart`는 Spring Boot 애플리케이션 이미지를 Docker 안에서 빌드하고 MySQL, Redis, Prometheus, Grafana와 함께 로컬 환경을 실행합니다. 로컬 Java가 있으면 Gradle Wrapper가 정상 실행되고, Java/JDK가 없거나 `JAVA_HOME`이 잘못된 경우에는 Docker 명령으로 대체 실행됩니다.<br>
+`localStart` builds the Spring Boot application image inside Docker and starts it with MySQL, Redis, Prometheus, and Grafana. When local Java is available, the Gradle Wrapper runs normally; when Java/JDK is missing or `JAVA_HOME` is invalid, it falls back to Docker commands.
 
 애플리케이션 Docker 이미지는 컨테이너 내부에서 Eclipse Temurin Java 17을 사용해 빌드 및 실행됩니다.<br>
 The application Docker image is built and run with Eclipse Temurin Java 17 inside the container.
 
-Mac에서는 프로젝트 루트에서 아래 명령을 순서대로 실행하십시오.<br>
-On Mac, run the following commands from the project root.
+서버 환경과 혼동하기 쉬운 Linux에서는 기본적으로 차단됩니다. Linux 로컬 개발 환경에서만 아래처럼 명시적으로 허용하십시오.<br>
+Linux is blocked by default because it is easy to confuse with server environments. Opt in only on a local Linux development machine as shown below.
 
 ```bash
-docker build --progress=plain -t flowit-main-server:local -f Dockerfile .
-docker compose up -d
+FLOWIT_ALLOW_LOCAL_DOCKER=true ./gradlew localStart
 ```
 
-첫 번째 명령은 Spring Boot 애플리케이션 이미지를 Docker 안에서 빌드하고, 두 번째 명령은 MySQL, Redis, Prometheus, Grafana와 함께 로컬 환경을 실행합니다. 최초 실행 시 Gradle과 의존성을 컨테이너 내부에서 내려받으므로 시간이 걸릴 수 있습니다.<br>
-The first command builds the Spring Boot application image inside Docker, and the second command starts it with MySQL, Redis, Prometheus, and Grafana. The first run can take a while because Gradle and dependencies are downloaded inside the container.
+이 명령들은 클라이언트/API 연동용 로컬 개발 환경 전용입니다. `FLOWIT_ENV=prod|production`, `SPRING_PROFILES_ACTIVE=prod|production`, `SPRING_PROFILES_INCLUDE=prod|production`, `CI=true`, `GITHUB_ACTIONS=true`, `GITLAB_CI=true`, `JENKINS_URL`, `KUBERNETES_SERVICE_HOST` 같은 운영 또는 CI 신호가 있으면 `FLOWIT_ALLOW_LOCAL_DOCKER=true`가 설정되어 있어도 실행이 차단됩니다.<br>
+These commands are only for local client/API integration development. When production or CI signals such as `FLOWIT_ENV=prod|production`, `SPRING_PROFILES_ACTIVE=prod|production`, `SPRING_PROFILES_INCLUDE=prod|production`, `CI=true`, `GITHUB_ACTIONS=true`, `GITLAB_CI=true`, `JENKINS_URL`, or `KUBERNETES_SERVICE_HOST` are present, execution is blocked even if `FLOWIT_ALLOW_LOCAL_DOCKER=true` is set.
 
-애플리케이션 이미지를 이미 빌드한 뒤에는 아래 명령만으로 다시 실행할 수 있습니다.<br>
-After the application image has already been built, you can start the local environment again with only the following command.
-
-```bash
-docker compose up -d
-```
+의존성 공급망은 Gradle dependency verification과 Docker image digest pinning으로 고정합니다. 의존성 또는 이미지 버전을 갱신할 때는 verification metadata와 digest를 함께 갱신하고, Dependabot PR은 자동 병합하지 말고 테스트 후 수동으로 병합하십시오. GitHub 저장소에서는 Dependency graph, Dependabot alerts, Dependabot security updates를 활성화하십시오.<br>
+The dependency supply chain is pinned with Gradle dependency verification and Docker image digest pinning. When updating dependencies or image versions, update the verification metadata and digests together, and merge Dependabot pull requests manually after testing. Enable Dependency graph, Dependabot alerts, and Dependabot security updates in the GitHub repository settings.
 
 상태와 로그는 아래 명령으로 확인합니다.<br>
 Use the following commands to check status and logs.
 
 ```bash
-docker compose ps
+./gradlew localStatus
 docker compose logs -f app
 ```
 
@@ -136,14 +138,14 @@ docker compose logs -f app
 Use the following command to stop the containers. Docker volumes are preserved.
 
 ```bash
-docker compose down
+./gradlew localStop
 ```
 
 <details>
 <summary>Startup time notes</summary>
 
-최초 실행 또는 Docker 이미지와 Gradle 의존성을 새로 내려받아야 하는 경우 `docker build --progress=plain -t flowit-main-server:local -f Dockerfile .` 또는 `./gradlew localBuildImage`가 몇 분 정도 걸릴 수 있습니다.<br>
-The first run, or any run that needs to download Docker images and Gradle dependencies again, can make `docker build --progress=plain -t flowit-main-server:local -f Dockerfile .` or `./gradlew localBuildImage` take a few minutes.
+최초 실행 또는 Docker 이미지와 Gradle 의존성을 새로 내려받아야 하는 경우 `./gradlew localStart` 또는 `./gradlew localBuildImage`가 몇 분 정도 걸릴 수 있습니다.<br>
+The first run, or any run that needs to download Docker images and Gradle dependencies again, can make `./gradlew localStart` or `./gradlew localBuildImage` take a few minutes.
 
 빌드 명령은 `--progress=plain` 옵션을 사용하므로 Dockerfile 단계, Gradle 다운로드, `bootJar` 실행 상태가 터미널에 출력됩니다.<br>
 The build command uses `--progress=plain`, so Dockerfile steps, Gradle downloads, and `bootJar` execution status are printed in the terminal.
@@ -160,17 +162,7 @@ On Windows, the way `gradlew.bat` and Docker Compose child processes are handled
 </details>
 
 <details>
-<summary>Gradle local commands</summary>
-
-Gradle 명령어는 동일한 Docker Compose 구성을 감싸는 편의 명령입니다. 단, Gradle Wrapper 자체는 JVM에서 실행되므로 이 경로는 로컬 Java가 있는 백엔드 개발자에게 적합합니다.<br>
-The Gradle commands wrap the same Docker Compose setup. Because the Gradle Wrapper itself runs on the JVM, this path is intended for backend developers who have local Java installed.
-
-```bash
-./gradlew localStart
-```
-
-`localStart`는 애플리케이션 이미지가 없을 때만 `docker build --progress=plain`으로 이미지를 빌드하고 전체 로컬 환경을 실행합니다.<br>
-`localStart` builds the application image with `docker build --progress=plain` only when the image is missing, then starts the full local environment.
+<summary>Additional Gradle local commands</summary>
 
 ```bash
 ./gradlew localBuildImage

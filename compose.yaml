@@ -37,7 +37,7 @@ services:
       - flowit-local
 
   mysql:
-    image: mysql:8.4
+    image: mysql:8.4@sha256:c36050afdca850f23cef85703f84c7531a5ae155a11b5ee1c60acb09937c4084
     container_name: flowit-local-mysql
     ports:
       - "127.0.0.1:3306:3306"
@@ -59,7 +59,7 @@ services:
       - flowit-local
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:7.4-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
     container_name: flowit-local-redis
     ports:
       - "127.0.0.1:6379:6379"
@@ -80,7 +80,7 @@ services:
       - flowit-local
 
   prometheus:
-    image: prom/prometheus:v3.11.2
+    image: prom/prometheus:v3.11.2@sha256:5550dc63da361dc30f6fe02ac0e4dfc736ededfef3c8d12a634db04a67824d78
     container_name: flowit-local-prometheus
     ports:
       - "127.0.0.1:9090:9090"
@@ -97,7 +97,7 @@ services:
       - flowit-local
 
   grafana:
-    image: grafana/grafana:12.3.6-security-04-ubuntu
+    image: grafana/grafana:12.3.6-security-04-ubuntu@sha256:0efd2af3c3f43bece95078744e38f79bb92a1cf3b0884107b475765c81b5521a
     container_name: flowit-local-grafana
     ports:
       - "127.0.0.1:3050:3050"
