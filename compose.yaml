@@ -97,7 +97,7 @@ services:
       - flowit-local
 
   grafana:
-    image: grafana/grafana:12.3.6-security-04-ubuntu@sha256:0efd2af3c3f43bece95078744e38f79bb92a1cf3b0884107b475765c81b5521a
+    image: grafana/grafana:13.0.1-security-01-ubuntu@sha256:1d1280584274f875db9db69dace8397396560f95baf4351991c720298b41fff8
     container_name: flowit-local-grafana
     ports:
       - "127.0.0.1:3050:3050"
