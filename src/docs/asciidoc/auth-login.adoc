@@ -1,0 +1,67 @@
+= 로그인 API
+:doctype: book
+:toc: left
+:toc-title: 목차
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+
+[.page-action]
+link:index.html[API 문서 목록으로 이동]
+
+== 로그인
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |`POST`
+|경로 |`/v1/public/auth/login`
+|목적 |이메일과 비밀번호로 access token을 발급하고 refresh token을 HttpOnly 쿠키로 전달합니다.
+|인증 |필요하지 않습니다.
+|Refresh Token |응답 본문에 노출하지 않고 `Set-Cookie` 헤더로만 전달합니다.
+|===
+
+== Refresh Token Cookie
+
+로그인 성공 응답은 `Set-Cookie` 헤더로 `flowit_refresh_token` 쿠키를 전달합니다. 이 쿠키는 JavaScript에서 읽을 수 없는 `HttpOnly` 쿠키이며, 클라이언트는 refresh token 값을 직접 저장하거나 요청 본문에 담지 않습니다.
+
+[source,http]
+----
+Set-Cookie: flowit_refresh_token=...; HttpOnly
+----
+
+쿠키 속성은 요청 환경과 브라우저 정책에 따라 다를 수 있습니다. 클라이언트는 쿠키 값을 직접 읽거나 속성 값을 고정 가정하지 않고, 브라우저의 쿠키 처리에 맡깁니다.
+
+=== HTTP 요청
+
+비밀번호에는 특수문자를 사용할 수 없습니다.
+
+include::{snippets}/auth-login/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/auth-login/curl-request.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/auth-login/request-headers.adoc[]
+
+=== 요청 필드
+
+include::{snippets}/auth-login/request-fields.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/auth-login/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/auth-login/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/auth-login/response-fields.adoc[]

@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Personal local scripts ###
+.local-*.ps1

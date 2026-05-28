@@ -1,0 +1,77 @@
+= 토큰 재발급 API
+:doctype: book
+:toc: left
+:toc-title: 목차
+:toclevels: 3
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+
+[.page-action]
+link:index.html[API 문서 목록으로 이동]
+
+== 토큰 재발급
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |`POST`
+|경로 |`/v1/public/auth/refresh`
+|목적 |Refresh token 쿠키를 사용해 새 access token과 새 refresh token 쿠키를 발급합니다.
+|요청 본문 |없습니다.
+|쿠키 |`flowit_refresh_token` 쿠키가 필요합니다.
+|===
+
+== 클라이언트 주의사항
+
+브라우저 기반 클라이언트는 쿠키가 함께 전송되도록 credentials 옵션을 켭니다.
+
+[source,javascript]
+----
+await fetch("/v1/public/auth/refresh", {
+  method: "POST",
+  credentials: "include"
+});
+----
+
+Axios를 사용하는 경우 `withCredentials`를 사용합니다.
+
+[source,javascript]
+----
+await axios.post("/v1/public/auth/refresh", null, {
+  withCredentials: true
+});
+----
+
+프론트엔드와 API의 origin이 다르면 브라우저의 credentials/CORS 정책을 따릅니다. 클라이언트는 위 credentials 옵션을 사용해야 하며, wildcard origin(`*`)과 credentials 요청 조합은 브라우저에서 허용되지 않습니다.
+
+=== HTTP 요청
+
+include::{snippets}/auth-refresh/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/auth-refresh/curl-request.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/auth-refresh/request-headers.adoc[]
+
+=== 요청 쿠키
+
+include::{snippets}/auth-refresh/request-cookies.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/auth-refresh/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/auth-refresh/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/auth-refresh/response-fields.adoc[]

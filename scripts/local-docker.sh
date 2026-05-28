@@ -8,6 +8,9 @@ LOCAL_APP_IMAGE=flowit-main-server:local
 LOCAL_APP_HEALTH_URL=http://127.0.0.1:8081/actuator/health
 LOCAL_INFRASTRUCTURE_SERVICES="mysql redis prometheus grafana"
 SOURCE_HASH_LABEL=dev.runtime-lab.flowit.source-hash
+ALLOWED_GIT_REMOTE_NAME=origin
+ALLOWED_GIT_BRANCH=main
+ALLOWED_GIT_REMOTE_URLS="https://github.com/runtime-lab/flowit-main-server.git git@github.com:runtime-lab/flowit-main-server.git"
 SOURCE_HASH_PATHS="src/main src/docs src/test/java/dev/runtime_lab/flowit/docs src/test/resources/org/springframework/restdocs build.gradle settings.gradle gradle Dockerfile .dockerignore"
 
 case "$(uname)" in
@@ -215,28 +218,54 @@ sync_local_source_if_needed () {
         return 0
     fi
 
-    if ! git -C "$APP_HOME" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    git_top_level=$(git -C "$APP_HOME" rev-parse --show-toplevel 2>/dev/null) || {
         info "Git repository metadata is unavailable; skipping local source update."
         return 0
+    }
+    if [ "$(CDPATH= cd -P "$git_top_level" && pwd)" != "$APP_HOME" ]; then
+        info "Git repository root is not the expected project root; skipping automatic update. Expected $APP_HOME, got $git_top_level."
+        return 0
     fi
 
-    upstream=$(git -C "$APP_HOME" rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null) || {
-        info "No upstream branch is configured; skipping local source update."
+    current_branch=$(git -C "$APP_HOME" branch --show-current 2>/dev/null) || {
+        info "Repository is not on a named branch; skipping automatic update."
         return 0
     }
-    if [ -z "$upstream" ]; then
-        info "No upstream branch is configured; skipping local source update."
+    if [ -z "$current_branch" ]; then
+        info "Repository is not on a named branch; skipping automatic update."
+        return 0
+    fi
+    if [ "$current_branch" != "$ALLOWED_GIT_BRANCH" ]; then
+        info "Current branch is '$current_branch', but automatic update is only allowed on '$ALLOWED_GIT_BRANCH'."
         return 0
     fi
 
-    info "Checking for upstream source updates..."
-    if ! git -C "$APP_HOME" fetch --prune --quiet; then
+    remote_url=$(git -C "$APP_HOME" remote get-url "$ALLOWED_GIT_REMOTE_NAME" 2>/dev/null) || {
+        info "Configured remote '$ALLOWED_GIT_REMOTE_NAME' is unavailable; skipping automatic update."
+        return 0
+    }
+    allowed_remote=false
+    for allowed_url in $ALLOWED_GIT_REMOTE_URLS; do
+        if [ "$remote_url" = "$allowed_url" ]; then
+            allowed_remote=true
+            break
+        fi
+    done
+    if [ "$allowed_remote" != true ]; then
+        info "Remote '$ALLOWED_GIT_REMOTE_NAME' points to '$remote_url', which is not an allowed source; skipping automatic update."
+        return 0
+    fi
+
+    remote_branch="$ALLOWED_GIT_REMOTE_NAME/$ALLOWED_GIT_BRANCH"
+
+    info "Checking for source updates from $remote_branch..."
+    if ! git -C "$APP_HOME" fetch --prune --quiet "$ALLOWED_GIT_REMOTE_NAME" "$ALLOWED_GIT_BRANCH"; then
         info "Could not fetch upstream source updates; continuing with current source."
         return 0
     fi
 
-    counts=$(git -C "$APP_HOME" rev-list --left-right --count HEAD...@{u} 2>/dev/null) || {
-        info "Could not compare local source with $upstream; continuing with current source."
+    counts=$(git -C "$APP_HOME" rev-list --left-right --count "HEAD...$remote_branch" 2>/dev/null) || {
+        info "Could not compare local source with $remote_branch; continuing with current source."
         return 0
     }
 
@@ -245,28 +274,28 @@ sync_local_source_if_needed () {
     behind=${2:-0}
 
     if [ "$behind" -eq 0 ]; then
-        info "Local source is up to date with $upstream."
+        info "Local source is up to date with $remote_branch."
         return 0
     fi
 
     if [ -n "$(git -C "$APP_HOME" status --porcelain)" ]; then
         info "Upstream source has $behind newer commit(s), but local changes are present; skipping automatic update."
-        info "Commit or stash local changes, then run: git pull --ff-only"
+        info "Commit or stash local changes, then fast-forward from $remote_branch manually."
         return 0
     fi
 
     if [ "$ahead" -gt 0 ]; then
-        info "Local branch and $upstream have diverged; skipping automatic update."
+        info "Local branch and $remote_branch have diverged; skipping automatic update."
         info "Resolve the branch manually, then run $INVOCATION_LABEL again."
         return 0
     fi
 
-    info "Updating local source from $upstream ($behind commit(s))..."
-    if git -C "$APP_HOME" merge --ff-only '@{u}'; then
+    info "Updating local source from $remote_branch ($behind commit(s))..."
+    if git -C "$APP_HOME" merge --ff-only "$remote_branch"; then
         info "Local source updated."
     else
         info "Automatic source update failed; continuing with current source."
-        info "Run manually when ready: git pull --ff-only"
+        info "Run manually when ready: git fetch $ALLOWED_GIT_REMOTE_NAME $ALLOWED_GIT_BRANCH; git merge --ff-only $remote_branch"
     fi
 }
 

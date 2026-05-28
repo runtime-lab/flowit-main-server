@@ -5,6 +5,7 @@ import dev.runtime_lab.flowit.domain.user.dto.JoinResponse;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.exception.DuplicateActiveEmailException;
 import dev.runtime_lab.flowit.domain.user.service.UserJoinService;
+import dev.runtime_lab.flowit.global.security.password.InvalidPasswordPolicyException;
 import dev.runtime_lab.flowit.global.web.exception.GlobalExceptionHandler;
 import dev.runtime_lab.flowit.global.web.response.ApiResponseBodyAdvice;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,6 +116,30 @@ class UserJoinControllerTest {
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("USER_409_001"))
 			.andExpect(jsonPath("$.error.message").value("Active user email already exists: user@example.com"))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void joinReturnsBadRequestWhenPasswordContainsSpecialCharacter() throws Exception {
+		String requestBody = """
+			{
+			  "email": "user@example.com",
+			  "passwordPlan": "plainPassword!",
+			  "nickname": "nickname"
+			}
+			""";
+
+		when(userJoinService.join(any(JoinRequest.class)))
+			.thenThrow(new InvalidPasswordPolicyException());
+
+		mockMvc.perform(post("/v1/public/users/join")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("VALIDATION_400_001"))
+			.andExpect(jsonPath("$.error.message").value("Password must not contain special characters"))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 }

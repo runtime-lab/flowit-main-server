@@ -27,6 +27,8 @@ link:index.html[API 문서 목차로 이동]
 
 === HTTP 요청
 
+비밀번호에는 특수문자를 사용할 수 없습니다.
+
 include::{snippets}/users-join/http-request.adoc[]
 
 === cURL 요청
