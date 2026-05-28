@@ -39,6 +39,29 @@ Flowit API 문서의 진입점입니다. API가 추가되면 이 페이지에서
 ====
 
 [%collapsible]
+.인증/인가 API
+====
+
+[cols="28,30,42",role="api-index"]
+|===
+|문서 |Endpoint |설명
+
+|link:auth-login.html[로그인 API]
+|`POST /v1/public/auth/login`
+|JWT access token 발급과 HttpOnly refresh token 쿠키 전달 방식을 설명합니다.
+
+|link:auth-token-refresh.html[토큰 재발급 API]
+|`POST /v1/public/auth/refresh`
+|Refresh token 쿠키를 사용한 access token 재발급 방식을 설명합니다.
+
+|link:auth-logout.html[로그아웃 API]
+|`POST /v1/public/auth/logout`
+|Refresh token 로그아웃 처리와 쿠키 만료 응답을 설명합니다.
+|===
+
+====
+
+[%collapsible]
 .유저 API
 ====
 

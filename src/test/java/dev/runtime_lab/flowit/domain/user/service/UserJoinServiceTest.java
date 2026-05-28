@@ -6,6 +6,8 @@ import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.exception.DuplicateActiveEmailException;
 import dev.runtime_lab.flowit.domain.user.repository.UserRepository;
+import dev.runtime_lab.flowit.global.security.password.InvalidPasswordPolicyException;
+import dev.runtime_lab.flowit.global.security.password.PasswordPolicy;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -26,7 +28,13 @@ class UserJoinServiceTest {
 	private final UserRepository userRepository = mock(UserRepository.class);
 	private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
 	private final Clock clock = Clock.fixed(Instant.ofEpochSecond(1779889000L), ZoneOffset.UTC);
-	private final UserJoinService userJoinService = new UserJoinService(userRepository, passwordEncoder, clock);
+	private final PasswordPolicy passwordPolicy = new PasswordPolicy();
+	private final UserJoinService userJoinService = new UserJoinService(
+		userRepository,
+		passwordEncoder,
+		clock,
+		passwordPolicy
+	);
 
 	@Test
 	void joinCreatesActiveUserWithEncodedPassword() {
@@ -75,6 +83,16 @@ class UserJoinServiceTest {
 
 		assertTrue(exception.getMessage().contains("user@example.com"));
 		verify(passwordEncoder, never()).encode("plainPassword");
+		verify(userRepository, never()).save(org.mockito.ArgumentMatchers.any(User.class));
+	}
+
+	@Test
+	void joinRejectsPasswordContainingSpecialCharacterBeforeRepositoryLookup() {
+		JoinRequest request = new JoinRequest("user@example.com", "plainPassword!", "nickname");
+
+		assertThrows(InvalidPasswordPolicyException.class, () -> userJoinService.join(request));
+		verify(userRepository, never()).existsActiveByEmail("user@example.com");
+		verify(passwordEncoder, never()).encode("plainPassword!");
 		verify(userRepository, never()).save(org.mockito.ArgumentMatchers.any(User.class));
 	}
 }

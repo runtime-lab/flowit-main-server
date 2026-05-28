@@ -58,3 +58,19 @@ management:
   endpoint:
     health:
       show-details: never
+
+flowit:
+  security:
+    jwt:
+      issuer: ${FLOWIT_JWT_ISSUER:flowit-main-server}
+      access-token-time-to-live: ${FLOWIT_JWT_ACCESS_TOKEN_TIME_TO_LIVE:15m}
+      refresh-token-time-to-live: ${FLOWIT_JWT_REFRESH_TOKEN_TIME_TO_LIVE:14d}
+      refresh-token-cookie-name: ${FLOWIT_JWT_REFRESH_TOKEN_COOKIE_NAME:flowit_refresh_token}
+      refresh-token-cookie-path: ${FLOWIT_JWT_REFRESH_TOKEN_COOKIE_PATH:/v1/public/auth}
+      refresh-token-cookie-same-site: ${FLOWIT_JWT_REFRESH_TOKEN_COOKIE_SAME_SITE:Lax}
+      refresh-token-cookie-secure: ${FLOWIT_JWT_REFRESH_TOKEN_COOKIE_SECURE:false}
+      # Local development defaults. Override key settings in deployed environments.
+      private-key-location: ${FLOWIT_JWT_PRIVATE_KEY_LOCATION:classpath:jwt/local-dev-private.pem}
+      public-key-location: ${FLOWIT_JWT_PUBLIC_KEY_LOCATION:classpath:jwt/local-dev-public.pem}
+      private-key: ${FLOWIT_JWT_PRIVATE_KEY:}
+      public-key: ${FLOWIT_JWT_PUBLIC_KEY:}

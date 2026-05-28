@@ -1,6 +1,9 @@
 package dev.runtime_lab.flowit.global.web.exception;
 
 import dev.runtime_lab.flowit.domain.user.exception.DuplicateActiveEmailException;
+import dev.runtime_lab.flowit.domain.auth.exception.InvalidLoginCredentialsException;
+import dev.runtime_lab.flowit.domain.auth.exception.InvalidRefreshTokenException;
+import dev.runtime_lab.flowit.global.security.password.InvalidPasswordPolicyException;
 import dev.runtime_lab.flowit.global.web.response.ApiError;
 import dev.runtime_lab.flowit.global.web.response.ApiResponse;
 import dev.runtime_lab.flowit.global.web.response.ResponseExtensionContext;
@@ -34,6 +37,33 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DuplicateActiveEmailException.class)
 	public ResponseEntity<ApiResponse<Object>> handleDuplicateActiveEmail(DuplicateActiveEmailException exception) {
 		ErrorCode errorCode = ErrorCode.USER_409_001;
+
+		return ResponseEntity
+			.status(errorCode.getHttpStatus())
+			.body(ApiResponse.error(ApiError.from(errorCode, exception.getMessage())));
+	}
+
+	@ExceptionHandler(InvalidPasswordPolicyException.class)
+	public ResponseEntity<ApiResponse<Object>> handleInvalidPasswordPolicy(InvalidPasswordPolicyException exception) {
+		ErrorCode errorCode = ErrorCode.VALIDATION_400_001;
+
+		return ResponseEntity
+			.status(errorCode.getHttpStatus())
+			.body(ApiResponse.error(ApiError.from(errorCode, exception.getMessage())));
+	}
+
+	@ExceptionHandler(InvalidLoginCredentialsException.class)
+	public ResponseEntity<ApiResponse<Object>> handleInvalidLoginCredentials(InvalidLoginCredentialsException exception) {
+		ErrorCode errorCode = ErrorCode.AUTH_401_001;
+
+		return ResponseEntity
+			.status(errorCode.getHttpStatus())
+			.body(ApiResponse.error(ApiError.from(errorCode, exception.getMessage())));
+	}
+
+	@ExceptionHandler(InvalidRefreshTokenException.class)
+	public ResponseEntity<ApiResponse<Object>> handleInvalidRefreshToken(InvalidRefreshTokenException exception) {
+		ErrorCode errorCode = ErrorCode.AUTH_401_001;
 
 		return ResponseEntity
 			.status(errorCode.getHttpStatus())

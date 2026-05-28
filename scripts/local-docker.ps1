@@ -10,6 +10,12 @@ $LocalAppImage = 'flowit-main-server:local'
 $LocalAppHealthUrl = 'http://127.0.0.1:8081/actuator/health'
 $LocalInfrastructureServices = @('mysql', 'redis', 'prometheus', 'grafana')
 $SourceHashLabel = 'dev.runtime-lab.flowit.source-hash'
+$AllowedGitRemoteName = 'origin'
+$AllowedGitRemoteUrls = @(
+    'https://github.com/runtime-lab/flowit-main-server.git',
+    'git@github.com:runtime-lab/flowit-main-server.git'
+)
+$AllowedGitBranch = 'main'
 $SourceHashPaths = @(
     'src/main',
     'src/docs',
@@ -353,42 +359,64 @@ function Sync-LocalSourceIfNeeded {
         return
     }
 
-    $insideWorkTree = Invoke-GitCapture -Arguments @('rev-parse', '--is-inside-work-tree')
-    if ($insideWorkTree.ExitCode -ne 0) {
+    $gitTopLevelResult = Invoke-GitCapture -Arguments @('rev-parse', '--show-toplevel')
+    if ($gitTopLevelResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($gitTopLevelResult.Output)) {
         Write-Info 'Git repository metadata is unavailable; skipping local source update.'
         return
     }
-
-    $upstreamResult = Invoke-GitCapture -Arguments @('rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}')
-    if ($upstreamResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($upstreamResult.Output)) {
-        Write-Info 'No upstream branch is configured; skipping local source update.'
+    $gitTopLevel = (Resolve-Path -LiteralPath $gitTopLevelResult.Output.Trim()).Path
+    if ($gitTopLevel -ne $AppHome) {
+        Write-Info "Git repository root is not the expected project root; skipping automatic update. Expected $AppHome, got $gitTopLevel."
         return
     }
-    $upstream = $upstreamResult.Output.Trim()
 
-    Write-Info 'Checking for upstream source updates...'
-    $fetchResult = Invoke-GitCapture -Arguments @('fetch', '--prune', '--quiet')
+    $branchResult = Invoke-GitCapture -Arguments @('branch', '--show-current')
+    if ($branchResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($branchResult.Output)) {
+        Write-Info 'Repository is not on a named branch; skipping automatic update.'
+        return
+    }
+    $currentBranch = $branchResult.Output.Trim()
+    if ($currentBranch -ne $AllowedGitBranch) {
+        Write-Info "Current branch is '$currentBranch', but automatic update is only allowed on '$AllowedGitBranch'."
+        return
+    }
+
+    $remoteUrlResult = Invoke-GitCapture -Arguments @('remote', 'get-url', $AllowedGitRemoteName)
+    if ($remoteUrlResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($remoteUrlResult.Output)) {
+        Write-Info "Configured remote '$AllowedGitRemoteName' is unavailable; skipping automatic update."
+        return
+    }
+    $remoteUrl = $remoteUrlResult.Output.Trim()
+    if ($AllowedGitRemoteUrls -notcontains $remoteUrl) {
+        Write-Info "Remote '$AllowedGitRemoteName' points to '$remoteUrl', which is not an allowed source; skipping automatic update."
+        return
+    }
+
+    $remoteBranch = "$AllowedGitRemoteName/$AllowedGitBranch"
+
+    Write-Info "Checking for source updates from $remoteBranch..."
+    $fetchResult = Invoke-GitCapture -Arguments @('fetch', '--prune', '--quiet', $AllowedGitRemoteName, $AllowedGitBranch)
     if ($fetchResult.ExitCode -ne 0) {
         Write-Info 'Could not fetch upstream source updates; continuing with current source.'
         return
     }
 
-    $countResult = Invoke-GitCapture -Arguments @('rev-list', '--left-right', '--count', 'HEAD...@{u}')
+    $countResult = Invoke-GitCapture -Arguments @('rev-list', '--left-right', '--count', "HEAD...$remoteBranch")
     if ($countResult.ExitCode -ne 0) {
-        Write-Info "Could not compare local source with $upstream; continuing with current source."
+        Write-Info "Could not compare local source with $remoteBranch; continuing with current source."
         return
     }
 
     $counts = $countResult.Output.Trim() -split '\s+'
     if ($counts.Count -lt 2) {
-        Write-Info "Could not compare local source with $upstream; continuing with current source."
+        Write-Info "Could not compare local source with $remoteBranch; continuing with current source."
         return
     }
 
     $ahead = [int] $counts[0]
     $behind = [int] $counts[1]
     if ($behind -eq 0) {
-        Write-Info "Local source is up to date with $upstream."
+        Write-Info "Local source is up to date with $remoteBranch."
         return
     }
 
@@ -399,24 +427,24 @@ function Sync-LocalSourceIfNeeded {
     }
     if (-not [string]::IsNullOrWhiteSpace($statusResult.Output)) {
         Write-Info "Upstream source has $behind newer commit(s), but local changes are present; skipping automatic update."
-        Write-Info 'Commit or stash local changes, then run: git pull --ff-only'
+        Write-Info "Commit or stash local changes, then fast-forward from $remoteBranch manually."
         return
     }
 
     if ($ahead -gt 0) {
-        Write-Info "Local branch and $upstream have diverged; skipping automatic update."
+        Write-Info "Local branch and $remoteBranch have diverged; skipping automatic update."
         Write-Info "Resolve the branch manually, then run $InvocationLabel again."
         return
     }
 
-    Write-Info "Updating local source from $upstream ($behind commit(s))..."
-    $mergeExitCode = Invoke-GitNative -Arguments @('merge', '--ff-only', '@{u}')
+    Write-Info "Updating local source from $remoteBranch ($behind commit(s))..."
+    $mergeExitCode = Invoke-GitNative -Arguments @('merge', '--ff-only', $remoteBranch)
     if ($mergeExitCode -eq 0) {
         Write-Info 'Local source updated.'
     }
     else {
         Write-Info 'Automatic source update failed; continuing with current source.'
-        Write-Info 'Run manually when ready: git pull --ff-only'
+        Write-Info "Run manually when ready: git fetch $AllowedGitRemoteName $AllowedGitBranch; git merge --ff-only $remoteBranch"
     }
 }
 

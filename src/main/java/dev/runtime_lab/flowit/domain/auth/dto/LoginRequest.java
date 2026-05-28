@@ -1,21 +1,17 @@
-package dev.runtime_lab.flowit.domain.user.dto;
+package dev.runtime_lab.flowit.domain.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record JoinRequest(
+public record LoginRequest(
 	@NotBlank
 	@Email
 	@Size(max = 255)
 	String email,
 
 	@NotBlank
-	@Size(min = 8, max = 24)
-	String passwordPlan,
-
-	@NotBlank
-	@Size(max = 100)
-	String nickname
+	@Size(min = 8, max = 72)
+	String password
 ) {
 }
