@@ -24,7 +24,7 @@ public class UserJoinService {
 
 	@Transactional
 	public JoinResponse join(JoinRequest request) {
-		passwordPolicy.validate(request.passwordPlain());
+		passwordPolicy.validate(request.passwordPlan());
 
 		if (userRepository.existsActiveByEmail(request.email())) {
 			throw new DuplicateActiveEmailException(request.email());
@@ -33,7 +33,7 @@ public class UserJoinService {
 		long now = Instant.now(clock).getEpochSecond();
 		User user = User.builder()
 			.email(request.email())
-			.passwordHash(passwordEncoder.encode(request.passwordPlain()))
+			.passwordHash(passwordEncoder.encode(request.passwordPlan()))
 			.name(request.nickname())
 			.createdAt(now)
 			.updatedAt(now)

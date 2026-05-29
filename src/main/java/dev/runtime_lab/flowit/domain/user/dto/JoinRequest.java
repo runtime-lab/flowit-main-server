@@ -12,7 +12,7 @@ public record JoinRequest(
 
 	@NotBlank
 	@Size(min = 8, max = 24)
-	String passwordPlain,
+	String passwordPlan,
 
 	@NotBlank
 	@Size(max = 100)

@@ -14,13 +14,13 @@ public enum ErrorCode {
 	),
 	AUTH_401_001(
 		HttpStatus.UNAUTHORIZED,
-		"인증이 필요하거나 인증에 실패했습니다.",
-		"유효한 인증 정보가 제공되지 않았거나 제공된 인증 정보를 검증할 수 없습니다."
+		"Authentication is required or has failed.",
+		"Valid authentication credentials were not provided, or the provided credentials could not be verified."
 	),
 	AUTH_403_001(
 		HttpStatus.FORBIDDEN,
-		"접근 권한이 없습니다.",
-		"인증된 사용자가 해당 리소스에 접근할 권한을 가지고 있지 않습니다."
+		"Access is denied.",
+		"The authenticated user does not have permission to access this resource."
 	),
 	USER_409_001(
 		HttpStatus.CONFLICT,

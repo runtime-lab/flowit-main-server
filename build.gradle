@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.0.1-draft'
+version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
@@ -31,7 +31,6 @@ ext {
 }
 
 def apiDocsStaticDir = layout.buildDirectory.dir('resources/main/static/docs')
-def apiDocsSourceDir = 'src/docs/asciidoc'
 def composeFile = layout.projectDirectory.file('compose.yaml')
 def composeLinuxFile = layout.projectDirectory.file('compose.linux.yaml')
 def localAppImage = 'flowit-main-server:local'
@@ -543,14 +542,12 @@ tasks.register('restdocsTest', Test) {
 tasks.named('asciidoctor', AsciidoctorTask) {
 	inputs.dir snippetsDir
 	dependsOn restdocsTest
-	baseDirFollowsSourceFile()
 	doFirst {
 		delete layout.buildDirectory.dir('docs/asciidoc')
 	}
-	attributes 'snippets': snippetsDir,
-		'api-version': project.version.toString()
+	attributes 'snippets': snippetsDir
 	resources {
-		from(apiDocsSourceDir) {
+		from('src/docs/asciidoc') {
 			include 'css/**'
 		}
 	}
