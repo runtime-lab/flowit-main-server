@@ -59,7 +59,7 @@ class UserControllerTest {
 			"nickname",
 			UserStatus.ACTIVE,
 			null,
-			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", WorkspaceMemberRole.LEADER, 2L))
+			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.LEADER, 2L))
 		);
 
 		when(userMeService.getMe(any(CurrentUser.class))).thenReturn(response);
@@ -78,6 +78,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data.workspaces[0].id").value(10L))
 			.andExpect(jsonPath("$.data.workspaces[0].name").value("Flowit"))
 			.andExpect(jsonPath("$.data.workspaces[0].description").value("Team workspace"))
+			.andExpect(jsonPath("$.data.workspaces[0].memberCount").value(3L))
 			.andExpect(jsonPath("$.data.workspaces[0].role").value("LEADER"))
 			.andExpect(jsonPath("$.data.workspaces[0].joinedAt").value(2L))
 			.andExpect(jsonPath("$.extensions").isMap());

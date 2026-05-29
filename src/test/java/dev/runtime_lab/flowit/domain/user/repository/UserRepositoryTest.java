@@ -110,6 +110,7 @@ class UserRepositoryTest {
 				10L,
 				"Flowit",
 				"Team workspace",
+				3L,
 				WorkspaceMemberRole.LEADER,
 				2L
 			)
@@ -135,6 +136,7 @@ class UserRepositoryTest {
 		assertEquals(UserStatus.ACTIVE, found.get().status());
 		assertEquals(1, found.get().workspaces().size());
 		assertEquals(10L, found.get().workspaces().get(0).id());
+		assertEquals(3L, found.get().workspaces().get(0).memberCount());
 		assertEquals(WorkspaceMemberRole.LEADER, found.get().workspaces().get(0).role());
 		verify(queryFactory).select(org.mockito.ArgumentMatchers.<ConstructorExpression<UserRepository.UserMeProjectionRow>>any());
 		verify(query).from(QUser.user);

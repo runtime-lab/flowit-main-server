@@ -1,0 +1,40 @@
+= Enum Reference
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-enum-reference:
+:breadcrumb-section: 공통 문서
+:breadcrumb-current: Enum Reference
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 개요
+
+API 응답에서 문자열로 전달되는 enum 값의 의미를 정리합니다. 클라이언트는 이 문서의 값을 기준으로 분기 처리와 화면 표시 정책을 구성할 수 있습니다.
+
+[#user-status]
+== UserStatus
+
+사용자 계정 상태입니다.
+
+include::{snippets}/enum-reference/user-status.adoc[]
+
+[#workspace-member-role]
+== WorkspaceMemberRole
+
+워크스페이스에서 사용자가 가지는 권한입니다.
+
+include::{snippets}/enum-reference/workspace-member-role.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:api-response.html[공통 응답 포맷]
+* link:users-me.html[현재 사용자 조회 API]

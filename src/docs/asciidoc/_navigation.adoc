@@ -37,6 +37,13 @@ ifndef::nav-error-codes[]
 * link:error-codes.html[에러 코드]
 endif::nav-error-codes[]
 
+ifdef::nav-enum-reference[]
+* [.is-current]#Enum Reference#
+endif::nav-enum-reference[]
+ifndef::nav-enum-reference[]
+* link:enum-reference.html[Enum Reference]
+endif::nav-enum-reference[]
+
 [.docs-nav-section-title]
 인증/인가 API
 

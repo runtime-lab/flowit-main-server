@@ -1,6 +1,7 @@
 package dev.runtime_lab.flowit.domain.user.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
@@ -55,6 +56,7 @@ public class UserRepository extends CustomJpaRepo<User, Long> {
 	public Optional<UserMeResponse> findActiveMeById(Long id) {
 		QUser user = QUser.user;
 		QWorkspaceMember workspaceMember = QWorkspaceMember.workspaceMember;
+		QWorkspaceMember workspaceMemberCount = new QWorkspaceMember("workspaceMemberCount");
 		QWorkspace workspace = QWorkspace.workspace;
 
 		List<UserMeProjectionRow> rows = queryFactory
@@ -68,6 +70,12 @@ public class UserRepository extends CustomJpaRepo<User, Long> {
 				workspace.id,
 				workspace.name,
 				workspace.description,
+				JPAExpressions.select(workspaceMemberCount.id.count())
+					.from(workspaceMemberCount)
+					.where(
+						workspaceMemberCount.workspace.id.eq(workspace.id),
+						workspaceMemberCount.deletedAt.isNull()
+					),
 				workspaceMember.role,
 				workspaceMember.joinedAt
 			))
@@ -124,6 +132,7 @@ public class UserRepository extends CustomJpaRepo<User, Long> {
 		Long workspaceId,
 		String workspaceName,
 		String workspaceDescription,
+		Long workspaceMemberCount,
 		WorkspaceMemberRole workspaceRole,
 		Long workspaceJoinedAt
 	) {
@@ -137,6 +146,7 @@ public class UserRepository extends CustomJpaRepo<User, Long> {
 				workspaceId,
 				workspaceName,
 				workspaceDescription,
+				workspaceMemberCount,
 				workspaceRole,
 				workspaceJoinedAt
 			);

@@ -6,6 +6,7 @@ public record UserMeWorkspaceResponse(
 	Long id,
 	String name,
 	String description,
+	Long memberCount,
 	WorkspaceMemberRole role,
 	Long joinedAt
 ) {

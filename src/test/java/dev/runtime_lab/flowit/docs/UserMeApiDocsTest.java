@@ -71,7 +71,7 @@ class UserMeApiDocsTest {
 			"nickname",
 			UserStatus.ACTIVE,
 			3001L,
-			List.of(new UserMeWorkspaceResponse(2001L, "Flowit", "Team workspace", WorkspaceMemberRole.LEADER, 1779889000L))
+			List.of(new UserMeWorkspaceResponse(2001L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.LEADER, 1779889000L))
 		);
 
 		when(userMeService.getMe(any(CurrentUser.class))).thenReturn(response);
@@ -96,13 +96,14 @@ class UserMeApiDocsTest {
 					fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("현재 사용자 식별자입니다."),
 					fieldWithPath("data.email").type(JsonFieldType.STRING).description("현재 사용자 이메일입니다."),
 					fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("현재 사용자 닉네임입니다."),
-					fieldWithPath("data.status").type(JsonFieldType.STRING).description("현재 사용자 상태입니다."),
+					fieldWithPath("data.status").type(JsonFieldType.STRING).description("현재 사용자 상태입니다. link:enum-reference.html#user-status[UserStatus]를 참고합니다."),
 					fieldWithPath("data.profileImageFileId").type(JsonFieldType.NUMBER).description("프로필 이미지 파일 식별자입니다. 등록된 이미지가 없으면 `null`입니다.").optional(),
 					fieldWithPath("data.workspaces").type(JsonFieldType.ARRAY).description("현재 사용자가 속한 워크스페이스 목록입니다."),
 					fieldWithPath("data.workspaces[].id").type(JsonFieldType.NUMBER).description("워크스페이스 식별자입니다."),
 					fieldWithPath("data.workspaces[].name").type(JsonFieldType.STRING).description("워크스페이스 이름입니다."),
 					fieldWithPath("data.workspaces[].description").type(JsonFieldType.STRING).description("워크스페이스 설명입니다.").optional(),
-					fieldWithPath("data.workspaces[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다."),
+					fieldWithPath("data.workspaces[].memberCount").type(JsonFieldType.NUMBER).description("워크스페이스의 활성 멤버 수입니다."),
+					fieldWithPath("data.workspaces[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("data.workspaces[].joinedAt").type(JsonFieldType.NUMBER).description("워크스페이스 참여 시각입니다. Unix epoch seconds 기준입니다."),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
