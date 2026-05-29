@@ -1,0 +1,73 @@
+[.docs-global-nav]
+--
+[.docs-nav-title]
+link:index.html[Flowit API 문서]
+
+[.docs-nav-section-title]
+시작
+
+ifdef::nav-index[]
+* [.is-current]#문서 홈#
+endif::nav-index[]
+ifndef::nav-index[]
+* link:index.html[문서 홈]
+endif::nav-index[]
+
+[.docs-nav-section-title]
+공통 문서
+
+ifdef::nav-docs-preview[]
+* [.is-current]#문서 미리보기 API#
+endif::nav-docs-preview[]
+ifndef::nav-docs-preview[]
+* link:docs-preview.html[문서 미리보기 API]
+endif::nav-docs-preview[]
+
+ifdef::nav-api-response[]
+* [.is-current]#공통 응답 포맷#
+endif::nav-api-response[]
+ifndef::nav-api-response[]
+* link:api-response.html[공통 응답 포맷]
+endif::nav-api-response[]
+
+ifdef::nav-error-codes[]
+* [.is-current]#에러 코드#
+endif::nav-error-codes[]
+ifndef::nav-error-codes[]
+* link:error-codes.html[에러 코드]
+endif::nav-error-codes[]
+
+[.docs-nav-section-title]
+인증/인가 API
+
+ifdef::nav-auth-login[]
+* [.is-current]#로그인 API#
+endif::nav-auth-login[]
+ifndef::nav-auth-login[]
+* link:auth-login.html[로그인 API]
+endif::nav-auth-login[]
+
+ifdef::nav-auth-token-refresh[]
+* [.is-current]#토큰 재발급 API#
+endif::nav-auth-token-refresh[]
+ifndef::nav-auth-token-refresh[]
+* link:auth-token-refresh.html[토큰 재발급 API]
+endif::nav-auth-token-refresh[]
+
+ifdef::nav-auth-logout[]
+* [.is-current]#로그아웃 API#
+endif::nav-auth-logout[]
+ifndef::nav-auth-logout[]
+* link:auth-logout.html[로그아웃 API]
+endif::nav-auth-logout[]
+
+[.docs-nav-section-title]
+유저 API
+
+ifdef::nav-users-join[]
+* [.is-current]#회원가입 API#
+endif::nav-users-join[]
+ifndef::nav-users-join[]
+* link:users-join.html[회원가입 API]
+endif::nav-users-join[]
+--

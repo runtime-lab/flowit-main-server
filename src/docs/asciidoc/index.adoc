@@ -1,8 +1,5 @@
 = Flowit API 문서
 :doctype: book
-:toc: left
-:toc-title: 목차
-:toclevels: 2
 :sectanchors:
 :sectlinks:
 :version-label: 버전
@@ -10,6 +7,9 @@
 :stylesheet: restdocs-modern.css
 :stylesdir: css
 :linkcss:
+:nav-index:
+
+include::_navigation.adoc[]
 
 == API 문서 목차
 

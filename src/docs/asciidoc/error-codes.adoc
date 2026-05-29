@@ -1,8 +1,5 @@
 = 에러 코드
 :doctype: book
-:toc: left
-:toc-title: 목차
-:toclevels: 3
 :sectanchors:
 :sectlinks:
 :version-label: 버전
@@ -10,9 +7,13 @@
 :stylesheet: restdocs-modern.css
 :stylesdir: css
 :linkcss:
+:nav-error-codes:
+:breadcrumb-section: 공통 문서
+:breadcrumb-current: 에러 코드
 
-[.page-action]
-link:index.html[API 문서 목차로 이동]
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
 
 == 개요
 
@@ -25,3 +26,10 @@ link:index.html[API 문서 목차로 이동]
 == 에러 코드 목록
 
 include::{snippets}/error-codes/error-codes.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:api-response.html[공통 응답 포맷]
+* link:auth-login.html[로그인 API]
+* link:users-join.html[회원가입 API]

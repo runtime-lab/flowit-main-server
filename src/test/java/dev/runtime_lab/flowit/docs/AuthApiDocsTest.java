@@ -116,25 +116,25 @@ class AuthApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("?붿껌 蹂몃Ц 誘몃뵒????낆엯?덈떎."),
-					headerWithName(HttpHeaders.ACCEPT).description("?대씪?댁뼵?멸? 湲곕??섎뒗 ?묐떟 誘몃뵒????낆엯?덈떎.").optional()
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다."),
+					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				responseHeaders(
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("?묐떟 蹂몃Ц 誘몃뵒????낆엯?덈떎."),
-					headerWithName(HttpHeaders.SET_COOKIE).description("HttpOnly refresh token 荑좏궎?낅땲??")
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("응답 본문 미디어 타입입니다."),
+					headerWithName(HttpHeaders.SET_COOKIE).description("HttpOnly refresh token 쿠키입니다.")
 				),
 				requestFields(
-					fieldWithPath("email").type(JsonFieldType.STRING).description("濡쒓렇???대찓?쇱엯?덈떎."),
-					fieldWithPath("password").type(JsonFieldType.STRING).description("?됰Ц 鍮꾨?踰덊샇?낅땲??")
+					fieldWithPath("email").type(JsonFieldType.STRING).description("로그인 이메일입니다."),
+					fieldWithPath("password").type(JsonFieldType.STRING).description("평문 비밀번호입니다.")
 				),
 				responseFields(
-					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("?붿껌 泥섎━ ?깃났 ?щ??낅땲??"),
-					fieldWithPath("data").type(JsonFieldType.OBJECT).description("濡쒓렇???좏겙 ?묐떟?낅땲??"),
-					fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Bearer access token?낅땲??"),
-					fieldWithPath("data.tokenType").type(JsonFieldType.STRING).description("?좏겙 ??낆엯?덈떎."),
-					fieldWithPath("data.expiresIn").type(JsonFieldType.NUMBER).description("Access token 留뚮즺源뚯? ?⑥? 珥덉엯?덈떎."),
-					fieldWithPath("data.refreshTokenExpiresIn").type(JsonFieldType.NUMBER).description("Refresh token 荑좏궎 留뚮즺源뚯? ?⑥? 珥덉엯?덈떎."),
-					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("?묐떟 蹂댁“ ?뺣낫?낅땲??")
+					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 처리 성공 여부입니다."),
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("로그인 토큰 응답입니다."),
+					fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Bearer access token입니다."),
+					fieldWithPath("data.tokenType").type(JsonFieldType.STRING).description("토큰 타입입니다."),
+					fieldWithPath("data.expiresIn").type(JsonFieldType.NUMBER).description("Access token 만료까지 남은 초입니다."),
+					fieldWithPath("data.refreshTokenExpiresIn").type(JsonFieldType.NUMBER).description("Refresh token 쿠키 만료까지 남은 초입니다."),
+					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
 			));
 	}
@@ -154,23 +154,23 @@ class AuthApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.ACCEPT).description("?대씪?댁뼵?멸? 湲곕??섎뒗 ?묐떟 誘몃뵒????낆엯?덈떎.").optional()
+					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				requestCookies(
-					cookieWithName("flowit_refresh_token").description("濡쒓렇????諛쒓툒??refresh token 荑좏궎?낅땲??")
+					cookieWithName("flowit_refresh_token").description("로그인 때 발급된 refresh token 쿠키입니다.")
 				),
 				responseHeaders(
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("?묐떟 蹂몃Ц 誘몃뵒????낆엯?덈떎."),
-					headerWithName(HttpHeaders.SET_COOKIE).description("?뚯쟾??refresh token 荑좏궎?낅땲??")
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("응답 본문 미디어 타입입니다."),
+					headerWithName(HttpHeaders.SET_COOKIE).description("새로 발급된 refresh token 쿠키입니다.")
 				),
 				responseFields(
-					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("?붿껌 泥섎━ ?깃났 ?щ??낅땲??"),
-					fieldWithPath("data").type(JsonFieldType.OBJECT).description("?щ컻湲??좏겙 ?묐떟?낅땲??"),
-					fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("??Bearer access token?낅땲??"),
-					fieldWithPath("data.tokenType").type(JsonFieldType.STRING).description("?좏겙 ??낆엯?덈떎."),
-					fieldWithPath("data.expiresIn").type(JsonFieldType.NUMBER).description("Access token 留뚮즺源뚯? ?⑥? 珥덉엯?덈떎."),
-					fieldWithPath("data.refreshTokenExpiresIn").type(JsonFieldType.NUMBER).description("Refresh token 荑좏궎 留뚮즺源뚯? ?⑥? 珥덉엯?덈떎."),
-					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("?묐떟 蹂댁“ ?뺣낫?낅땲??")
+					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 처리 성공 여부입니다."),
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("재발급 토큰 응답입니다."),
+					fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("새 Bearer access token입니다."),
+					fieldWithPath("data.tokenType").type(JsonFieldType.STRING).description("토큰 타입입니다."),
+					fieldWithPath("data.expiresIn").type(JsonFieldType.NUMBER).description("Access token 만료까지 남은 초입니다."),
+					fieldWithPath("data.refreshTokenExpiresIn").type(JsonFieldType.NUMBER).description("Refresh token 쿠키 만료까지 남은 초입니다."),
+					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
 			));
 	}
@@ -187,19 +187,19 @@ class AuthApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.ACCEPT).description("?대씪?댁뼵?멸? 湲곕??섎뒗 ?묐떟 誘몃뵒????낆엯?덈떎.").optional()
+					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				requestCookies(
-					cookieWithName("flowit_refresh_token").description("濡쒓렇????諛쒓툒??refresh token 荑좏궎?낅땲??")
+					cookieWithName("flowit_refresh_token").description("로그인 때 발급된 refresh token 쿠키입니다.")
 				),
 				responseHeaders(
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("?묐떟 蹂몃Ц 誘몃뵒????낆엯?덈떎."),
-					headerWithName(HttpHeaders.SET_COOKIE).description("留뚮즺 泥섎━??refresh token 荑좏궎?낅땲??")
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("응답 본문 미디어 타입입니다."),
+					headerWithName(HttpHeaders.SET_COOKIE).description("만료 처리된 refresh token 쿠키입니다.")
 				),
 				responseFields(
-					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("?붿껌 泥섎━ ?깃났 ?щ??낅땲??"),
-					fieldWithPath("data").type(JsonFieldType.OBJECT).description("鍮꾩뼱 ?덈뒗 ?깃났 ?묐떟?낅땲??"),
-					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("?묐떟 蹂댁“ ?뺣낫?낅땲??")
+					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 처리 성공 여부입니다."),
+					fieldWithPath("data").type(JsonFieldType.OBJECT).description("비어 있는 성공 응답입니다."),
+					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
 			));
 	}

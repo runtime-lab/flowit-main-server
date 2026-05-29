@@ -1,8 +1,5 @@
 = 공통 응답 포맷
 :doctype: book
-:toc: left
-:toc-title: 목차
-:toclevels: 3
 :sectanchors:
 :sectlinks:
 :version-label: 버전
@@ -10,9 +7,13 @@
 :stylesheet: restdocs-modern.css
 :stylesdir: css
 :linkcss:
+:nav-api-response:
+:breadcrumb-section: 공통 문서
+:breadcrumb-current: 공통 응답 포맷
 
-[.page-action]
-link:index.html[API 문서 목차로 이동]
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
 
 == 개요
 
@@ -94,3 +95,9 @@ include::{snippets}/users-join-duplicate-email/http-response.adoc[]
 === 응답 필드
 
 include::{snippets}/users-join-duplicate-email/response-fields.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:error-codes.html[에러 코드]
+* link:users-join.html[회원가입 API]

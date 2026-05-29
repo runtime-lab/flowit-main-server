@@ -1,8 +1,5 @@
 = 로그아웃 API
 :doctype: book
-:toc: left
-:toc-title: 목차
-:toclevels: 3
 :sectanchors:
 :sectlinks:
 :version-label: 버전
@@ -10,9 +7,13 @@
 :stylesheet: restdocs-modern.css
 :stylesdir: css
 :linkcss:
+:nav-auth-logout:
+:breadcrumb-section: 인증/인가 API
+:breadcrumb-current: 로그아웃 API
 
-[.page-action]
-link:index.html[API 문서 목록으로 이동]
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
 
 == 로그아웃
 
@@ -81,3 +82,10 @@ include::{snippets}/auth-logout/response-headers.adoc[]
 === 응답 필드
 
 include::{snippets}/auth-logout/response-fields.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:auth-login.html[로그인 API]
+* link:auth-token-refresh.html[토큰 재발급 API]
+* link:error-codes.html[에러 코드]

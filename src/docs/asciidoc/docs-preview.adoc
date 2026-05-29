@@ -1,8 +1,5 @@
 = 문서 미리보기 API
 :doctype: book
-:toc: left
-:toc-title: 목차
-:toclevels: 3
 :sectanchors:
 :sectlinks:
 :version-label: 버전
@@ -10,9 +7,13 @@
 :stylesheet: restdocs-modern.css
 :stylesdir: css
 :linkcss:
+:nav-docs-preview:
+:breadcrumb-section: 공통 문서
+:breadcrumb-current: 문서 미리보기 API
 
-[.page-action]
-link:index.html[API 문서 목차로 이동]
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
 
 == 작업 생성 문서 미리보기
 
@@ -60,3 +61,9 @@ include::{snippets}/docs-preview-create-task/response-headers.adoc[]
 === 응답 필드
 
 include::{snippets}/docs-preview-create-task/response-fields.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:api-response.html[공통 응답 포맷]
+* link:error-codes.html[에러 코드]

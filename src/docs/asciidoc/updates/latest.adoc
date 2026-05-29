@@ -6,8 +6,8 @@ Integration Note
 
 Added:: 로컬 React 클라이언트(`http://localhost:3000`)에서 서버 API를 호출할 때 CORS preflight와 credential 요청을 허용합니다.
 
-Added:: 이제부터 버전과 간략한 변경 지점이 문서에 출력됩니다.
+Added:: 죄측 글로벌 네비게이션을 통해 문서 전역을 이동할 수 있도록 개선되었습니다.
 
-Added:: 인증/인가 API 문서에 에러 파트가 추가되었습니다.
+Added:: 각 문서의 최하단에 연관 문서 섹션이 추가되었습니다.
 
-Changed:: 에러 코드의 설명이 국문으로 변경되었습니다.
+Maint:: JPA Projections 계열의 클래스가 기동 과정에서 간헐적으로 깨지는 현상을 조사 중 입니다.

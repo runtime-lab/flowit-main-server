@@ -445,6 +445,127 @@ table.endpoint-summary td:first-child {
   color: var(--warning);
 }
 
+.docs-global-nav {
+  margin: 0 0 24px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.06);
+}
+
+.docs-global-nav .content > *:first-child {
+  margin-top: 0;
+}
+
+.docs-global-nav .content > *:last-child {
+  margin-bottom: 0;
+}
+
+.docs-nav-title p {
+  margin: 0 0 18px;
+}
+
+.docs-nav-title a {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 780;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.docs-nav-title a:hover {
+  color: var(--accent);
+}
+
+.docs-nav-section-title p {
+  margin: 18px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 780;
+  letter-spacing: 0;
+}
+
+.docs-global-nav ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.docs-global-nav li {
+  margin: 2px 0;
+}
+
+.docs-global-nav li p {
+  margin: 0;
+}
+
+.docs-global-nav a,
+.docs-global-nav .is-current {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: #344054;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.docs-global-nav a:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.docs-global-nav .is-current {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.docs-breadcrumb {
+  margin: 0 0 24px;
+}
+
+.docs-breadcrumb p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.docs-breadcrumb a {
+  color: #475467;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.docs-breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.related-docs {
+  margin-top: 56px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.05);
+}
+
+#content .related-docs h2 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+.related-docs ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.related-docs li {
+  margin: 6px 0;
+}
+
 .page-action {
   margin: 0 0 22px;
 }
@@ -494,6 +615,25 @@ table.endpoint-summary td:first-child {
 }
 
 @media (min-width: 1180px) {
+  body:has(.docs-global-nav) {
+    padding-left: 300px;
+  }
+
+  .docs-global-nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    width: 300px;
+    margin: 0;
+    overflow-y: auto;
+    border-width: 0 1px 0 0;
+    border-radius: 0;
+    padding: 30px 22px;
+    box-shadow: none;
+  }
+
   body.toc2 {
     padding-left: 280px;
   }
