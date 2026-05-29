@@ -61,6 +61,13 @@ management:
 
 flowit:
   security:
+    cors:
+      allowed-origins: ${FLOWIT_CORS_ALLOWED_ORIGINS:http://localhost:3000}
+      allowed-methods: ${FLOWIT_CORS_ALLOWED_METHODS:GET,POST,PUT,PATCH,DELETE,OPTIONS}
+      allowed-headers: ${FLOWIT_CORS_ALLOWED_HEADERS:*}
+      exposed-headers: ${FLOWIT_CORS_EXPOSED_HEADERS:Location}
+      allow-credentials: ${FLOWIT_CORS_ALLOW_CREDENTIALS:true}
+      max-age: ${FLOWIT_CORS_MAX_AGE:1h}
     jwt:
       issuer: ${FLOWIT_JWT_ISSUER:flowit-main-server}
       access-token-time-to-live: ${FLOWIT_JWT_ACCESS_TOKEN_TIME_TO_LIVE:15m}

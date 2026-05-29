@@ -49,7 +49,7 @@ class UserJoinControllerTest {
 		String requestBody = """
 			{
 			  "email": "user@example.com",
-			  "passwordPlan": "plainPassword",
+			  "passwordPlain": "plainPassword",
 			  "nickname": "nickname"
 			}
 			""";
@@ -71,7 +71,7 @@ class UserJoinControllerTest {
 
 		verify(userJoinService).join(requestCaptor.capture());
 		assertEquals("user@example.com", requestCaptor.getValue().email());
-		assertEquals("plainPassword", requestCaptor.getValue().passwordPlan());
+		assertEquals("plainPassword", requestCaptor.getValue().passwordPlain());
 		assertEquals("nickname", requestCaptor.getValue().nickname());
 	}
 
@@ -80,7 +80,7 @@ class UserJoinControllerTest {
 		String requestBody = """
 			{
 			  "email": "not-email",
-			  "passwordPlan": "short",
+			  "passwordPlain": "short",
 			  "nickname": ""
 			}
 			""";
@@ -100,7 +100,7 @@ class UserJoinControllerTest {
 		String requestBody = """
 			{
 			  "email": "user@example.com",
-			  "passwordPlan": "plainPassword",
+			  "passwordPlain": "plainPassword",
 			  "nickname": "nickname"
 			}
 			""";
@@ -124,7 +124,7 @@ class UserJoinControllerTest {
 		String requestBody = """
 			{
 			  "email": "user@example.com",
-			  "passwordPlan": "plainPassword!",
+			  "passwordPlain": "plainPassword!",
 			  "nickname": "nickname"
 			}
 			""";

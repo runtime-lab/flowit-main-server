@@ -62,7 +62,7 @@ class UserJoinApiDocsTest {
 		String requestBody = """
 			{
 			  "email": "user@example.com",
-			  "passwordPlan": "plainPassword",
+			  "passwordPlain": "plainPassword",
 			  "nickname": "nickname"
 			}
 			""";
@@ -90,7 +90,7 @@ class UserJoinApiDocsTest {
 				),
 				requestFields(
 					fieldWithPath("email").type(JsonFieldType.STRING).description("가입 이메일입니다. 활성 계정 기준으로 유일해야 합니다."),
-					fieldWithPath("passwordPlan").type(JsonFieldType.STRING).description("평문 비밀번호입니다. 서버에서 해시 처리 후 저장합니다."),
+					fieldWithPath("passwordPlain").type(JsonFieldType.STRING).description("평문 비밀번호입니다. 서버에서 해시 처리 후 저장합니다."),
 					fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임입니다. 유저 엔티티의 name으로 저장됩니다.")
 				),
 				responseFields(
@@ -107,7 +107,7 @@ class UserJoinApiDocsTest {
 		String requestBody = """
 			{
 			  "email": "user@example.com",
-			  "passwordPlan": "plainPassword",
+			  "passwordPlain": "plainPassword",
 			  "nickname": "nickname"
 			}
 			""";
@@ -125,7 +125,7 @@ class UserJoinApiDocsTest {
 				preprocessResponse(prettyPrint()),
 				requestFields(
 					fieldWithPath("email").type(JsonFieldType.STRING).description("가입 이메일입니다."),
-					fieldWithPath("passwordPlan").type(JsonFieldType.STRING).description("평문 비밀번호입니다."),
+					fieldWithPath("passwordPlain").type(JsonFieldType.STRING).description("평문 비밀번호입니다."),
 					fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임입니다.")
 				),
 				responseFields(

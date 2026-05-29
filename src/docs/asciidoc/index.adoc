@@ -15,6 +15,11 @@
 
 Flowit API 문서의 진입점입니다. API가 추가되면 이 페이지에서 도메인별 문서로 이동할 수 있습니다.
 
+[.update-note]
+--
+include::updates/latest.adoc[]
+--
+
 [%collapsible]
 .표준 API 포맷
 ====

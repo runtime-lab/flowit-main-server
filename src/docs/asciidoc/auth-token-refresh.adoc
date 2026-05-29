@@ -25,6 +25,12 @@ link:index.html[API 문서 목록으로 이동]
 |쿠키 |`flowit_refresh_token` 쿠키가 필요합니다.
 |===
 
+== 인증/인가 에러
+
+아래 에러 코드는 인증/인가 흐름에서 공통으로 사용할 수 있습니다.
+
+include::{snippets}/auth/error-codes.adoc[]
+
 == 클라이언트 주의사항
 
 브라우저 기반 클라이언트는 쿠키가 함께 전송되도록 credentials 옵션을 켭니다.
