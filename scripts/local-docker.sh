@@ -202,6 +202,27 @@ require_docker () {
     fi
 }
 
+confirm_continue_with_current_source () {
+    reason=$1
+
+    info "$reason"
+    if [ ! -r /dev/tty ] || [ ! -w /dev/tty ]; then
+        fail "ERROR: automatic source update did not complete and no interactive terminal is available to confirm continuing with the current source."
+    fi
+
+    printf '%s' "Continue with the current local source? [y/N] " > /dev/tty
+    IFS= read -r answer < /dev/tty || answer=
+    case "$(printf '%s' "$answer" | tr '[:upper:]' '[:lower:]')" in
+      y | yes)
+        info "Continuing with current local source."
+        return 0
+        ;;
+      *)
+        fail "ERROR: stopped because local source was not updated."
+        ;;
+    esac
+}
+
 sync_local_source_if_needed () {
     case "$COMMAND" in
       start | build-image) ;;
@@ -219,24 +240,11 @@ sync_local_source_if_needed () {
     fi
 
     git_top_level=$(git -C "$APP_HOME" rev-parse --show-toplevel 2>/dev/null) || {
-        info "Git repository metadata is unavailable; skipping local source update."
+        confirm_continue_with_current_source "Could not read Git repository metadata. Automatic source update cannot verify whether this source is current."
         return 0
     }
     if [ "$(CDPATH= cd -P "$git_top_level" && pwd)" != "$APP_HOME" ]; then
         info "Git repository root is not the expected project root; skipping automatic update. Expected $APP_HOME, got $git_top_level."
-        return 0
-    fi
-
-    current_branch=$(git -C "$APP_HOME" branch --show-current 2>/dev/null) || {
-        info "Repository is not on a named branch; skipping automatic update."
-        return 0
-    }
-    if [ -z "$current_branch" ]; then
-        info "Repository is not on a named branch; skipping automatic update."
-        return 0
-    fi
-    if [ "$current_branch" != "$ALLOWED_GIT_BRANCH" ]; then
-        info "Current branch is '$current_branch', but automatic update is only allowed on '$ALLOWED_GIT_BRANCH'."
         return 0
     fi
 
@@ -252,20 +260,29 @@ sync_local_source_if_needed () {
         fi
     done
     if [ "$allowed_remote" != true ]; then
-        info "Remote '$ALLOWED_GIT_REMOTE_NAME' points to '$remote_url', which is not an allowed source; skipping automatic update."
         return 0
+    fi
+
+    current_branch=$(git -C "$APP_HOME" branch --show-current 2>/dev/null) || {
+        fail "ERROR: repository uses allowed remote '$ALLOWED_GIT_REMOTE_NAME', but is not on a named branch. Switch to '$ALLOWED_GIT_BRANCH' or set FLOWIT_SKIP_AUTO_UPDATE=true when intentionally running without source update."
+    }
+    if [ -z "$current_branch" ]; then
+        fail "ERROR: repository uses allowed remote '$ALLOWED_GIT_REMOTE_NAME', but is not on a named branch. Switch to '$ALLOWED_GIT_BRANCH' or set FLOWIT_SKIP_AUTO_UPDATE=true when intentionally running without source update."
+    fi
+    if [ "$current_branch" != "$ALLOWED_GIT_BRANCH" ]; then
+        fail "ERROR: current branch is '$current_branch', but '$ALLOWED_GIT_REMOTE_NAME' points to the allowed source. Switch to '$ALLOWED_GIT_BRANCH' before running $INVOCATION_LABEL."
     fi
 
     remote_branch="$ALLOWED_GIT_REMOTE_NAME/$ALLOWED_GIT_BRANCH"
 
     info "Checking for source updates from $remote_branch..."
     if ! git -C "$APP_HOME" fetch --prune --quiet "$ALLOWED_GIT_REMOTE_NAME" "$ALLOWED_GIT_BRANCH"; then
-        info "Could not fetch upstream source updates; continuing with current source."
+        confirm_continue_with_current_source "Could not fetch source updates from $remote_branch."
         return 0
     fi
 
     counts=$(git -C "$APP_HOME" rev-list --left-right --count "HEAD...$remote_branch" 2>/dev/null) || {
-        info "Could not compare local source with $remote_branch; continuing with current source."
+        confirm_continue_with_current_source "Could not compare local source with $remote_branch."
         return 0
     }
 
@@ -278,15 +295,17 @@ sync_local_source_if_needed () {
         return 0
     fi
 
-    if [ -n "$(git -C "$APP_HOME" status --porcelain)" ]; then
-        info "Upstream source has $behind newer commit(s), but local changes are present; skipping automatic update."
-        info "Commit or stash local changes, then fast-forward from $remote_branch manually."
+    status_output=$(git -C "$APP_HOME" status --porcelain 2>/dev/null) || {
+        confirm_continue_with_current_source "Could not inspect local source changes before updating from $remote_branch."
+        return 0
+    }
+    if [ -n "$status_output" ]; then
+        confirm_continue_with_current_source "Upstream source has $behind newer commit(s), but local changes are present. Commit or stash local changes, then run: git fetch $ALLOWED_GIT_REMOTE_NAME $ALLOWED_GIT_BRANCH; git merge --ff-only $remote_branch"
         return 0
     fi
 
     if [ "$ahead" -gt 0 ]; then
-        info "Local branch and $remote_branch have diverged; skipping automatic update."
-        info "Resolve the branch manually, then run $INVOCATION_LABEL again."
+        confirm_continue_with_current_source "Local branch and $remote_branch have diverged. Resolve the branch manually, then run: git fetch $ALLOWED_GIT_REMOTE_NAME $ALLOWED_GIT_BRANCH; git merge --ff-only $remote_branch"
         return 0
     fi
 
@@ -294,8 +313,7 @@ sync_local_source_if_needed () {
     if git -C "$APP_HOME" merge --ff-only "$remote_branch"; then
         info "Local source updated."
     else
-        info "Automatic source update failed; continuing with current source."
-        info "Run manually when ready: git fetch $ALLOWED_GIT_REMOTE_NAME $ALLOWED_GIT_BRANCH; git merge --ff-only $remote_branch"
+        confirm_continue_with_current_source "Automatic source update failed. Run manually when ready: git fetch $ALLOWED_GIT_REMOTE_NAME $ALLOWED_GIT_BRANCH; git merge --ff-only $remote_branch"
     fi
 }
 

@@ -122,9 +122,9 @@ If a local JDK is installed, the existing Gradle command remains supported.
 
 The application Docker image is built and run with Eclipse Temurin Java 17 inside the container.
 
-To use safe automatic source updates, clone the organization source repository `runtime-lab/flowit-main-server`, not a fork. Worktrees cloned from forks or other remotes are not eligible for automatic updates; the script prints a warning and continues with the current source.
+To use safe automatic source updates, clone the organization source repository `runtime-lab/flowit-main-server`, not a fork. Worktrees cloned from forks or other remotes are not eligible for automatic updates and continue with the current source without prompting.
 
-Before `local.bat start`, `local.bat build-image`, `./local.sh start`, or `./local.sh build-image` builds the image, the script checks only the allowed source: `origin` pointing to `https://github.com/runtime-lab/flowit-main-server.git` or `git@github.com:runtime-lab/flowit-main-server.git`, on branch `main`. If the branch is behind and the worktree is clean, it fetches that branch and fast-forwards automatically. If the remote/branch does not match, local changes are present, the branch has diverged, Git is unavailable, or fetch fails, the script prints a warning and continues with the current source. Set `FLOWIT_SKIP_AUTO_UPDATE=true` to skip this source update check.
+Before `local.bat start`, `local.bat build-image`, `./local.sh start`, or `./local.sh build-image` builds the image, the script checks only the allowed source: `origin` pointing to `https://github.com/runtime-lab/flowit-main-server.git` or `git@github.com:runtime-lab/flowit-main-server.git`. If the allowed source is configured but the current branch is not `main`, the script stops with an error. If `main` is behind and the worktree is clean, it fetches that branch and fast-forwards automatically. If fetch, comparison, status inspection, or merge fails on the allowed `main`, or local changes or divergence prevent the update, the script asks whether to continue with the current source. The default answer is no. Set `FLOWIT_SKIP_AUTO_UPDATE=true` to skip this source update check.
 
 Linux is blocked by default because it is easy to confuse with server environments. Opt in only on a local Linux development machine as shown below.
 
