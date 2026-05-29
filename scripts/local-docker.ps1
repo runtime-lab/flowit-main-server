@@ -344,6 +344,30 @@ function Invoke-GitNative {
     Invoke-Native -CommandLine (@('git', '-C', $AppHome) + $Arguments)
 }
 
+function Confirm-ContinueWithCurrentSource {
+    param([string] $Reason)
+
+    Write-Info $Reason
+    if ([Console]::IsInputRedirected) {
+        throw 'ERROR: automatic source update did not complete and no interactive terminal is available to confirm continuing with the current source.'
+    }
+
+    $answer = Read-Host 'Continue with the current local source? [y/N]'
+    switch ($answer.Trim().ToLowerInvariant()) {
+        'y' {
+            Write-Info 'Continuing with current local source.'
+            return
+        }
+        'yes' {
+            Write-Info 'Continuing with current local source.'
+            return
+        }
+        default {
+            throw 'ERROR: stopped because local source was not updated.'
+        }
+    }
+}
+
 function Sync-LocalSourceIfNeeded {
     if ($Command -notin @('start', 'build-image')) {
         return
@@ -361,23 +385,12 @@ function Sync-LocalSourceIfNeeded {
 
     $gitTopLevelResult = Invoke-GitCapture -Arguments @('rev-parse', '--show-toplevel')
     if ($gitTopLevelResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($gitTopLevelResult.Output)) {
-        Write-Info 'Git repository metadata is unavailable; skipping local source update.'
+        Confirm-ContinueWithCurrentSource 'Could not read Git repository metadata. Automatic source update cannot verify whether this source is current.'
         return
     }
     $gitTopLevel = (Resolve-Path -LiteralPath $gitTopLevelResult.Output.Trim()).Path
     if ($gitTopLevel -ne $AppHome) {
         Write-Info "Git repository root is not the expected project root; skipping automatic update. Expected $AppHome, got $gitTopLevel."
-        return
-    }
-
-    $branchResult = Invoke-GitCapture -Arguments @('branch', '--show-current')
-    if ($branchResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($branchResult.Output)) {
-        Write-Info 'Repository is not on a named branch; skipping automatic update.'
-        return
-    }
-    $currentBranch = $branchResult.Output.Trim()
-    if ($currentBranch -ne $AllowedGitBranch) {
-        Write-Info "Current branch is '$currentBranch', but automatic update is only allowed on '$AllowedGitBranch'."
         return
     }
 
@@ -388,8 +401,16 @@ function Sync-LocalSourceIfNeeded {
     }
     $remoteUrl = $remoteUrlResult.Output.Trim()
     if ($AllowedGitRemoteUrls -notcontains $remoteUrl) {
-        Write-Info "Remote '$AllowedGitRemoteName' points to '$remoteUrl', which is not an allowed source; skipping automatic update."
         return
+    }
+
+    $branchResult = Invoke-GitCapture -Arguments @('branch', '--show-current')
+    if ($branchResult.ExitCode -ne 0 -or [string]::IsNullOrWhiteSpace($branchResult.Output)) {
+        throw "ERROR: repository uses allowed remote '$AllowedGitRemoteName', but is not on a named branch. Switch to '$AllowedGitBranch' or set FLOWIT_SKIP_AUTO_UPDATE=true when intentionally running without source update."
+    }
+    $currentBranch = $branchResult.Output.Trim()
+    if ($currentBranch -ne $AllowedGitBranch) {
+        throw "ERROR: current branch is '$currentBranch', but '$AllowedGitRemoteName' points to the allowed source. Switch to '$AllowedGitBranch' before running $InvocationLabel."
     }
 
     $remoteBranch = "$AllowedGitRemoteName/$AllowedGitBranch"
@@ -397,19 +418,19 @@ function Sync-LocalSourceIfNeeded {
     Write-Info "Checking for source updates from $remoteBranch..."
     $fetchResult = Invoke-GitCapture -Arguments @('fetch', '--prune', '--quiet', $AllowedGitRemoteName, $AllowedGitBranch)
     if ($fetchResult.ExitCode -ne 0) {
-        Write-Info 'Could not fetch upstream source updates; continuing with current source.'
+        Confirm-ContinueWithCurrentSource "Could not fetch source updates from $remoteBranch."
         return
     }
 
     $countResult = Invoke-GitCapture -Arguments @('rev-list', '--left-right', '--count', "HEAD...$remoteBranch")
     if ($countResult.ExitCode -ne 0) {
-        Write-Info "Could not compare local source with $remoteBranch; continuing with current source."
+        Confirm-ContinueWithCurrentSource "Could not compare local source with $remoteBranch."
         return
     }
 
     $counts = $countResult.Output.Trim() -split '\s+'
     if ($counts.Count -lt 2) {
-        Write-Info "Could not compare local source with $remoteBranch; continuing with current source."
+        Confirm-ContinueWithCurrentSource "Could not compare local source with $remoteBranch."
         return
     }
 
@@ -422,18 +443,16 @@ function Sync-LocalSourceIfNeeded {
 
     $statusResult = Invoke-GitCapture -Arguments @('status', '--porcelain')
     if ($statusResult.ExitCode -ne 0) {
-        Write-Info 'Could not inspect local source changes; skipping automatic update.'
+        Confirm-ContinueWithCurrentSource "Could not inspect local source changes before updating from $remoteBranch."
         return
     }
     if (-not [string]::IsNullOrWhiteSpace($statusResult.Output)) {
-        Write-Info "Upstream source has $behind newer commit(s), but local changes are present; skipping automatic update."
-        Write-Info "Commit or stash local changes, then fast-forward from $remoteBranch manually."
+        Confirm-ContinueWithCurrentSource "Upstream source has $behind newer commit(s), but local changes are present. Commit or stash local changes, then run: git fetch $AllowedGitRemoteName $AllowedGitBranch; git merge --ff-only $remoteBranch"
         return
     }
 
     if ($ahead -gt 0) {
-        Write-Info "Local branch and $remoteBranch have diverged; skipping automatic update."
-        Write-Info "Resolve the branch manually, then run $InvocationLabel again."
+        Confirm-ContinueWithCurrentSource "Local branch and $remoteBranch have diverged. Resolve the branch manually, then run: git fetch $AllowedGitRemoteName $AllowedGitBranch; git merge --ff-only $remoteBranch"
         return
     }
 
@@ -443,8 +462,7 @@ function Sync-LocalSourceIfNeeded {
         Write-Info 'Local source updated.'
     }
     else {
-        Write-Info 'Automatic source update failed; continuing with current source.'
-        Write-Info "Run manually when ready: git fetch $AllowedGitRemoteName $AllowedGitBranch; git merge --ff-only $remoteBranch"
+        Confirm-ContinueWithCurrentSource "Automatic source update failed. Run manually when ready: git fetch $AllowedGitRemoteName $AllowedGitBranch; git merge --ff-only $remoteBranch"
     }
 }
 

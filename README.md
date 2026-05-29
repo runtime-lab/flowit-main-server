@@ -122,9 +122,9 @@ chmod +x local.sh
 
 애플리케이션 Docker 이미지는 컨테이너 내부에서 Eclipse Temurin Java 17을 사용해 빌드 및 실행됩니다.
 
-안전한 자동 소스 갱신을 사용하려면 fork 저장소가 아니라 조직 원본 저장소 `runtime-lab/flowit-main-server`를 clone해야 합니다. fork 또는 다른 remote에서 clone한 작업 트리는 자동 갱신 대상이 아니며, 스크립트는 경고만 출력하고 현재 소스로 계속 진행합니다.
+안전한 자동 소스 갱신을 사용하려면 fork 저장소가 아니라 조직 원본 저장소 `runtime-lab/flowit-main-server`를 clone해야 합니다. fork 또는 다른 remote에서 clone한 작업 트리는 자동 갱신 대상이 아니며, 별도 확인 없이 현재 소스로 계속 진행합니다.
 
-이미지를 빌드하기 전 `local.bat start`, `local.bat build-image`, `./local.sh start`, `./local.sh build-image`는 허용된 소스만 확인합니다. 허용된 소스는 `origin`이 `https://github.com/runtime-lab/flowit-main-server.git` 또는 `git@github.com:runtime-lab/flowit-main-server.git`을 가리키고, 현재 브랜치가 `main`인 경우입니다. 브랜치가 뒤처져 있고 작업 트리가 깨끗하면 해당 브랜치만 가져와 fast-forward로 갱신합니다. remote/branch가 맞지 않거나, 로컬 변경이 있거나, 브랜치가 diverge 되었거나, Git을 사용할 수 없거나, fetch에 실패하면 경고만 출력하고 현재 소스로 계속 진행합니다. 이 소스 갱신 확인을 건너뛰려면 `FLOWIT_SKIP_AUTO_UPDATE=true`를 설정하십시오.
+이미지를 빌드하기 전 `local.bat start`, `local.bat build-image`, `./local.sh start`, `./local.sh build-image`는 허용된 소스만 확인합니다. 허용된 소스는 `origin`이 `https://github.com/runtime-lab/flowit-main-server.git` 또는 `git@github.com:runtime-lab/flowit-main-server.git`을 가리키는 경우입니다. 허용된 원본 저장소에서 현재 브랜치가 `main`이 아니면 에러와 함께 중단합니다. `main` 브랜치가 뒤처져 있고 작업 트리가 깨끗하면 해당 브랜치만 가져와 fast-forward로 갱신합니다. 허용된 원본 `main`에서 fetch, 비교, 상태 확인, merge가 실패하거나 로컬 변경 또는 diverge 상태 때문에 자동 갱신할 수 없으면 현재 소스로 계속 진행할지 묻습니다. 기본값은 중단입니다. 이 소스 갱신 확인을 건너뛰려면 `FLOWIT_SKIP_AUTO_UPDATE=true`를 설정하십시오.
 
 서버 환경과 혼동하기 쉬운 Linux에서는 기본적으로 실행을 차단합니다. Linux 로컬 개발 환경에서만 아래처럼 명시적으로 허용하십시오.
 
