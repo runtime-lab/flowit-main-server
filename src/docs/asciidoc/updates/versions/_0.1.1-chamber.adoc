@@ -1,0 +1,24 @@
+[[integration-notes-0-1-1-chamber]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.1.1 Chamber</span><span class="integration-note-version-meta">Chamber / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-05-30 02:32 KST
+|Enhancement
+|GET /v1/users/me
+|<<integration-note-0-1-1-chamber-2026-05-30-0232-users-me-workspace-count,User me workspace member count>>
+
+|===
+
+include::../notes/0.1.1-chamber/2026-05-30-0232-users-me-workspace-count.adoc[]
+
+++++
+</div>
+</details>
+++++

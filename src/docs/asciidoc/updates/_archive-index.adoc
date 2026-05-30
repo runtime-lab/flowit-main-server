@@ -1,0 +1,11 @@
+[cols="20,22,16,16,26",options="header",role="api-index"]
+|===
+|Series |Latest Version |Versions |Notes |Link
+
+|0.1.x
+|`0.1.2-chamber`
+|2
+|2
+|pass:[<a href="integration-notes-0.1.html">0.1.x Integration Notes</a>]
+
+|===

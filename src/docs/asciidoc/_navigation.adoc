@@ -30,6 +30,13 @@ ifndef::nav-api-response[]
 * link:api-response.html[공통 응답 포맷]
 endif::nav-api-response[]
 
+ifdef::nav-integration-notes[]
+* [.is-current]#Integration Notes#
+endif::nav-integration-notes[]
+ifndef::nav-integration-notes[]
+* link:integration-notes.html[Integration Notes]
+endif::nav-integration-notes[]
+
 ifdef::nav-error-codes[]
 * [.is-current]#에러 코드#
 endif::nav-error-codes[]
@@ -84,4 +91,14 @@ endif::nav-users-me[]
 ifndef::nav-users-me[]
 * link:users-me.html[현재 사용자 조회 API]
 endif::nav-users-me[]
+
+[.docs-nav-section-title]
+워크스페이스 API
+
+ifdef::nav-workspaces-create[]
+* [.is-current]#워크스페이스 생성 API#
+endif::nav-workspaces-create[]
+ifndef::nav-workspaces-create[]
+* link:workspaces-create.html[워크스페이스 생성 API]
+endif::nav-workspaces-create[]
 --

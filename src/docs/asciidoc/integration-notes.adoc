@@ -1,0 +1,40 @@
+= Integration Notes
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-integration-notes:
+:breadcrumb-section: 공통 문서
+:breadcrumb-current: Integration Notes
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== Latest
+
+[.update-note]
+--
+include::updates/latest.adoc[]
+--
+
+== Version Series
+
+Integration Note 아카이브는 `major.minor.x` 시리즈 단위 문서로 분리합니다. 각 시리즈 페이지에서 해당 버전대의 상세 변경 기록을 확인합니다.
+
+include::updates/_archive-index.adoc[]
+
+== Archiving Workflow
+
+pass:[updates/latest.adoc]를 새 내용으로 바꾸기 전에 현재 내용을 먼저 이관합니다.
+
+[source,powershell]
+----
+.\gradlew.bat archiveIntegrationNote -PintegrationNoteSlug=workspace-create -PintegrationNoteImpact=Added -PintegrationNoteTarget="POST /v1/workspaces" -PintegrationNoteSummary="Workspace create API"
+----
+
+이 태스크는 현재 pass:[{api-version}] 기준으로 pass:[updates/notes/{api-version}/] 아래에 note 파일을 만들고, pass:[updates/_archive-index.adoc], pass:[updates/series/_{major.minor}.adoc], pass:[updates/versions/_{api-version}.adoc], pass:[integration-notes-{major.minor}.adoc]를 갱신합니다.
