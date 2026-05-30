@@ -45,6 +45,10 @@ include::updates/latest.adoc[]
 |최신/누적 통합 변경 기록
 |빠르게 변하는 API 통합 변경 사항을 최신 note와 버전별 아카이브로 설명합니다.
 
+|link:version-policy.html[Version Policy]
+|`major.minor.patch-stage`
+|버전 증가 기준과 `chamber`, `volt`, `neon` stage 정책을 설명합니다.
+
 |link:error-codes.html[에러 코드]
 |`error.code`
 |클라이언트 다국어 처리와 에러 분기에 사용하는 에러 코드 목록을 설명합니다.

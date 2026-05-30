@@ -27,6 +27,17 @@ Flowit API는 JSON 응답을 공통 envelope으로 감싸서 반환합니다.
 |`extensions` |화면 표시나 디버깅 보조 정보처럼 응답 본문 외에 덧붙일 수 있는 자유 필드입니다.
 |===
 
+== 응답 필드 안정성
+
+응답 필드 표의 안정성은 클라이언트가 해당 필드를 어느 정도 신뢰하고 화면이나 상태 관리에 연결해도 되는지 표시합니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|[.badge.stability.stable]#Stable# |계약된 필드입니다. 제거, 타입 변경, 의미 변경은 breaking change로 취급합니다.
+|[.badge.stability.experimental]#Experimental# |제공 중인 필드이지만 구현 단계에서 이름, 타입, 의미가 바뀔 수 있습니다.
+|[.badge.stability.deprecated]#Deprecated# |하위 호환을 위해 남아 있지만 신규 클라이언트 구현에서는 사용하지 않아야 합니다.
+|===
+
 == extensions 작성 방식
 
 `extensions`에 값을 추가해야 하는 경우 컨트롤러나 서비스에서 `ApiResponse`에 직접 인자를 전달하지 않고 `ResponseExtensionContext.addProperty(...)`를 사용합니다.

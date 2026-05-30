@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import static dev.runtime_lab.flowit.docs.support.ResponseFieldStability.experimental;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -110,7 +111,7 @@ class WorkspaceCreateApiDocsTest {
 				responseFields(
 					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 처리 성공 여부입니다."),
 					fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성 결과 데이터입니다."),
-					fieldWithPath("data.createdId").type(JsonFieldType.NUMBER).description("생성된 워크스페이스 식별자입니다."),
+					fieldWithPath("data.createdId").type(JsonFieldType.NUMBER).description("생성된 워크스페이스 식별자입니다.").attributes(experimental()),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
 			));

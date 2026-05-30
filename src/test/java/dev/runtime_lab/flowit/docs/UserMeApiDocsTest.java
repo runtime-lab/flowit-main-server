@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static dev.runtime_lab.flowit.docs.support.ResponseFieldStability.experimental;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -102,7 +103,7 @@ class UserMeApiDocsTest {
 					fieldWithPath("data.workspaces[].id").type(JsonFieldType.NUMBER).description("워크스페이스 식별자입니다."),
 					fieldWithPath("data.workspaces[].name").type(JsonFieldType.STRING).description("워크스페이스 이름입니다."),
 					fieldWithPath("data.workspaces[].description").type(JsonFieldType.STRING).description("워크스페이스 설명입니다.").optional(),
-					fieldWithPath("data.workspaces[].memberCount").type(JsonFieldType.NUMBER).description("워크스페이스의 활성 멤버 수입니다."),
+					fieldWithPath("data.workspaces[].memberCount").type(JsonFieldType.NUMBER).description("워크스페이스의 활성 멤버 수입니다.").attributes(experimental()),
 					fieldWithPath("data.workspaces[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("data.workspaces[].joinedAt").type(JsonFieldType.NUMBER).description("워크스페이스 참여 시각입니다. Unix epoch seconds 기준입니다."),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")

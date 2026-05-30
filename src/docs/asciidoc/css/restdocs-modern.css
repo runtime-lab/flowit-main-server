@@ -579,6 +579,24 @@ table.endpoint-summary td:first-child {
   color: var(--warning);
 }
 
+.badge.stability.stable {
+  border-color: #b9ddd7;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.badge.stability.experimental {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: var(--info);
+}
+
+.badge.stability.deprecated {
+  border-color: #fecdd3;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
 .docs-global-nav {
   margin: 0 0 24px;
   padding: 16px;

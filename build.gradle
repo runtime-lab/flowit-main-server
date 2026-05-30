@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.1.2-chamber'
+version = '0.2.0-volt'
 
 java {
 	toolchain {
@@ -28,6 +28,7 @@ repositories {
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
 	set('querydslVersion', '5.1.0')
+	set('apiDocsVersion', '0.2.0-volt')
 }
 
 def apiDocsStaticDir = layout.buildDirectory.dir('resources/main/static/docs')
@@ -124,8 +125,21 @@ def sha256Hex = { byte[] bytes ->
 	digest.collect { String.format('%02x', it & 0xff) }.join()
 }
 
+def apiDocsVersion = {
+	def value = providers.gradleProperty('apiDocsVersion')
+		.orElse(providers.provider {
+			project.ext.has('apiDocsVersion') ? project.ext.get('apiDocsVersion').toString() : project.version.toString()
+		})
+		.get()
+		.trim()
+	if (value.isEmpty()) {
+		throw new GradleException('API docs version must not be blank.')
+	}
+	value
+}
+
 def integrationNoteVersion = {
-	(project.findProperty('integrationNoteVersion') ?: project.version.toString()).toString().trim()
+	(project.findProperty('integrationNoteVersion') ?: apiDocsVersion()).toString().trim()
 }
 
 def integrationNoteSafeName = { String value ->
@@ -223,6 +237,31 @@ def integrationNoteStage = { String version ->
 		.join(' ')
 }
 
+def integrationNoteStageKey = { String version ->
+	def matcher = version =~ /^\d+\.\d+\.\d+[-_]([A-Za-z0-9._-]+)$/
+	if (!matcher.matches()) {
+		return 'release'
+	}
+	matcher[0][1]
+		.split(/[._-]+/)
+		.findAll { !it.isBlank() }
+		.first()
+		.toLowerCase(java.util.Locale.ROOT)
+}
+
+def integrationNoteStageStatus = { String version ->
+	switch (integrationNoteStageKey(version)) {
+		case 'chamber':
+			return '이 API들은 불완전 상태로 구현 과정에서 응답이 변경 될 수 있는 상태입니다.'
+		case 'volt':
+			return '개발 지원 체계가 성립된 고속 확장 구간입니다. 급격한 API 변동이 예고됩니다.'
+		case 'neon':
+			return '완전 안정화 및 상용화 개시 가능 단계입니다. Stable 계약에 대해 엄격한 Semantic Versioning을 적용합니다.'
+		default:
+			return '현재 stage 정책은 Version Policy를 참고합니다.'
+	}
+}
+
 def integrationNoteTimestamp = {
 	def override = project.findProperty('integrationNoteTimestamp')?.toString()?.trim()
 	if (override) {
@@ -276,8 +315,7 @@ def integrationNoteVersionNoteCount = { String version ->
 }
 
 def integrationNoteVersions = {
-	def currentSafeVersion = integrationNoteSafeName(integrationNoteVersion())
-	def versions = [currentSafeVersion] as LinkedHashSet
+	def versions = [] as LinkedHashSet
 	def notesRoot = integrationNoteNotesDir.asFile
 	if (notesRoot.exists()) {
 		notesRoot.listFiles()
@@ -287,6 +325,44 @@ def integrationNoteVersions = {
 	}
 
 	integrationNoteSortVersionsDesc(versions)
+}
+
+def findArchivedIntegrationNoteByHash = { String sourceHash ->
+	def notesRoot = integrationNoteNotesDir.asFile
+	if (!notesRoot.exists()) {
+		return null
+	}
+
+	notesRoot.listFiles()
+		.findAll { it.isDirectory() }
+		.collectMany { versionDir ->
+			versionDir.listFiles()
+				.findAll { it.isFile() && it.name.endsWith('.adoc') }
+		}
+		.find { it.getText('UTF-8').contains("// integration-note-source-sha256: ${sourceHash}") }
+}
+
+def isEmptyIntegrationNote = { String latestContent ->
+	latestContent.readLines().any { it ==~ /^\s*Empty::.*$/ }
+}
+
+def deleteGeneratedIntegrationNoteFiles = {
+	def deleteMatching = { File root, Closure<Boolean> predicate ->
+		if (!root.exists()) {
+			return
+		}
+		root.listFiles()
+			.findAll { it.isFile() && predicate(it) }
+			.each { file ->
+				if (!file.delete()) {
+					throw new GradleException("Failed to delete generated Integration Note file: ${file}")
+				}
+			}
+	}
+
+	deleteMatching(integrationNoteVersionsDir.asFile) { it.name.startsWith('_') && it.name.endsWith('.adoc') }
+	deleteMatching(integrationNoteSeriesDir.asFile) { it.name.startsWith('_') && it.name.endsWith('.adoc') }
+	deleteMatching(apiDocsAsciidocDir.asFile) { it.name ==~ /^integration-notes-\d+\.\d+\.adoc$/ }
 }
 
 def refreshIntegrationVersionPage = { String version ->
@@ -391,6 +467,8 @@ include::updates/series/_${safeSeries}.adoc[]
 }
 
 def refreshIntegrationArchiveIndex = {
+	deleteGeneratedIntegrationNoteFiles()
+
 	def versions = integrationNoteVersions()
 	versions.each { refreshIntegrationVersionPage(it) }
 	def versionsBySeries = versions.groupBy { integrationNoteSeriesKey(it) }
@@ -886,6 +964,19 @@ tasks.register('archiveIntegrationNote') {
 		def sourceHash = sha256Hex(latestContent.getBytes('UTF-8'))
 		def notesRoot = integrationNoteNotesDir.dir(safeVersion).asFile
 
+		if (isEmptyIntegrationNote(latestContent) && !project.hasProperty('archiveEmptyIntegrationNote')) {
+			logger.lifecycle('Integration Note latest is Empty; skipping archive. Use -ParchiveEmptyIntegrationNote=true to force it.')
+			refreshIntegrationArchiveIndex()
+			return
+		}
+
+		def archivedByAnyVersion = findArchivedIntegrationNoteByHash(sourceHash)
+		if (archivedByAnyVersion != null) {
+			logger.lifecycle("Integration Note already archived: ${archivedByAnyVersion}")
+			refreshIntegrationArchiveIndex()
+			return
+		}
+
 		notesRoot.mkdirs()
 
 		def alreadyArchived = notesRoot.listFiles()
@@ -949,7 +1040,10 @@ tasks.named('asciidoctor', AsciidoctorTask) {
 		delete layout.buildDirectory.dir('docs/asciidoc')
 	}
 	attributes 'snippets': snippetsDir,
-		'api-version': project.version.toString()
+		'api-version': apiDocsVersion(),
+		'api-version-stage': integrationNoteStage(apiDocsVersion()),
+		'api-version-stage-status': integrationNoteStageStatus(apiDocsVersion()),
+		'revnumber': apiDocsVersion()
 	resources {
 		from(apiDocsSourceDir) {
 			include 'css/**'

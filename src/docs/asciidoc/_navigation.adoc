@@ -37,6 +37,13 @@ ifndef::nav-integration-notes[]
 * link:integration-notes.html[Integration Notes]
 endif::nav-integration-notes[]
 
+ifdef::nav-version-policy[]
+* [.is-current]#Version Policy#
+endif::nav-version-policy[]
+ifndef::nav-version-policy[]
+* link:version-policy.html[Version Policy]
+endif::nav-version-policy[]
+
 ifdef::nav-error-codes[]
 * [.is-current]#에러 코드#
 endif::nav-error-codes[]

@@ -32,6 +32,10 @@ include::updates/_archive-index.adoc[]
 
 pass:[updates/latest.adoc]를 새 내용으로 바꾸기 전에 현재 내용을 먼저 이관합니다.
 
+Integration Note의 기본 버전은 Gradle `project.version`이 아니라 `build.gradle`의 `apiDocsVersion`을 사용합니다. 작업 중 애플리케이션 버전을 먼저 올려도 문서 아카이브 기준선은 명시적으로 전환하기 전까지 유지합니다.
+
+이미 다른 버전에 아카이브된 `latest` 내용은 새 버전으로 다시 이관하지 않습니다. `Empty::` note도 기본적으로 아카이브하지 않으며, 정말 기록해야 하는 경우에만 `-ParchiveEmptyIntegrationNote=true`를 함께 전달합니다.
+
 [source,powershell]
 ----
 .\gradlew.bat archiveIntegrationNote -PintegrationNoteSlug=workspace-create -PintegrationNoteImpact=Added -PintegrationNoteTarget="POST /v1/workspaces" -PintegrationNoteSummary="Workspace create API"

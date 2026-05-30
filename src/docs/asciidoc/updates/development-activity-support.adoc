@@ -4,9 +4,9 @@
 [.activity-support-title]
 Development Activity Support
 
-Version Stage:: Chamber
-API Status:: 이 API들은 불완전 상태로 구현 과정에서 응답이 변경 될 수 있는 상태입니다.
+Version Stage:: {api-version-stage} (pass:[<a href="version-policy.html">Version Policy</a>])
+API Status:: {api-version-stage-status}
 
 Infra:: 기동 스크립트가 Auto-Fetch에 실패하는 경우 명시적으로 중단 여부 질의와 가이드를 수행하도록 변경되었습니다.
 
-Docs:: 계약된 값을 위한 상수표가 생성되었습니다. (공통문서 > Enum Reference)
+Docs:: 응답 필드 표에 안정성 배지가 추가되었습니다. (Stable, Experimental, Deprecated)

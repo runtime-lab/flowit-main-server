@@ -1,0 +1,100 @@
+= Version Policy
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-version-policy:
+:breadcrumb-section: 공통 문서
+:breadcrumb-current: Version Policy
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 개요
+
+Flowit API 버전은 숫자 버전과 stage 키워드를 함께 사용합니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|형식 |`major.minor.patch-stage`
+|예시 |`0.1.2-chamber`, `0.2.0-volt`, `1.0.0-neon`
+|숫자 버전 |변경 범위와 호환성 기준을 표현합니다.
+|stage 키워드 |서버 애플리케이션의 개발/운영 국면과 클라이언트 통합 리스크를 표현합니다.
+|===
+
+== Stage 기준
+
+[cols="18,22,60",options="header",role="api-index"]
+|===
+|Stage |버전 범위 |의미
+
+|Chamber
+|`0.1.x-chamber`
+|최초 생성 이후 불안정 구간입니다. API 구조를 탐색하고 빠르게 구현하며, 응답 변경 가능성이 높습니다.
+
+|Volt
+|`0.2.x-volt`
+|개발 활동 지원 체계가 성립한 뒤의 고속 확장 구간입니다. API 변화가 여전히 빠르지만 Integration Notes, Response Field Stability, Enum Reference, Error Code 문서로 변경 추적을 강화합니다.
+
+|Neon
+|`1.0.0-neon` 이후
+|완전 안정화 및 상용화 개시 가능 단계입니다. Stable 계약에 대해 엄격한 Semantic Versioning 규칙을 적용합니다.
+|===
+
+stage 키워드는 자주 변경하지 않습니다. 서버 애플리케이션의 큰 개발 흐름이 바뀌는 시점에 minor 버전 증가와 함께 변경합니다.
+
+== 버전 증가 기준
+
+[cols="16,28,56",options="header",role="api-index"]
+|===
+|구분 |예시 |기준
+
+|Patch
+|`0.1.1-chamber` -> `0.1.2-chamber`
+|같은 stage 안의 개별 API 추가, 작은 응답 필드 추가, 버그 수정, 문서 갱신, 테스트 보강입니다. `1.0.0-neon` 이후에는 기능 계약을 바꾸지 않는 수정에만 사용합니다.
+
+|Minor
+|`0.1.x-chamber` -> `0.2.0-volt`
+|서버 애플리케이션의 개발 국면이 바뀌거나 클라이언트 통합 기준선을 새로 잡는 변경입니다. `1.0.0-neon` 이후에는 하위 호환 기능 추가에 사용합니다.
+
+|Major
+|`1.0.0-neon` 이후 `2.0.0-*`
+|안정화 이후 Stable 계약을 깨는 변경입니다. 응답 필드 삭제, 이름 변경, 타입 변경, 기존 enum 의미 변경, 인증 방식 변경 등이 여기에 포함됩니다.
+|===
+
+== 1.0.0 이전 정책
+
+`1.0.0-neon` 이전 버전은 API 계약 안정화 전 단계입니다. 이 구간에서는 빠른 구현과 통합 피드백을 우선하며, breaking change 가능성을 완전히 배제하지 않습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|변경 추적 |클라이언트 영향이 있는 변경은 Integration Notes에 기록합니다.
+|필드 안정성 |변동 가능성이 있는 응답 필드는 pass:[<span class="badge stability experimental">Experimental</span>] 상태로 표시합니다.
+|마이너 증가 |stage 변경 또는 클라이언트 통합 기준선 변경이 있을 때 사용합니다.
+|패치 증가 |같은 stage 안의 작업 단위 누적에 사용할 수 있습니다.
+|===
+
+== 1.0.0-neon 이후 정책
+
+pass:[1.0.0-neon]부터는 Stable 계약에 대해 엄격한 Semantic Versioning을 적용합니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Breaking change |major 버전을 올립니다.
+|하위 호환 기능 추가 |minor 버전을 올립니다.
+|버그 수정/문서/내부 개선 |patch 버전을 올립니다.
+|Stable 필드 |삭제, 이름 변경, 타입 변경, 의미 변경을 breaking change로 취급합니다.
+|Experimental 필드 |기존 Stable 계약을 깨지 않는 추가 필드로만 허용합니다. Stable 전환 시 minor 증가 대상입니다.
+|===
+
+== 관련 문서
+
+* link:integration-notes.html[Integration Notes]
+* link:api-response.html[공통 응답 포맷]
+* link:enum-reference.html[Enum Reference]
+* link:error-codes.html[에러 코드]
