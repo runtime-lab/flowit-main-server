@@ -1,0 +1,31 @@
+// integration-note-source-sha256: bf94e9e6965b2cefc4c4ce392b96d4bfdc522a60b92097e44a9ced74c500085a
+// integration-note-version: 0.2.3-volt
+// integration-note-time: 2026-05-31-0239
+// integration-note-time-human: 2026-05-31 02:39 KST
+// integration-note-impact: Changed
+// integration-note-target: `updates/latest.adoc`
+// integration-note-summary: integration note
+// integration-note-anchor: integration-note-0-2-3-volt-2026-05-31-0239-integration-note
+
+[#integration-note-0-2-3-volt-2026-05-31-0239-integration-note]
+=== integration note
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.3-volt`
+|Archived At |2026-05-31 02:39 KST
+|Impact |Changed
+|Target |`updates/latest.adoc`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Changed:: 워크스페이스 권한 계약이 변경되었습니다. (`LEADER`, `MEMBER` > `OWNER`, `ADMIN`, `MEMBER`)
+Changed:: 워크스페이스장의 초기 권한 상수가 변경됩니다. (`LEADER` > `OWNER`)
+Changed:: `/user/me` 응답의 워크스페이스 권한으로 변경 된 상수가 적용됩니다.
+--

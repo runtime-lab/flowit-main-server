@@ -106,7 +106,7 @@ class UserMeApiDocsTest {
 			UserStatus.ACTIVE,
 			3001L,
 			"/v1/users/me/profile-image",
-			List.of(new UserMeWorkspaceResponse(2001L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.LEADER, 1779889000L))
+			List.of(new UserMeWorkspaceResponse(2001L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 1779889000L))
 		);
 
 		when(userMeService.getMe(any(CurrentUser.class))).thenReturn(response);

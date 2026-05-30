@@ -44,7 +44,7 @@ class WorkspaceCreateServiceTest {
 	);
 
 	@Test
-	void createCreatesWorkspaceAndLeaderMembership() {
+	void createCreatesWorkspaceAndOwnerMembership() {
 		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
 		WorkspaceCreateRequest request = new WorkspaceCreateRequest("Flowit", "Team workspace");
 		User creator = activeUser();
@@ -79,7 +79,7 @@ class WorkspaceCreateServiceTest {
 		WorkspaceMember workspaceMemberToSave = workspaceMemberCaptor.getValue();
 		assertSame(savedWorkspace, workspaceMemberToSave.getWorkspace());
 		assertSame(creator, workspaceMemberToSave.getUser());
-		assertEquals(WorkspaceMemberRole.LEADER, workspaceMemberToSave.getRole());
+		assertEquals(WorkspaceMemberRole.OWNER, workspaceMemberToSave.getRole());
 		assertEquals(1779889000L, workspaceMemberToSave.getJoinedAt());
 		assertEquals(1779889000L, workspaceMemberToSave.getCreatedAt());
 		assertEquals(1779889000L, workspaceMemberToSave.getUpdatedAt());

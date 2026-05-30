@@ -50,7 +50,7 @@ public class WorkspaceCreateService {
 		workspaceMemberRepository.save(WorkspaceMember.builder()
 			.workspace(workspace)
 			.user(creator)
-			.role(WorkspaceMemberRole.LEADER)
+			.role(WorkspaceMemberRole.OWNER)
 			.joinedAt(now)
 			.createdAt(now)
 			.updatedAt(now)
