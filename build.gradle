@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.1.1-chamber'
+version = '0.1.2-chamber'
 
 java {
 	toolchain {
@@ -47,6 +47,12 @@ def localSourceHashPaths = [
 	'Dockerfile',
 	'.dockerignore'
 ]
+def integrationNoteLatestFile = layout.projectDirectory.file('src/docs/asciidoc/updates/latest.adoc')
+def integrationNoteArchiveIndexFile = layout.projectDirectory.file('src/docs/asciidoc/updates/_archive-index.adoc')
+def integrationNoteNotesDir = layout.projectDirectory.dir('src/docs/asciidoc/updates/notes')
+def integrationNoteSeriesDir = layout.projectDirectory.dir('src/docs/asciidoc/updates/series')
+def integrationNoteVersionsDir = layout.projectDirectory.dir('src/docs/asciidoc/updates/versions')
+def apiDocsAsciidocDir = layout.projectDirectory.dir('src/docs/asciidoc')
 def localInfrastructureServices = ['mysql', 'redis', 'prometheus', 'grafana']
 def localStackServices = ['app'] + localInfrastructureServices
 def localAppHealthUrl = 'http://127.0.0.1:8081/actuator/health'
@@ -116,6 +122,310 @@ def dockerComposeCommand = { List<String> args ->
 def sha256Hex = { byte[] bytes ->
 	def digest = java.security.MessageDigest.getInstance('SHA-256').digest(bytes)
 	digest.collect { String.format('%02x', it & 0xff) }.join()
+}
+
+def integrationNoteVersion = {
+	(project.findProperty('integrationNoteVersion') ?: project.version.toString()).toString().trim()
+}
+
+def integrationNoteSafeName = { String value ->
+	def safe = value.trim().replaceAll(/[^A-Za-z0-9._-]+/, '-')
+	if (safe.isEmpty()) {
+		throw new GradleException('Integration note version or slug must not be blank.')
+	}
+	safe
+}
+
+def integrationNoteAnchor = { String value ->
+	value.toLowerCase(java.util.Locale.ROOT)
+		.replaceAll(/[^a-z0-9]+/, '-')
+		.replaceAll(/^-+|-+$/, '')
+}
+
+def integrationNoteHtmlEscape = { String value ->
+	(value ?: '')
+		.replace('&', '&amp;')
+		.replace('<', '&lt;')
+		.replace('>', '&gt;')
+		.replace('"', '&quot;')
+		.replace("'", '&#39;')
+}
+
+def integrationNoteDisplayVersion = { String value ->
+	value.split(/[-_]/)
+		.findAll { !it.isBlank() }
+		.collect { part -> part.equalsIgnoreCase('chamber') ? 'Chamber' : part }
+		.join(' ')
+}
+
+def integrationNoteVersionParts = { String version ->
+	def matcher = version =~ /^(\d+)\.(\d+)\.(\d+)(?:[-_].*)?$/
+	if (!matcher.matches()) {
+		throw new GradleException("Integration note version must start with major.minor.patch: ${version}")
+	}
+	[
+		major: matcher[0][1] as int,
+		minor: matcher[0][2] as int,
+		patch: matcher[0][3] as int
+	]
+}
+
+def compareIntegrationVersionsDesc = { String left, String right ->
+	def leftParts = integrationNoteVersionParts(left)
+	def rightParts = integrationNoteVersionParts(right)
+	int comparison = rightParts.major <=> leftParts.major
+	if (comparison != 0) {
+		return comparison
+	}
+	comparison = rightParts.minor <=> leftParts.minor
+	if (comparison != 0) {
+		return comparison
+	}
+	comparison = rightParts.patch <=> leftParts.patch
+	if (comparison != 0) {
+		return comparison
+	}
+	return right <=> left
+}
+
+def integrationNoteSortVersionsDesc = { Collection<String> source ->
+	def sorted = new ArrayList<String>(source ?: [])
+	sorted.sort(compareIntegrationVersionsDesc)
+	sorted
+}
+
+def integrationNoteSeriesKey = { String version ->
+	def parts = integrationNoteVersionParts(version)
+	"${parts.major}.${parts.minor}"
+}
+
+def integrationNoteDisplaySeries = { String series ->
+	"${series}.x"
+}
+
+def integrationNoteSeriesPageName = { String series ->
+	"integration-notes-${integrationNoteSafeName(series)}.adoc"
+}
+
+def integrationNoteSeriesHtmlName = { String series ->
+	"integration-notes-${integrationNoteSafeName(series)}.html"
+}
+
+def integrationNoteStage = { String version ->
+	def matcher = version =~ /^\d+\.\d+\.\d+[-_]([A-Za-z0-9._-]+)$/
+	if (!matcher.matches()) {
+		return 'Release'
+	}
+	matcher[0][1]
+		.split(/[._-]+/)
+		.findAll { !it.isBlank() }
+		.collect { it.equalsIgnoreCase('chamber') ? 'Chamber' : it.capitalize() }
+		.join(' ')
+}
+
+def integrationNoteTimestamp = {
+	def override = project.findProperty('integrationNoteTimestamp')?.toString()?.trim()
+	if (override) {
+		return override
+	}
+
+	java.time.LocalDateTime.now(java.time.ZoneId.of('Asia/Seoul'))
+		.format(java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm'))
+}
+
+def integrationNoteHumanTime = { String timestamp ->
+	try {
+		def parsed = java.time.LocalDateTime.parse(
+			timestamp,
+			java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd-HHmm')
+		)
+		return parsed.format(java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm')) + ' KST'
+	}
+	catch (Exception ignored) {
+		return timestamp
+	}
+}
+
+def integrationNoteMetadata = { File file ->
+	def metadata = [
+		file: file,
+		summary: file.name.replaceFirst(/\.adoc$/, ''),
+		time: '',
+		'time-human': '',
+		impact: 'Changed',
+		target: '`updates/latest.adoc`',
+		anchor: ''
+	]
+
+	file.readLines('UTF-8').take(20).each { line ->
+		def matcher = line =~ /^\/\/ integration-note-([A-Za-z0-9-]+):\s*(.*)$/
+		if (matcher.matches()) {
+			metadata[matcher[0][1]] = matcher[0][2]
+		}
+	}
+
+	metadata
+}
+
+def integrationNoteVersionNoteCount = { String version ->
+	def safeVersion = integrationNoteSafeName(version)
+	def versionNotesRoot = integrationNoteNotesDir.dir(safeVersion).asFile
+	versionNotesRoot.exists()
+		? versionNotesRoot.listFiles().count { it.isFile() && it.name.endsWith('.adoc') }
+		: 0
+}
+
+def integrationNoteVersions = {
+	def currentSafeVersion = integrationNoteSafeName(integrationNoteVersion())
+	def versions = [currentSafeVersion] as LinkedHashSet
+	def notesRoot = integrationNoteNotesDir.asFile
+	if (notesRoot.exists()) {
+		notesRoot.listFiles()
+			.findAll { it.isDirectory() && integrationNoteVersionNoteCount(it.name) > 0 }
+			.collect { it.name }
+			.each { versions.add(it) }
+	}
+
+	integrationNoteSortVersionsDesc(versions)
+}
+
+def refreshIntegrationVersionPage = { String version ->
+	def safeVersion = integrationNoteSafeName(version)
+	def notesRoot = integrationNoteNotesDir.dir(safeVersion).asFile
+	def versionFile = integrationNoteVersionsDir.file("_${safeVersion}.adoc").asFile
+	versionFile.parentFile.mkdirs()
+
+	def notes = []
+	if (notesRoot.exists()) {
+		notes = notesRoot.listFiles()
+			.findAll { it.isFile() && it.name.endsWith('.adoc') }
+			.collect { integrationNoteMetadata(it) }
+			.sort { left, right -> (right.time ?: '') <=> (left.time ?: '') }
+	}
+
+	def builder = new StringBuilder()
+	def displayVersion = integrationNoteDisplayVersion(version)
+	def noteCount = notes.size()
+	def noteLabel = noteCount == 1 ? '1 note' : "${noteCount} notes"
+	builder.append("[[integration-notes-${integrationNoteAnchor(safeVersion)}]]\n")
+	builder.append('++++\n')
+	builder.append('<details class="integration-note-version">\n')
+	builder.append('<summary><span class="integration-note-version-summary">')
+	builder.append("<span class=\"integration-note-version-title\">${integrationNoteHtmlEscape(displayVersion)}</span>")
+	builder.append("<span class=\"integration-note-version-meta\">${integrationNoteHtmlEscape(integrationNoteStage(version))} / ${noteLabel}</span>")
+	builder.append('</span></summary>\n')
+	builder.append('<div class="content">\n')
+	builder.append('++++\n\n')
+
+	if (notes.isEmpty()) {
+		builder.append('아직 이관된 Integration Note가 없습니다.\n')
+	}
+	else {
+		builder.append('[cols="18,16,24,42",options="header",role="api-index"]\n')
+		builder.append('|===\n')
+		builder.append('|Time |Impact |Target |Summary\n\n')
+		notes.each { note ->
+			builder.append("|${note['time-human'] ?: note.time}\n")
+			builder.append("|${note.impact}\n")
+			builder.append("|${note.target}\n")
+			builder.append("|<<${note.anchor},${note.summary}>>\n\n")
+		}
+		builder.append('|===\n\n')
+		notes.each { note ->
+			builder.append("include::../notes/${safeVersion}/${note.file.name}[]\n\n")
+		}
+	}
+	builder.append('++++\n')
+	builder.append('</div>\n')
+	builder.append('</details>\n')
+	builder.append('++++\n')
+
+	versionFile.setText(builder.toString(), 'UTF-8')
+}
+
+def refreshIntegrationSeriesPage = { String series, List<String> versions ->
+	def safeSeries = integrationNoteSafeName(series)
+	def seriesFile = integrationNoteSeriesDir.file("_${safeSeries}.adoc").asFile
+	seriesFile.parentFile.mkdirs()
+
+	def sortedVersions = integrationNoteSortVersionsDesc(versions)
+	def builder = new StringBuilder()
+	builder.append("[#integration-notes-series-${integrationNoteAnchor(series)}]\n")
+	builder.append("== ${integrationNoteDisplaySeries(series)} Integration Notes\n\n")
+	builder.append('[cols="24,18,18,40",options="header",role="api-index"]\n')
+	builder.append('|===\n')
+	builder.append('|Version |Stage |Notes |Description\n\n')
+	sortedVersions.each { version ->
+		builder.append("|<<integration-notes-${integrationNoteAnchor(version)},`${version}`>>\n")
+		builder.append("|${integrationNoteStage(version)}\n")
+		builder.append("|${integrationNoteVersionNoteCount(version)}\n")
+		builder.append("|${integrationNoteDisplayVersion(version)} 기록입니다.\n\n")
+	}
+	builder.append('|===\n\n')
+	sortedVersions.each { version ->
+		builder.append("include::../versions/_${version}.adoc[]\n\n")
+	}
+
+	seriesFile.setText(builder.toString(), 'UTF-8')
+
+	def pageFile = apiDocsAsciidocDir.file(integrationNoteSeriesPageName(series)).asFile
+	pageFile.setText("""= Integration Notes - ${integrationNoteDisplaySeries(series)}
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-integration-notes:
+:breadcrumb-section: Integration Notes
+:breadcrumb-current: ${integrationNoteDisplaySeries(series)}
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+include::updates/series/_${safeSeries}.adoc[]
+""", 'UTF-8')
+}
+
+def refreshIntegrationArchiveIndex = {
+	def versions = integrationNoteVersions()
+	versions.each { refreshIntegrationVersionPage(it) }
+	def versionsBySeries = versions.groupBy { integrationNoteSeriesKey(it) }
+	def sortedSeries = versionsBySeries.keySet().toList()
+	sortedSeries.sort { left, right ->
+		def leftParts = left.split(/\./).collect { it as int }
+		def rightParts = right.split(/\./).collect { it as int }
+		int comparison = rightParts[0] <=> leftParts[0]
+		if (comparison != 0) {
+			return comparison
+		}
+		return rightParts[1] <=> leftParts[1]
+	}
+	sortedSeries.each { series -> refreshIntegrationSeriesPage(series, versionsBySeries.get(series)) }
+
+	def builder = new StringBuilder()
+	builder.append('[cols="20,22,16,16,26",options="header",role="api-index"]\n')
+	builder.append('|===\n')
+	builder.append('|Series |Latest Version |Versions |Notes |Link\n\n')
+	sortedSeries.each { series ->
+		def seriesVersions = integrationNoteSortVersionsDesc(versionsBySeries.get(series))
+		def latestVersion = seriesVersions.first()
+		def noteCount = seriesVersions.sum { integrationNoteVersionNoteCount(it) }
+		builder.append("|${integrationNoteDisplaySeries(series)}\n")
+		builder.append("|`${latestVersion}`\n")
+		builder.append("|${seriesVersions.size()}\n")
+		builder.append("|${noteCount}\n")
+		def seriesLinkText = integrationNoteHtmlEscape("${integrationNoteDisplaySeries(series)} Integration Notes")
+		builder.append("|pass:[<a href=\"${integrationNoteSeriesHtmlName(series)}\">${seriesLinkText}</a>]\n\n")
+	}
+	builder.append('|===\n')
+
+	def indexFile = integrationNoteArchiveIndexFile.asFile
+	indexFile.parentFile.mkdirs()
+	indexFile.setText(builder.toString(), 'UTF-8')
 }
 
 def relativeProjectPath = { File file ->
@@ -537,6 +847,97 @@ tasks.register('restdocsTest', Test) {
 	useJUnitPlatform()
 	filter {
 		includeTestsMatching 'dev.runtime_lab.flowit.docs.*'
+	}
+}
+
+tasks.register('refreshIntegrationNotes') {
+	description = 'Regenerates the Integration Notes archive index from archived note files.'
+	group = 'documentation'
+
+	doLast {
+		refreshIntegrationArchiveIndex()
+		logger.lifecycle("Integration Notes archive refreshed: ${integrationNoteArchiveIndexFile.asFile}")
+	}
+}
+
+tasks.register('archiveIntegrationNote') {
+	description = 'Archives the current updates/latest.adoc into a versioned Integration Note file.'
+	group = 'documentation'
+
+	doLast {
+		def latestFile = integrationNoteLatestFile.asFile
+		if (!latestFile.isFile()) {
+			throw new GradleException("Integration Note latest file does not exist: ${latestFile}")
+		}
+
+		def latestContent = latestFile.getText('UTF-8').trim()
+		if (latestContent.isEmpty()) {
+			throw new GradleException('Integration Note latest file is blank.')
+		}
+
+		def version = integrationNoteVersion()
+		def safeVersion = integrationNoteSafeName(version)
+		def timestamp = integrationNoteTimestamp()
+		def humanTime = integrationNoteHumanTime(timestamp)
+		def slug = integrationNoteSafeName((project.findProperty('integrationNoteSlug') ?: 'integration-note').toString())
+		def impact = (project.findProperty('integrationNoteImpact') ?: 'Changed').toString().trim()
+		def target = (project.findProperty('integrationNoteTarget') ?: '`updates/latest.adoc`').toString().trim()
+		def summary = (project.findProperty('integrationNoteSummary') ?: slug.replace('-', ' ')).toString().trim()
+		def sourceHash = sha256Hex(latestContent.getBytes('UTF-8'))
+		def notesRoot = integrationNoteNotesDir.dir(safeVersion).asFile
+
+		notesRoot.mkdirs()
+
+		def alreadyArchived = notesRoot.listFiles()
+			.findAll { it.isFile() && it.name.endsWith('.adoc') }
+			.find { it.getText('UTF-8').contains("// integration-note-source-sha256: ${sourceHash}") }
+
+		if (alreadyArchived != null) {
+			logger.lifecycle("Integration Note already archived: ${alreadyArchived}")
+			refreshIntegrationArchiveIndex()
+			return
+		}
+
+		def baseName = "${timestamp}-${slug}"
+		def noteFile = new File(notesRoot, "${baseName}.adoc")
+		int duplicateIndex = 2
+		while (noteFile.exists()) {
+			noteFile = new File(notesRoot, "${baseName}-${duplicateIndex}.adoc")
+			duplicateIndex++
+		}
+
+		def anchor = "integration-note-${integrationNoteAnchor("${safeVersion}-${noteFile.name.replaceFirst(/\.adoc$/, '')}")}"
+		def archivedContent = """// integration-note-source-sha256: ${sourceHash}
+// integration-note-version: ${version}
+// integration-note-time: ${timestamp}
+// integration-note-time-human: ${humanTime}
+// integration-note-impact: ${impact}
+// integration-note-target: ${target}
+// integration-note-summary: ${summary}
+// integration-note-anchor: ${anchor}
+
+[#${anchor}]
+=== ${summary}
+
+[cols=\"1,4\",role=\"endpoint-summary\"]
+|===
+|Version |`${version}`
+|Archived At |${humanTime}
+|Impact |${impact}
+|Target |${target}
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+${latestContent}
+--
+"""
+
+		noteFile.setText(archivedContent, 'UTF-8')
+		refreshIntegrationArchiveIndex()
+		logger.lifecycle("Integration Note archived: ${noteFile}")
 	}
 }
 

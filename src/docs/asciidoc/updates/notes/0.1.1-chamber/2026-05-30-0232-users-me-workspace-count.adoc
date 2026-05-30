@@ -1,0 +1,29 @@
+// integration-note-source-sha256: 66f339a8bfe4614d1479aafed5fe689601d8659af100c879ef5ea8ea28a66d30
+// integration-note-version: 0.1.1-chamber
+// integration-note-time: 2026-05-30-0232
+// integration-note-time-human: 2026-05-30 02:32 KST
+// integration-note-impact: Enhancement
+// integration-note-target: GET /v1/users/me
+// integration-note-summary: User me workspace member count
+// integration-note-anchor: integration-note-0-1-1-chamber-2026-05-30-0232-users-me-workspace-count
+
+[#integration-note-0-1-1-chamber-2026-05-30-0232-users-me-workspace-count]
+=== User me workspace member count
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.1.1-chamber`
+|Archived At |2026-05-30 02:32 KST
+|Impact |Enhancement
+|Target |GET /v1/users/me
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Enhancement:: /me 엔드포인트가 워크스페이스의 인원 수를 함께 반환하도록 변경되었습니다.
+--

@@ -1,0 +1,18 @@
+= Integration Notes - 0.1.x
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-integration-notes:
+:breadcrumb-section: Integration Notes
+:breadcrumb-current: 0.1.x
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+include::updates/series/_0.1.adoc[]

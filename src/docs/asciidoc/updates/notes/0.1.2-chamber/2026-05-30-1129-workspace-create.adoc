@@ -1,0 +1,29 @@
+// integration-note-source-sha256: d68d822a013f10d0fb1675eb49cab4970e55bf3ffdc4e6644efa6d2026f3427e
+// integration-note-version: 0.1.2-chamber
+// integration-note-time: 2026-05-30-1129
+// integration-note-time-human: 2026-05-30 11:29 KST
+// integration-note-impact: Added
+// integration-note-target: POST /v1/workspaces
+// integration-note-summary: Workspace create API
+// integration-note-anchor: integration-note-0-1-2-chamber-2026-05-30-1129-workspace-create
+
+[#integration-note-0-1-2-chamber-2026-05-30-1129-workspace-create]
+=== Workspace create API
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.1.2-chamber`
+|Archived At |2026-05-30 11:29 KST
+|Impact |Added
+|Target |POST /v1/workspaces
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: `POST /v1/workspaces` 워크스페이스 생성 API가 추가되었습니다.
+--

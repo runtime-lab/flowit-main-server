@@ -1,0 +1,23 @@
+[#integration-notes-series-0-1]
+== 0.1.x Integration Notes
+
+[cols="24,18,18,40",options="header",role="api-index"]
+|===
+|Version |Stage |Notes |Description
+
+|<<integration-notes-0-1-2-chamber,`0.1.2-chamber`>>
+|Chamber
+|1
+|0.1.2 Chamber 기록입니다.
+
+|<<integration-notes-0-1-1-chamber,`0.1.1-chamber`>>
+|Chamber
+|1
+|0.1.1 Chamber 기록입니다.
+
+|===
+
+include::../versions/_0.1.2-chamber.adoc[]
+
+include::../versions/_0.1.1-chamber.adoc[]
+
