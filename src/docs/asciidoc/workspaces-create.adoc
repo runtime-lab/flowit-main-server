@@ -21,6 +21,7 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`POST`
 |경로 |`/v1/workspaces`
+|API 상태 |[.badge.stability.stable]#Stable#
 |목적 |인증된 사용자가 새 워크스페이스를 생성합니다.
 |인증 |JWT access token이 필요합니다.
 |생성 결과 |`201 Created`와 `Location: /v1/workspaces/{id}`를 반환하고, 응답 본문 `data.createdId`에 생성된 워크스페이스 ID를 제공합니다.

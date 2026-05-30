@@ -79,6 +79,31 @@ public class LocalProfileImageStorage {
 		}
 	}
 
+	public ProfileImageFileContent load(String storageKey) {
+		try {
+			Path path = resolveStorageKey(storageKey);
+			Path baseDirectory = baseDirectory();
+			if (!Files.exists(baseDirectory, LinkOption.NOFOLLOW_LINKS)) {
+				throw new ProfileImageStorageException("프로필 이미지 저장 경로가 존재하지 않습니다.");
+			}
+			validateBaseDirectoryForCleanup(baseDirectory);
+			validateStoragePathParents(path);
+			if (Files.isSymbolicLink(path)) {
+				throw new ProfileImageStorageException("프로필 이미지 파일은 symbolic link일 수 없습니다.");
+			}
+			if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+				throw new ProfileImageStorageException("프로필 이미지 파일을 찾을 수 없습니다.");
+			}
+			return new ProfileImageFileContent(Files.readAllBytes(path));
+		}
+		catch (ProfileImageStorageException exception) {
+			throw exception;
+		}
+		catch (IOException exception) {
+			throw new ProfileImageStorageException("프로필 이미지 파일 읽기에 실패했습니다.", exception);
+		}
+	}
+
 	public void deleteIfExists(String storageKey) {
 		try {
 			Path path = resolveStorageKey(storageKey);

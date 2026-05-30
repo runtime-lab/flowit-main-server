@@ -21,8 +21,10 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`GET`
 |경로 |`/v1/users/me`
+|API 상태 |[.badge.stability.experimental]#Experimental#
 |목적 |인증된 사용자의 기본 정보와 소속 워크스페이스 목록을 조회합니다.
 |인증 |JWT access token이 필요합니다.
+|프로필 이미지 |등록된 프로필 이미지가 있으면 pass:[<code>profileImageUrl</code>]로 이미지 바이너리 조회 URL을 함께 제공합니다.
 |워크스페이스 |현재는 조회 응답에 필요한 최소 정보만 제공합니다.
 |===
 

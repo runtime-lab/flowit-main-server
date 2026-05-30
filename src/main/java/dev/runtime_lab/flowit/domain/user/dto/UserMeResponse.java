@@ -9,6 +9,13 @@ public record UserMeResponse(
 	String nickname,
 	UserStatus status,
 	Long profileImageFileId,
+	String profileImageUrl,
 	List<UserMeWorkspaceResponse> workspaces
 ) {
+
+	private static final String PROFILE_IMAGE_URL = "/v1/users/me/profile-image";
+
+	public static String profileImageUrl(Long profileImageFileId) {
+		return profileImageFileId == null ? null : PROFILE_IMAGE_URL;
+	}
 }

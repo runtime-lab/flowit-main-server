@@ -2,6 +2,7 @@ package dev.runtime_lab.flowit.global.security.jwt;
 
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtProperties;
 import dev.runtime_lab.flowit.global.security.jwt.element.RefreshToken;
+import dev.runtime_lab.flowit.global.security.jwt.element.RefreshTokenPayload;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -23,20 +24,20 @@ public class RefreshTokenService {
 	private final StringRedisTemplate stringRedisTemplate;
 	private final JwtProperties jwtProperties;
 
-	public RefreshToken issue(String userId) {
+	public RefreshToken issue(String userId, Long tokenVersion) {
 		String token = generateToken();
 		String key = keyOf(token);
 
 		stringRedisTemplate.opsForValue()
-			.set(key, userId, jwtProperties.refreshTokenTimeToLive());
+			.set(key, payloadValue(userId, tokenVersion), jwtProperties.refreshTokenTimeToLive());
 
 		return new RefreshToken(token, jwtProperties.refreshTokenTimeToLive().toSeconds());
 	}
 
-	public Optional<String> consume(String token) {
-		String userId = stringRedisTemplate.opsForValue().getAndDelete(keyOf(token));
+	public Optional<RefreshTokenPayload> consume(String token) {
+		String payload = stringRedisTemplate.opsForValue().getAndDelete(keyOf(token));
 
-		return Optional.ofNullable(userId);
+		return parsePayload(payload);
 	}
 
 	public boolean revoke(String token) {
@@ -45,6 +46,28 @@ public class RefreshTokenService {
 
 	String keyOf(String token) {
 		return KEY_PREFIX + hash(token);
+	}
+
+	private String payloadValue(String userId, Long tokenVersion) {
+		return userId + ":" + tokenVersion;
+	}
+
+	private Optional<RefreshTokenPayload> parsePayload(String payload) {
+		if (payload == null) {
+			return Optional.empty();
+		}
+
+		String[] parts = payload.split(":", -1);
+		if (parts.length != 2 || parts[0].isBlank()) {
+			return Optional.empty();
+		}
+
+		try {
+			return Optional.of(new RefreshTokenPayload(parts[0], Long.valueOf(parts[1])));
+		}
+		catch (NumberFormatException exception) {
+			return Optional.empty();
+		}
 	}
 
 	private String generateToken() {

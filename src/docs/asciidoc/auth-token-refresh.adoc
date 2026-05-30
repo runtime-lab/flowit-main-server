@@ -21,6 +21,7 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`POST`
 |경로 |`/v1/public/auth/refresh`
+|API 상태 |[.badge.stability.stable]#Stable#
 |목적 |Refresh token 쿠키를 사용해 새 access token과 새 refresh token 쿠키를 발급합니다.
 |요청 본문 |없습니다.
 |쿠키 |`flowit_refresh_token` 쿠키가 필요합니다.

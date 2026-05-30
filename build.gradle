@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.2.1-volt'
+version = '0.2.2-volt'
 
 java {
 	toolchain {
@@ -360,6 +360,21 @@ def integrationNoteVersions = {
 	}
 
 	integrationNoteSortVersionsDesc(versions)
+}
+
+def apiDocsVersionLocked = {
+	integrationNoteVersions().contains(projectVersion())
+}
+
+def shouldPublishApiDocs = {
+	!apiDocsVersionLocked()
+}
+
+def logApiDocsPublicationSkip = { String taskName ->
+	logger.lifecycle(
+		"Skipping ${taskName}: API docs for project.version=${projectVersion()} are already archived. " +
+			"Bump project.version before publishing new API documentation."
+	)
 }
 
 def findArchivedIntegrationNoteByHash = { String sourceHash ->
@@ -824,6 +839,9 @@ tasks.register('resolveDependencySources') {
 
 tasks.named('test') {
 	dependsOn 'copyApiDocs'
+	if (!shouldPublishApiDocs()) {
+		exclude 'dev/runtime_lab/flowit/docs/**'
+	}
 	useJUnitPlatform()
 }
 
@@ -958,6 +976,13 @@ tasks.register('restdocsTest', Test) {
 	classpath = sourceSets.test.runtimeClasspath
 	outputs.dir snippetsDir
 	useJUnitPlatform()
+	onlyIf {
+		if (!shouldPublishApiDocs()) {
+			logApiDocsPublicationSkip('restdocsTest')
+			return false
+		}
+		true
+	}
 	doFirst {
 		assertIntegrationNoteVersionAligned()
 	}
@@ -983,6 +1008,11 @@ tasks.register('archiveIntegrationNote') {
 
 	doLast {
 		assertIntegrationNoteVersionAligned()
+		if (!shouldPublishApiDocs()) {
+			logApiDocsPublicationSkip('archiveIntegrationNote')
+			return
+		}
+
 		def latestFile = integrationNoteLatestFile.asFile
 		if (!latestFile.isFile()) {
 			throw new GradleException("Integration Note latest file does not exist: ${latestFile}")
@@ -1076,6 +1106,13 @@ tasks.named('asciidoctor', AsciidoctorTask) {
 	inputs.dir snippetsDir
 	dependsOn restdocsTest
 	baseDirFollowsSourceFile()
+	onlyIf {
+		if (!shouldPublishApiDocs()) {
+			logApiDocsPublicationSkip('asciidoctor')
+			return false
+		}
+		true
+	}
 	doFirst {
 		assertIntegrationNoteVersionAligned()
 		delete layout.buildDirectory.dir('docs/asciidoc')
@@ -1098,6 +1135,13 @@ tasks.register('copyApiDocs', Copy) {
 	dependsOn asciidoctor
 	from layout.buildDirectory.dir('docs/asciidoc')
 	into apiDocsStaticDir
+	onlyIf {
+		if (!shouldPublishApiDocs()) {
+			logApiDocsPublicationSkip('copyApiDocs')
+			return false
+		}
+		true
+	}
 	doFirst {
 		delete apiDocsStaticDir
 	}

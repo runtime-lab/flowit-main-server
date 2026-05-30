@@ -2,6 +2,7 @@ package dev.runtime_lab.flowit.global.security.jwt;
 
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtProperties;
 import dev.runtime_lab.flowit.global.security.jwt.element.RefreshToken;
+import dev.runtime_lab.flowit.global.security.jwt.element.RefreshTokenPayload;
 import java.time.Duration;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,26 +44,27 @@ class RefreshTokenServiceTest {
 
 	@Test
 	void issueStoresHashedRefreshTokenWithTtl() {
-		RefreshToken refreshToken = refreshTokenService.issue("1001");
+		RefreshToken refreshToken = refreshTokenService.issue("1001", 7L);
 
 		assertFalse(refreshToken.tokenValue().isBlank());
 		assertEquals(1_209_600L, refreshToken.expiresIn());
 		verify(valueOperations).set(
 			refreshTokenService.keyOf(refreshToken.tokenValue()),
-			"1001",
+			"1001:7",
 			Duration.ofDays(14)
 		);
 	}
 
 	@Test
-	void consumeReturnsUserIdAndDeletesToken() {
+	void consumeReturnsPayloadAndDeletesToken() {
 		when(valueOperations.getAndDelete(refreshTokenService.keyOf("refresh-token")))
-			.thenReturn("1001");
+			.thenReturn("1001:7");
 
-		Optional<String> userId = refreshTokenService.consume("refresh-token");
+		Optional<RefreshTokenPayload> payload = refreshTokenService.consume("refresh-token");
 
-		assertTrue(userId.isPresent());
-		assertEquals("1001", userId.get());
+		assertTrue(payload.isPresent());
+		assertEquals("1001", payload.get().userId());
+		assertEquals(7L, payload.get().tokenVersion());
 		verify(valueOperations).getAndDelete(refreshTokenService.keyOf("refresh-token"));
 	}
 
@@ -71,9 +73,19 @@ class RefreshTokenServiceTest {
 		when(valueOperations.getAndDelete(refreshTokenService.keyOf("refresh-token")))
 			.thenReturn(null);
 
-		Optional<String> userId = refreshTokenService.consume("refresh-token");
+		Optional<RefreshTokenPayload> payload = refreshTokenService.consume("refresh-token");
 
-		assertTrue(userId.isEmpty());
+		assertTrue(payload.isEmpty());
+	}
+
+	@Test
+	void consumeReturnsEmptyWhenPayloadIsInvalid() {
+		when(valueOperations.getAndDelete(refreshTokenService.keyOf("refresh-token")))
+			.thenReturn("1001");
+
+		Optional<RefreshTokenPayload> payload = refreshTokenService.consume("refresh-token");
+
+		assertTrue(payload.isEmpty());
 	}
 
 	@Test

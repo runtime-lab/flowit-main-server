@@ -21,6 +21,7 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`POST`
 |경로 |`/v1/public/auth/login`
+|API 상태 |[.badge.stability.stable]#Stable#
 |목적 |이메일과 비밀번호로 access token을 발급하고 refresh token을 HttpOnly 쿠키로 전달합니다.
 |인증 |필요하지 않습니다.
 |Refresh Token |응답 본문에 노출하지 않고 `Set-Cookie` 헤더로만 전달합니다.

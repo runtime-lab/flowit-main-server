@@ -14,6 +14,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.unit.DataSize;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,6 +38,32 @@ class LocalProfileImageStorageTest {
 		assertEquals("image/png", storedFile.contentType());
 		assertEquals(1, storedFile.width());
 		assertEquals(1, storedFile.height());
+	}
+
+	@Test
+	void loadReturnsStoredProfileImageContent() throws Exception {
+		LocalProfileImageStorage storage = storage(storageDirectory());
+		MockMultipartFile file = pngFile();
+		StoredProfileImageFile storedFile = storage.store(1L, file);
+
+		ProfileImageFileContent content = storage.load(storedFile.storageKey());
+
+		assertArrayEquals(file.getBytes(), content.bytes());
+		assertEquals(file.getSize(), content.contentLength());
+	}
+
+	@Test
+	void loadRejectsMissingPhysicalFile() {
+		LocalProfileImageStorage storage = storage(storageDirectory());
+
+		assertThrows(ProfileImageStorageException.class, () -> storage.load("users/1/missing.png"));
+	}
+
+	@Test
+	void loadRejectsStorageKeyOutsideBaseDirectory() {
+		LocalProfileImageStorage storage = storage(storageDirectory());
+
+		assertThrows(ProfileImageStorageException.class, () -> storage.load("../outside.png"));
 	}
 
 	@Test
