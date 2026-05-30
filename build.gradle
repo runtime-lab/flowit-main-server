@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.2.2-volt'
+version = '0.2.3-volt'
 
 java {
 	toolchain {

@@ -32,7 +32,8 @@ class EnumReferenceDocsTest {
 		Files.writeString(
 			workspaceMemberRoleSnippetPath,
 			enumTable(WorkspaceMemberRole.values(), Map.of(
-				WorkspaceMemberRole.LEADER, "워크스페이스를 관리할 수 있는 리더 권한입니다.",
+				WorkspaceMemberRole.OWNER, "워크스페이스 소유자 권한입니다.",
+				WorkspaceMemberRole.ADMIN, "워크스페이스를 관리할 수 있는 관리자 권한입니다.",
 				WorkspaceMemberRole.MEMBER, "워크스페이스에 참여한 일반 멤버 권한입니다."
 			)),
 			StandardCharsets.UTF_8
