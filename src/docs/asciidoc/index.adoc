@@ -97,11 +97,20 @@ include::updates/latest.adoc[]
 
 |link:users-me.html[현재 사용자 조회 API]
 |`GET /v1/users/me`
-|인증된 사용자의 기본 정보와 소속 워크스페이스 목록을 설명합니다.
+|인증된 사용자의 기본 정보, 프로필 이미지 조회 URL, 소속 워크스페이스 목록을 설명합니다.
+
+|link:users-nickname.html[현재 사용자 닉네임 변경 API]
+|`PATCH /v1/users/me/nickname`
+|사용자 ID를 요청에서 받지 않고 인증 토큰 기준으로 현재 사용자의 닉네임을 변경하는 API를 설명합니다.
+
+|link:users-password.html[현재 사용자 비밀번호 변경 API]
+|`PATCH /v1/users/me/password`
+|현재 비밀번호 검증, `token_version` 증가, refresh token 쿠키 만료 처리를 포함한 비밀번호 변경 API를 설명합니다.
 
 |link:users-profile-image.html[유저 프로필 이미지 API]
-|`PUT /v1/users/me/profile-image`
-|인증된 사용자의 프로필 이미지를 교체하는 multipart 요청과 응답을 설명합니다.
+a|`PUT /v1/users/me/profile-image` +
+`GET /v1/users/me/profile-image`
+|인증된 사용자의 프로필 이미지 교체와 이미지 바이너리 조회 방식을 설명합니다.
 |===
 
 ====

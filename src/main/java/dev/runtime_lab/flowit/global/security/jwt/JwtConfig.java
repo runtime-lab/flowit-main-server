@@ -14,7 +14,10 @@ import dev.runtime_lab.flowit.global.security.jwt.element.JwtProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
@@ -48,11 +51,20 @@ public class JwtConfig {
 	}
 
 	@Bean
-	public JwtDecoder jwtDecoder(RSAPublicKey jwtPublicKey, JwtProperties jwtProperties) {
+	public JwtDecoder jwtDecoder(
+		RSAPublicKey jwtPublicKey,
+		JwtProperties jwtProperties,
+		TokenVersionJwtValidator tokenVersionJwtValidator
+	) {
 		NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withPublicKey(jwtPublicKey)
 			.signatureAlgorithm(SignatureAlgorithm.RS256)
 			.build();
-		jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(jwtProperties.issuer()));
+		OAuth2TokenValidator<Jwt> jwtValidator =
+			new DelegatingOAuth2TokenValidator<>(
+				JwtValidators.createDefaultWithIssuer(jwtProperties.issuer()),
+				tokenVersionJwtValidator
+			);
+		jwtDecoder.setJwtValidator(jwtValidator);
 
 		return jwtDecoder;
 	}

@@ -31,6 +31,7 @@ class UserMeServiceTest {
 			"nickname",
 			UserStatus.ACTIVE,
 			null,
+			null,
 			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.LEADER, 2L))
 		);
 

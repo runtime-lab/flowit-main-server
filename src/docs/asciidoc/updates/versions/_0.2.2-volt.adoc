@@ -1,0 +1,24 @@
+[[integration-notes-0-2-2-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.2 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-05-30 23:48 KST
+|Changed
+|`updates/latest.adoc`
+|<<integration-note-0-2-2-volt-2026-05-30-2348-integration-note,integration note>>
+
+|===
+
+include::../notes/0.2.2-volt/2026-05-30-2348-integration-note.adoc[]
+
+++++
+</div>
+</details>
+++++

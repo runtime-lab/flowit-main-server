@@ -46,6 +46,10 @@ public class User {
 	@Column(name = "password_hash", nullable = false)
 	private String passwordHash;
 
+	@Builder.Default
+	@Column(name = "token_version", nullable = false)
+	private Long tokenVersion = 0L;
+
 	@Column(name = "name", nullable = false, length = 100)
 	private String name;
 
@@ -79,5 +83,24 @@ public class User {
 		this.profileImageFile = newProfileImageFile;
 		this.updatedAt = updatedAt;
 		return oldProfileImageFile;
+	}
+
+	public void changeNickname(String nickname, Long updatedAt) {
+		this.name = nickname;
+		this.updatedAt = updatedAt;
+	}
+
+	public void changePassword(String passwordHash, Long updatedAt) {
+		this.passwordHash = passwordHash;
+		this.tokenVersion = nextTokenVersion();
+		this.updatedAt = updatedAt;
+	}
+
+	private Long nextTokenVersion() {
+		if (tokenVersion == null) {
+			return 1L;
+		}
+
+		return tokenVersion + 1L;
 	}
 }

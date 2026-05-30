@@ -106,7 +106,7 @@ class UserRepositoryTest {
 				"user@example.com",
 				"nickname",
 				UserStatus.ACTIVE,
-				null,
+				3001L,
 				10L,
 				"Flowit",
 				"Team workspace",
@@ -134,6 +134,8 @@ class UserRepositoryTest {
 		assertEquals("user@example.com", found.get().email());
 		assertEquals("nickname", found.get().nickname());
 		assertEquals(UserStatus.ACTIVE, found.get().status());
+		assertEquals(3001L, found.get().profileImageFileId());
+		assertEquals("/v1/users/me/profile-image", found.get().profileImageUrl());
 		assertEquals(1, found.get().workspaces().size());
 		assertEquals(10L, found.get().workspaces().get(0).id());
 		assertEquals(3L, found.get().workspaces().get(0).memberCount());

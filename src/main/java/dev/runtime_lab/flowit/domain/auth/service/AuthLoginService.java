@@ -6,6 +6,7 @@ import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.auth.exception.InvalidLoginCredentialsException;
 import dev.runtime_lab.flowit.domain.user.repository.UserRepository;
+import dev.runtime_lab.flowit.global.security.jwt.FlowitJwtClaims;
 import dev.runtime_lab.flowit.global.security.jwt.JwtTokenService;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenService;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtAccessToken;
@@ -43,10 +44,11 @@ public class AuthLoginService {
 			String.valueOf(user.getId()),
 			Map.of(
 				"email", user.getEmail(),
-				"name", user.getName()
+				"name", user.getName(),
+				FlowitJwtClaims.TOKEN_VERSION, user.getTokenVersion()
 			)
 		);
-		RefreshToken refreshToken = refreshTokenService.issue(String.valueOf(user.getId()));
+		RefreshToken refreshToken = refreshTokenService.issue(String.valueOf(user.getId()), user.getTokenVersion());
 
 		return new AuthTokenResult(accessToken, refreshToken);
 	}

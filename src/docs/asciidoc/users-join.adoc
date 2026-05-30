@@ -21,6 +21,7 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`POST`
 |경로 |`/v1/public/users/join`
+|API 상태 |[.badge.stability.stable]#Stable#
 |목적 |이메일, 평문 비밀번호, 닉네임으로 신규 사용자를 생성합니다.
 |인증 |필요하지 않습니다.
 |프로필 이미지 |초기 가입 요청에서는 받지 않습니다.

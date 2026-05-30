@@ -30,7 +30,7 @@ public class JwtTokenService {
 			.issuedAt(issuedAt)
 			.expiresAt(expiresAt)
 			.subject(subject)
-			.claim("token_type", "access");
+			.claim(FlowitJwtClaims.TOKEN_TYPE, FlowitJwtClaims.ACCESS_TOKEN_TYPE);
 
 		claims.forEach(claimsBuilder::claim);
 

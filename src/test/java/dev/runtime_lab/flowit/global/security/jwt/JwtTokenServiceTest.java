@@ -13,12 +13,16 @@ import java.util.Map;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtAccessToken;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtProperties;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class JwtTokenServiceTest {
 
@@ -45,14 +49,17 @@ class JwtTokenServiceTest {
 			(RSAPublicKey) keyPair.getPublic(),
 			(RSAPrivateKey) keyPair.getPrivate()
 		);
-		JwtDecoder jwtDecoder = jwtConfig.jwtDecoder((RSAPublicKey) keyPair.getPublic(), jwtProperties);
+		TokenVersionJwtValidator tokenVersionJwtValidator = mock(TokenVersionJwtValidator.class);
+		when(tokenVersionJwtValidator.validate(any(Jwt.class))).thenReturn(OAuth2TokenValidatorResult.success());
+		JwtDecoder jwtDecoder = jwtConfig.jwtDecoder((RSAPublicKey) keyPair.getPublic(), jwtProperties, tokenVersionJwtValidator);
 		JwtTokenService jwtTokenService = new JwtTokenService(jwtEncoder, jwtProperties, clock);
 
 		JwtAccessToken accessToken = jwtTokenService.issueAccessToken(
 			"1001",
 			Map.of(
 				"email", "user@example.com",
-				"name", "nickname"
+				"name", "nickname",
+				FlowitJwtClaims.TOKEN_VERSION, 7L
 			)
 		);
 
@@ -65,7 +72,8 @@ class JwtTokenServiceTest {
 		assertEquals("1001", decodedJwt.getSubject());
 		assertEquals("user@example.com", decodedJwt.getClaimAsString("email"));
 		assertEquals("nickname", decodedJwt.getClaimAsString("name"));
-		assertEquals("access", decodedJwt.getClaimAsString("token_type"));
+		assertEquals("access", decodedJwt.getClaimAsString(FlowitJwtClaims.TOKEN_TYPE));
+		assertEquals(7L, ((Number) decodedJwt.getClaim(FlowitJwtClaims.TOKEN_VERSION)).longValue());
 		assertEquals(Instant.parse("2100-01-01T00:00:00Z"), decodedJwt.getIssuedAt());
 		assertEquals(Instant.parse("2100-01-01T00:15:00Z"), decodedJwt.getExpiresAt());
 	}

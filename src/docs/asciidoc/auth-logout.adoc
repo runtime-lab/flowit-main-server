@@ -21,6 +21,7 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`POST`
 |경로 |`/v1/public/auth/logout`
+|API 상태 |[.badge.stability.stable]#Stable#
 |목적 |Refresh token 세션을 종료하고 브라우저 쿠키를 만료 처리합니다.
 |요청 본문 |없습니다.
 |쿠키 |`flowit_refresh_token` 쿠키가 있으면 해당 refresh token을 로그아웃 처리합니다.
