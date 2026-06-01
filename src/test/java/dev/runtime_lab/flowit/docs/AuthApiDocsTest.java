@@ -4,9 +4,7 @@ import dev.runtime_lab.flowit.domain.auth.controller.AuthController;
 import dev.runtime_lab.flowit.domain.auth.dto.AuthTokenResult;
 import dev.runtime_lab.flowit.domain.auth.dto.LoginRequest;
 import dev.runtime_lab.flowit.domain.auth.dto.TokenRefreshRequest;
-import dev.runtime_lab.flowit.domain.auth.service.AuthLoginService;
-import dev.runtime_lab.flowit.domain.auth.service.AuthLogoutService;
-import dev.runtime_lab.flowit.domain.auth.service.AuthTokenRefreshService;
+import dev.runtime_lab.flowit.domain.auth.service.AuthenticationService;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenCookieService;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtAccessToken;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtProperties;
@@ -56,9 +54,7 @@ class AuthApiDocsTest {
 	private static final String DUMMY_REFRESHED_ACCESS_TOKEN =
 		"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDAxIiwidG9rZW5fdHlwZSI6ImFjY2VzcyIsInJvdGF0ZWQiOnRydWV9.invalid-signature";
 
-	private final AuthLoginService authLoginService = mock(AuthLoginService.class);
-	private final AuthTokenRefreshService authTokenRefreshService = mock(AuthTokenRefreshService.class);
-	private final AuthLogoutService authLogoutService = mock(AuthLogoutService.class);
+	private final AuthenticationService authenticationService = mock(AuthenticationService.class);
 	private final RefreshTokenCookieService refreshTokenCookieService = new RefreshTokenCookieService(
 		new JwtProperties(
 			"flowit-test",
@@ -83,9 +79,7 @@ class AuthApiDocsTest {
 
 		mockMvc = MockMvcBuilders
 			.standaloneSetup(new AuthController(
-				authLoginService,
-				authTokenRefreshService,
-				authLogoutService,
+				authenticationService,
 				refreshTokenCookieService
 			))
 			.setControllerAdvice(new ApiResponseBodyAdvice(), new GlobalExceptionHandler())
@@ -103,7 +97,7 @@ class AuthApiDocsTest {
 			}
 			""";
 
-		when(authLoginService.login(any(LoginRequest.class)))
+		when(authenticationService.login(any(LoginRequest.class)))
 			.thenReturn(tokenResult(DUMMY_LOGIN_ACCESS_TOKEN, "refresh-token"));
 
 		mockMvc.perform(post("/v1/public/auth/login")
@@ -141,7 +135,7 @@ class AuthApiDocsTest {
 
 	@Test
 	void refresh() throws Exception {
-		when(authTokenRefreshService.refresh(any(TokenRefreshRequest.class)))
+		when(authenticationService.refresh(any(TokenRefreshRequest.class)))
 			.thenReturn(tokenResult(DUMMY_REFRESHED_ACCESS_TOKEN, "new-refresh-token"));
 
 		mockMvc.perform(post("/v1/public/auth/refresh")

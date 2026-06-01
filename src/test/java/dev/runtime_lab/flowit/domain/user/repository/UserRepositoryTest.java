@@ -140,6 +140,7 @@ class UserRepositoryTest {
 		assertEquals(10L, found.get().workspaces().get(0).id());
 		assertEquals(3L, found.get().workspaces().get(0).memberCount());
 		assertEquals(WorkspaceMemberRole.OWNER, found.get().workspaces().get(0).role());
+		assertEquals(List.of(), found.get().notificationAlerts());
 		verify(queryFactory).select(org.mockito.ArgumentMatchers.<ConstructorExpression<UserRepository.UserMeProjectionRow>>any());
 		verify(query).from(QUser.user);
 		verify(query).leftJoin(QWorkspaceMember.workspaceMember);

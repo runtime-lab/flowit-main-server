@@ -1,10 +1,10 @@
-[cols="22,12,12,54",options="header",role="api-table fields-table"]
+[cols="34,12,54",options="header",role="api-table fields-table"]
 |===
-|필드 |타입 |필수 여부 |설명
+|필드 및 타입 |필수 여부 |설명
 
 {{#fields}}
 |{{#tableCellContent}}[.field-path]#`+{{path}}+`#{{/tableCellContent}}
-|{{#tableCellContent}}[.field-type]#`+{{type}}+`#{{/tableCellContent}}
+{{#tableCellContent}}[.field-type]#`+{{type}}+`#{{/tableCellContent}}
 |{{#tableCellContent}}{{#optional}}[.badge.optional]#선택#{{/optional}}{{^optional}}[.badge.required]#필수#{{/optional}}{{/tableCellContent}}
 |{{#tableCellContent}}{{description}}{{/tableCellContent}}
 

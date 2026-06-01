@@ -8,7 +8,9 @@ import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
+import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
+import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceMemberRepository;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceRepository;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -28,14 +31,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class WorkspaceCreateServiceTest {
+class WorkspaceServiceTest {
 
 	private final UserRepository userRepository = mock(UserRepository.class);
 	private final WorkspaceRepository workspaceRepository = mock(WorkspaceRepository.class);
 	private final WorkspaceMemberRepository workspaceMemberRepository = mock(WorkspaceMemberRepository.class);
 	private final WorkspaceInviteCodeGenerator workspaceInviteCodeGenerator = mock(WorkspaceInviteCodeGenerator.class);
 	private final Clock clock = Clock.fixed(Instant.ofEpochSecond(1779889000L), ZoneOffset.UTC);
-	private final WorkspaceCreateService workspaceCreateService = new WorkspaceCreateService(
+	private final WorkspaceService workspaceService = new WorkspaceService(
 		userRepository,
 		workspaceRepository,
 		workspaceMemberRepository,
@@ -65,7 +68,7 @@ class WorkspaceCreateServiceTest {
 		when(workspaceRepository.existsByInviteCode("A1B2-C3D4-E5F6")).thenReturn(false);
 		when(workspaceRepository.save(workspaceCaptor.capture())).thenReturn(savedWorkspace);
 
-		WorkspaceCreateResponse response = workspaceCreateService.create(currentUser, request);
+		WorkspaceCreateResponse response = workspaceService.create(currentUser, request);
 
 		Workspace workspaceToSave = workspaceCaptor.getValue();
 		assertEquals("Flowit", workspaceToSave.getName());
@@ -111,7 +114,7 @@ class WorkspaceCreateServiceTest {
 		when(workspaceRepository.existsByInviteCode("A1B2-C3D4-E5F6")).thenReturn(false);
 		when(workspaceRepository.save(workspaceCaptor.capture())).thenReturn(savedWorkspace);
 
-		workspaceCreateService.create(currentUser, request);
+		workspaceService.create(currentUser, request);
 
 		assertEquals("A1B2-C3D4-E5F6", workspaceCaptor.getValue().getInviteCode());
 	}
@@ -123,7 +126,7 @@ class WorkspaceCreateServiceTest {
 
 		when(userRepository.findActiveById(1L)).thenReturn(Optional.empty());
 
-		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceCreateService.create(currentUser, request));
+		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceService.create(currentUser, request));
 		verify(workspaceRepository, never()).save(org.mockito.ArgumentMatchers.any(Workspace.class));
 		verify(workspaceMemberRepository, never()).save(org.mockito.ArgumentMatchers.any(WorkspaceMember.class));
 	}
@@ -144,7 +147,7 @@ class WorkspaceCreateServiceTest {
 
 		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(user));
 
-		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceCreateService.create(currentUser, request));
+		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceService.create(currentUser, request));
 		verify(workspaceRepository, never()).save(org.mockito.ArgumentMatchers.any(Workspace.class));
 		verify(workspaceMemberRepository, never()).save(org.mockito.ArgumentMatchers.any(WorkspaceMember.class));
 	}
@@ -158,9 +161,83 @@ class WorkspaceCreateServiceTest {
 		when(workspaceInviteCodeGenerator.generate()).thenReturn("DUPL-CODE-0001");
 		when(workspaceRepository.existsByInviteCode("DUPL-CODE-0001")).thenReturn(true);
 
-		assertThrows(WorkspaceInviteCodeGenerationException.class, () -> workspaceCreateService.create(currentUser, request));
+		assertThrows(WorkspaceInviteCodeGenerationException.class, () -> workspaceService.create(currentUser, request));
 		verify(workspaceRepository, never()).save(org.mockito.ArgumentMatchers.any(Workspace.class));
 		verify(workspaceMemberRepository, never()).save(org.mockito.ArgumentMatchers.any(WorkspaceMember.class));
+	}
+
+	@Test
+	void deleteSoftDeletesWorkspaceAndActiveMembersWhenCurrentUserIsOwner() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User user = activeUser();
+		Workspace workspace = workspace();
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(user));
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.existsActiveOwnerByWorkspaceAndUser(workspace, user)).thenReturn(true);
+
+		workspaceService.delete(currentUser, 10L);
+
+		assertEquals(1779889000L, workspace.getDeletedAt());
+		assertEquals(1779889000L, workspace.getUpdatedAt());
+		verify(workspaceMemberRepository).softDeleteActiveByWorkspaceId(10L, 1779889000L);
+	}
+
+	@Test
+	void deleteRejectsMissingUser() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.empty());
+
+		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceService.delete(currentUser, 10L));
+		verify(workspaceRepository, never()).findActiveByIdForUpdate(10L);
+		verify(workspaceMemberRepository, never()).softDeleteActiveByWorkspaceId(10L, 1779889000L);
+	}
+
+	@Test
+	void deleteRejectsInactiveUser() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User user = User.builder()
+			.id(1L)
+			.email("user@example.com")
+			.passwordHash("hash")
+			.name("nickname")
+			.status(UserStatus.LOCKED)
+			.createdAt(1L)
+			.updatedAt(1L)
+			.build();
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(user));
+
+		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceService.delete(currentUser, 10L));
+		verify(workspaceRepository, never()).findActiveByIdForUpdate(10L);
+		verify(workspaceMemberRepository, never()).softDeleteActiveByWorkspaceId(10L, 1779889000L);
+	}
+
+	@Test
+	void deleteRejectsMissingWorkspace() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(activeUser()));
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.empty());
+
+		assertThrows(WorkspaceNotFoundException.class, () -> workspaceService.delete(currentUser, 10L));
+		verify(workspaceMemberRepository, never()).softDeleteActiveByWorkspaceId(10L, 1779889000L);
+	}
+
+	@Test
+	void deleteRejectsNonOwnerMember() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User user = activeUser();
+		Workspace workspace = workspace();
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(user));
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.existsActiveOwnerByWorkspaceAndUser(workspace, user)).thenReturn(false);
+
+		assertThrows(WorkspaceAccessDeniedException.class, () -> workspaceService.delete(currentUser, 10L));
+		assertNull(workspace.getDeletedAt());
+		verify(workspaceMemberRepository, never()).softDeleteActiveByWorkspaceId(10L, 1779889000L);
 	}
 
 	private User activeUser() {
@@ -169,6 +246,17 @@ class WorkspaceCreateServiceTest {
 			.email("user@example.com")
 			.passwordHash("hash")
 			.name("nickname")
+			.createdAt(1L)
+			.updatedAt(1L)
+			.build();
+	}
+
+	private Workspace workspace() {
+		return Workspace.builder()
+			.id(10L)
+			.name("Flowit")
+			.inviteCode("A1B2-C3D4-E5F6")
+			.createdBy(activeUser())
 			.createdAt(1L)
 			.updatedAt(1L)
 			.build();

@@ -6,9 +6,7 @@ import dev.runtime_lab.flowit.domain.auth.dto.LogoutRequest;
 import dev.runtime_lab.flowit.domain.auth.dto.TokenRefreshRequest;
 import dev.runtime_lab.flowit.domain.auth.exception.InvalidLoginCredentialsException;
 import dev.runtime_lab.flowit.domain.auth.exception.InvalidRefreshTokenException;
-import dev.runtime_lab.flowit.domain.auth.service.AuthLoginService;
-import dev.runtime_lab.flowit.domain.auth.service.AuthLogoutService;
-import dev.runtime_lab.flowit.domain.auth.service.AuthTokenRefreshService;
+import dev.runtime_lab.flowit.domain.auth.service.AuthenticationService;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenCookieService;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtAccessToken;
 import dev.runtime_lab.flowit.global.security.jwt.element.JwtProperties;
@@ -43,9 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class AuthControllerTest {
 
-	private final AuthLoginService authLoginService = mock(AuthLoginService.class);
-	private final AuthTokenRefreshService authTokenRefreshService = mock(AuthTokenRefreshService.class);
-	private final AuthLogoutService authLogoutService = mock(AuthLogoutService.class);
+	private final AuthenticationService authenticationService = mock(AuthenticationService.class);
 	private final RefreshTokenCookieService refreshTokenCookieService = new RefreshTokenCookieService(
 		new JwtProperties(
 			"flowit-test",
@@ -70,9 +66,7 @@ class AuthControllerTest {
 
 		mockMvc = MockMvcBuilders
 			.standaloneSetup(new AuthController(
-				authLoginService,
-				authTokenRefreshService,
-				authLogoutService,
+				authenticationService,
 				refreshTokenCookieService
 			))
 			.setControllerAdvice(new ApiResponseBodyAdvice(), new GlobalExceptionHandler())
@@ -90,7 +84,7 @@ class AuthControllerTest {
 			""";
 		ArgumentCaptor<LoginRequest> requestCaptor = ArgumentCaptor.forClass(LoginRequest.class);
 
-		when(authLoginService.login(any(LoginRequest.class)))
+		when(authenticationService.login(any(LoginRequest.class)))
 			.thenReturn(tokenResult("jwt-token", "refresh-token"));
 
 		mockMvc.perform(post("/v1/public/auth/login")
@@ -114,7 +108,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.data.refreshTokenExpiresIn").value(1_209_600L))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(authLoginService).login(requestCaptor.capture());
+		verify(authenticationService).login(requestCaptor.capture());
 		assertEquals("user@example.com", requestCaptor.getValue().email());
 		assertEquals("plainPassword", requestCaptor.getValue().password());
 	}
@@ -147,7 +141,7 @@ class AuthControllerTest {
 			}
 			""";
 
-		when(authLoginService.login(any(LoginRequest.class)))
+		when(authenticationService.login(any(LoginRequest.class)))
 			.thenThrow(new InvalidLoginCredentialsException());
 
 		mockMvc.perform(post("/v1/public/auth/login")
@@ -170,7 +164,7 @@ class AuthControllerTest {
 			}
 			""";
 
-		when(authLoginService.login(any(LoginRequest.class)))
+		when(authenticationService.login(any(LoginRequest.class)))
 			.thenThrow(new InvalidPasswordPolicyException());
 
 		mockMvc.perform(post("/v1/public/auth/login")
@@ -188,7 +182,7 @@ class AuthControllerTest {
 	void refreshReturnsRotatedAccessTokenAndRefreshTokenCookie() throws Exception {
 		ArgumentCaptor<TokenRefreshRequest> requestCaptor = ArgumentCaptor.forClass(TokenRefreshRequest.class);
 
-		when(authTokenRefreshService.refresh(any(TokenRefreshRequest.class)))
+		when(authenticationService.refresh(any(TokenRefreshRequest.class)))
 			.thenReturn(tokenResult("new-access-token", "new-refresh-token"));
 
 		mockMvc.perform(post("/v1/public/auth/refresh")
@@ -210,7 +204,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.data.refreshTokenExpiresIn").value(1_209_600L))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(authTokenRefreshService).refresh(requestCaptor.capture());
+		verify(authenticationService).refresh(requestCaptor.capture());
 		assertEquals("old-refresh-token", requestCaptor.getValue().refreshToken());
 	}
 
@@ -224,12 +218,12 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.error.message").value("Invalid refresh token"))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verifyNoInteractions(authTokenRefreshService);
+		verifyNoInteractions(authenticationService);
 	}
 
 	@Test
 	void refreshReturnsUnauthorizedWhenRefreshTokenIsInvalid() throws Exception {
-		when(authTokenRefreshService.refresh(any(TokenRefreshRequest.class)))
+		when(authenticationService.refresh(any(TokenRefreshRequest.class)))
 			.thenThrow(new InvalidRefreshTokenException());
 
 		mockMvc.perform(post("/v1/public/auth/refresh")
@@ -261,7 +255,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.data").isMap())
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(authLogoutService).logout(requestCaptor.capture());
+		verify(authenticationService).logout(requestCaptor.capture());
 		assertEquals("refresh-token", requestCaptor.getValue().refreshToken());
 	}
 
@@ -278,7 +272,7 @@ class AuthControllerTest {
 			.andExpect(jsonPath("$.data").isMap())
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verifyNoInteractions(authLogoutService);
+		verifyNoInteractions(authenticationService);
 	}
 
 	private AuthTokenResult tokenResult(String accessToken, String refreshToken) {

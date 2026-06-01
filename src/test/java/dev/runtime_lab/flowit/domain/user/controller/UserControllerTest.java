@@ -11,10 +11,8 @@ import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.service.UserMeService;
-import dev.runtime_lab.flowit.domain.user.service.UserNicknameUpdateService;
 import dev.runtime_lab.flowit.domain.user.service.UserPasswordUpdateService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageContentService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageUpdateService;
+import dev.runtime_lab.flowit.domain.user.service.UserProfileService;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUserArgumentResolver;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
@@ -56,10 +54,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
 
 	private final UserMeService userMeService = mock(UserMeService.class);
-	private final UserNicknameUpdateService userNicknameUpdateService = mock(UserNicknameUpdateService.class);
+	private final UserProfileService userProfileService = mock(UserProfileService.class);
 	private final UserPasswordUpdateService userPasswordUpdateService = mock(UserPasswordUpdateService.class);
-	private final UserProfileImageUpdateService userProfileImageUpdateService = mock(UserProfileImageUpdateService.class);
-	private final UserProfileImageContentService userProfileImageContentService = mock(UserProfileImageContentService.class);
 	private final RefreshTokenCookieService refreshTokenCookieService = new RefreshTokenCookieService(
 		new JwtProperties(
 			"flowit-test",
@@ -85,10 +81,8 @@ class UserControllerTest {
 		mockMvc = MockMvcBuilders
 			.standaloneSetup(new UserController(
 				userMeService,
-				userNicknameUpdateService,
+				userProfileService,
 				userPasswordUpdateService,
-				userProfileImageUpdateService,
-				userProfileImageContentService,
 				refreshTokenCookieService
 			))
 			.setCustomArgumentResolvers(new AuthenticatedUserArgumentResolver())
@@ -112,7 +106,8 @@ class UserControllerTest {
 			UserStatus.ACTIVE,
 			3001L,
 			"/v1/users/me/profile-image",
-			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L))
+			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L)),
+			List.of()
 		);
 
 		when(userMeService.getMe(any(CurrentUser.class))).thenReturn(response);
@@ -136,6 +131,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data.workspaces[0].memberCount").value(3L))
 			.andExpect(jsonPath("$.data.workspaces[0].role").value("OWNER"))
 			.andExpect(jsonPath("$.data.workspaces[0].joinedAt").value(2L))
+			.andExpect(jsonPath("$.data.notificationAlerts").isArray())
 			.andExpect(jsonPath("$.extensions").isMap());
 
 		verify(userMeService).getMe(currentUserCaptor.capture());
@@ -165,7 +161,7 @@ class UserControllerTest {
 		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
 		ArgumentCaptor<UserNicknameUpdateRequest> requestCaptor = ArgumentCaptor.forClass(UserNicknameUpdateRequest.class);
 
-		when(userNicknameUpdateService.update(any(CurrentUser.class), any(UserNicknameUpdateRequest.class)))
+		when(userProfileService.updateNickname(any(CurrentUser.class), any(UserNicknameUpdateRequest.class)))
 			.thenReturn(new UserNicknameUpdateResponse(1L, "user@example.com", "new-nickname", UserStatus.ACTIVE, null, 3L));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
@@ -184,7 +180,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data.updatedAt").value(3L))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(userNicknameUpdateService).update(currentUserCaptor.capture(), requestCaptor.capture());
+		verify(userProfileService).updateNickname(currentUserCaptor.capture(), requestCaptor.capture());
 		assertEquals(1L, currentUserCaptor.getValue().id());
 		assertEquals("new-nickname", requestCaptor.getValue().nickname());
 	}
@@ -310,7 +306,7 @@ class UserControllerTest {
 	void replaceProfileImageUpdatesCurrentUserProfileImage() throws Exception {
 		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
 
-		when(userProfileImageUpdateService.replace(any(CurrentUser.class), any()))
+		when(userProfileService.replaceProfileImage(any(CurrentUser.class), any()))
 			.thenReturn(new UserProfileImageUpdateResponse(3001L, "image/png", 68L, 1, 1));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
@@ -332,7 +328,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data.height").value(1))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(userProfileImageUpdateService).replace(currentUserCaptor.capture(), any());
+		verify(userProfileService).replaceProfileImage(currentUserCaptor.capture(), any());
 		assertEquals(1L, currentUserCaptor.getValue().id());
 	}
 
@@ -354,7 +350,7 @@ class UserControllerTest {
 
 	@Test
 	void replaceProfileImageReturnsBadRequestWhenImageIsInvalid() throws Exception {
-		when(userProfileImageUpdateService.replace(any(CurrentUser.class), any()))
+		when(userProfileService.replaceProfileImage(any(CurrentUser.class), any()))
 			.thenThrow(new InvalidProfileImageException("지원하지 않는 프로필 이미지 MIME type입니다."));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
@@ -380,7 +376,7 @@ class UserControllerTest {
 		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
 		byte[] content = pngBytes();
 
-		when(userProfileImageContentService.get(any(CurrentUser.class)))
+		when(userProfileService.getProfileImage(any(CurrentUser.class)))
 			.thenReturn(new UserProfileImageContentResponse("image/png", content));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
@@ -394,7 +390,7 @@ class UserControllerTest {
 			.andExpect(header().string(HttpHeaders.CACHE_CONTROL, containsString("no-store")))
 			.andExpect(content().bytes(content));
 
-		verify(userProfileImageContentService).get(currentUserCaptor.capture());
+		verify(userProfileService).getProfileImage(currentUserCaptor.capture());
 		assertEquals(1L, currentUserCaptor.getValue().id());
 	}
 
@@ -409,7 +405,7 @@ class UserControllerTest {
 
 	@Test
 	void getProfileImageReturnsNotFoundWhenProfileImageIsMissing() throws Exception {
-		when(userProfileImageContentService.get(any(CurrentUser.class)))
+		when(userProfileService.getProfileImage(any(CurrentUser.class)))
 			.thenThrow(new ProfileImageNotFoundException());
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())

@@ -1,9 +1,14 @@
 package dev.runtime_lab.flowit.domain.user.service;
 
 import dev.runtime_lab.flowit.domain.file.entity.FileMetadata;
+import dev.runtime_lab.flowit.domain.file.exception.ProfileImageNotFoundException;
 import dev.runtime_lab.flowit.domain.file.repository.FileMetadataRepository;
 import dev.runtime_lab.flowit.domain.file.storage.LocalProfileImageStorage;
+import dev.runtime_lab.flowit.domain.file.storage.ProfileImageFileContent;
 import dev.runtime_lab.flowit.domain.file.storage.StoredProfileImageFile;
+import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateRequest;
+import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateResponse;
+import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
@@ -23,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserProfileImageUpdateService {
+public class UserProfileService {
 
 	private final UserRepository userRepository;
 	private final FileMetadataRepository fileMetadataRepository;
@@ -31,7 +36,18 @@ public class UserProfileImageUpdateService {
 	private final Clock clock;
 
 	@Transactional
-	public UserProfileImageUpdateResponse replace(CurrentUser currentUser, MultipartFile imageFile) {
+	public UserNicknameUpdateResponse updateNickname(CurrentUser currentUser, UserNicknameUpdateRequest request) {
+		User user = userRepository.findActiveByIdForUpdate(currentUser.id())
+			.filter(foundUser -> foundUser.getStatus() == UserStatus.ACTIVE)
+			.orElseThrow(InvalidAuthenticatedUserException::new);
+
+		user.changeNickname(request.nickname(), Instant.now(clock).getEpochSecond());
+
+		return UserNicknameUpdateResponse.from(user);
+	}
+
+	@Transactional
+	public UserProfileImageUpdateResponse replaceProfileImage(CurrentUser currentUser, MultipartFile imageFile) {
 		User user = userRepository.findActiveByIdForUpdate(currentUser.id())
 			.filter(foundUser -> foundUser.getStatus() == UserStatus.ACTIVE)
 			.orElseThrow(InvalidAuthenticatedUserException::new);
@@ -61,6 +77,21 @@ public class UserProfileImageUpdateService {
 		}
 
 		return UserProfileImageUpdateResponse.from(newFileMetadata);
+	}
+
+	@Transactional(readOnly = true)
+	public UserProfileImageContentResponse getProfileImage(CurrentUser currentUser) {
+		User user = userRepository.findActiveById(currentUser.id())
+			.filter(foundUser -> foundUser.getStatus() == UserStatus.ACTIVE)
+			.orElseThrow(InvalidAuthenticatedUserException::new);
+
+		FileMetadata profileImageFile = user.getProfileImageFile();
+		if (profileImageFile == null) {
+			throw new ProfileImageNotFoundException();
+		}
+
+		ProfileImageFileContent content = localProfileImageStorage.load(profileImageFile.getStorageKey());
+		return new UserProfileImageContentResponse(profileImageFile.getContentType(), content.bytes());
 	}
 
 	private void registerNewFileRollbackCleanup(String storageKey) {

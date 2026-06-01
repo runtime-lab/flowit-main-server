@@ -5,10 +5,8 @@ import dev.runtime_lab.flowit.domain.user.dto.UserMeResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.service.UserMeService;
-import dev.runtime_lab.flowit.domain.user.service.UserNicknameUpdateService;
 import dev.runtime_lab.flowit.domain.user.service.UserPasswordUpdateService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageContentService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageUpdateService;
+import dev.runtime_lab.flowit.domain.user.service.UserProfileService;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUserArgumentResolver;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
@@ -54,10 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserMeApiDocsTest {
 
 	private final UserMeService userMeService = mock(UserMeService.class);
-	private final UserNicknameUpdateService userNicknameUpdateService = mock(UserNicknameUpdateService.class);
+	private final UserProfileService userProfileService = mock(UserProfileService.class);
 	private final UserPasswordUpdateService userPasswordUpdateService = mock(UserPasswordUpdateService.class);
-	private final UserProfileImageUpdateService userProfileImageUpdateService = mock(UserProfileImageUpdateService.class);
-	private final UserProfileImageContentService userProfileImageContentService = mock(UserProfileImageContentService.class);
 	private final RefreshTokenCookieService refreshTokenCookieService = new RefreshTokenCookieService(
 		new JwtProperties(
 			"flowit-test",
@@ -80,10 +76,8 @@ class UserMeApiDocsTest {
 		mockMvc = MockMvcBuilders
 			.standaloneSetup(new UserController(
 				userMeService,
-				userNicknameUpdateService,
+				userProfileService,
 				userPasswordUpdateService,
-				userProfileImageUpdateService,
-				userProfileImageContentService,
 				refreshTokenCookieService
 			))
 			.setCustomArgumentResolvers(new AuthenticatedUserArgumentResolver())
@@ -106,7 +100,8 @@ class UserMeApiDocsTest {
 			UserStatus.ACTIVE,
 			3001L,
 			"/v1/users/me/profile-image",
-			List.of(new UserMeWorkspaceResponse(2001L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 1779889000L))
+			List.of(new UserMeWorkspaceResponse(2001L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 1779889000L)),
+			List.of()
 		);
 
 		when(userMeService.getMe(any(CurrentUser.class))).thenReturn(response);
@@ -141,6 +136,7 @@ class UserMeApiDocsTest {
 					fieldWithPath("data.workspaces[].memberCount").type(JsonFieldType.NUMBER).description("워크스페이스의 활성 멤버 수입니다."),
 					fieldWithPath("data.workspaces[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("data.workspaces[].joinedAt").type(JsonFieldType.NUMBER).description("워크스페이스 참여 시각입니다. Unix epoch seconds 기준입니다."),
+					fieldWithPath("data.notificationAlerts").type(JsonFieldType.ARRAY).description("현재 사용자에게 표시할 알림 목록입니다. 알림 모델링 전까지는 빈 배열입니다.").attributes(experimental()),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
 			));

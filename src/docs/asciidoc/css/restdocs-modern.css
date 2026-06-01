@@ -540,12 +540,31 @@ table.endpoint-summary td:first-child {
   text-transform: uppercase;
 }
 
+.field-path,
+.field-type {
+  max-width: 100%;
+}
+
 .field-path code,
 .field-type code {
+  display: inline-block;
+  max-width: 100%;
   color: #123b36;
   border-color: #b9ddd7;
   background: var(--accent-soft);
   font-weight: 650;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.fields-table .field-path,
+.fields-table .field-type {
+  display: block;
+}
+
+.fields-table .field-type {
+  margin-top: 6px;
 }
 
 .field-type code {

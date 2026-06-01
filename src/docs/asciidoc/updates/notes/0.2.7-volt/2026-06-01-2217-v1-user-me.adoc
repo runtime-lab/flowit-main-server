@@ -1,0 +1,29 @@
+// integration-note-source-sha256: 064ca7db429cd0a79a9e72dce40ddcf32302c4b861f2f2f1bd9209c94749b37b
+// integration-note-version: 0.2.7-volt
+// integration-note-time: 2026-06-01-2217
+// integration-note-time-human: 2026-06-01 22:17 KST
+// integration-note-impact: Added
+// integration-note-target: `updates/latest.adoc`
+// integration-note-summary: v1/user/me 엔드포인트에 알림 응답이 추가되었습니다. (표기용 필드로 아직 구현되지 않았습니다.)
+// integration-note-anchor: integration-note-0-2-7-volt-2026-06-01-2217-v1-user-me
+
+[#integration-note-0-2-7-volt-2026-06-01-2217-v1-user-me]
+=== v1/user/me 엔드포인트에 알림 응답이 추가되었습니다. (표기용 필드로 아직 구현되지 않았습니다.)
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.7-volt`
+|Archived At |2026-06-01 22:17 KST
+|Impact |Added
+|Target |`updates/latest.adoc`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: `v1/user/me` 엔드포인트에 알림 응답이 추가되었습니다. (표기용 필드로 아직 구현되지 않았습니다.)
+--

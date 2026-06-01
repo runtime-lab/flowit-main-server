@@ -7,9 +7,7 @@ import dev.runtime_lab.flowit.domain.auth.dto.LoginResponse;
 import dev.runtime_lab.flowit.domain.auth.dto.TokenRefreshRequest;
 import dev.runtime_lab.flowit.domain.auth.dto.TokenRefreshResponse;
 import dev.runtime_lab.flowit.domain.auth.exception.InvalidRefreshTokenException;
-import dev.runtime_lab.flowit.domain.auth.service.AuthLogoutService;
-import dev.runtime_lab.flowit.domain.auth.service.AuthLoginService;
-import dev.runtime_lab.flowit.domain.auth.service.AuthTokenRefreshService;
+import dev.runtime_lab.flowit.domain.auth.service.AuthenticationService;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenCookieService;
 import dev.runtime_lab.flowit.global.web.response.ApiEmptyData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,14 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final AuthLoginService authLoginService;
-	private final AuthTokenRefreshService authTokenRefreshService;
-	private final AuthLogoutService authLogoutService;
+	private final AuthenticationService authenticationService;
 	private final RefreshTokenCookieService refreshTokenCookieService;
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-		AuthTokenResult tokenResult = authLoginService.login(request);
+		AuthTokenResult tokenResult = authenticationService.login(request);
 
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, refreshTokenCookieService.create(tokenResult.refreshToken()).toString())
@@ -46,7 +42,7 @@ public class AuthController {
 		TokenRefreshRequest tokenRefreshRequest = refreshTokenCookieService.resolve(request)
 			.map(TokenRefreshRequest::new)
 			.orElseThrow(InvalidRefreshTokenException::new);
-		AuthTokenResult tokenResult = authTokenRefreshService.refresh(tokenRefreshRequest);
+		AuthTokenResult tokenResult = authenticationService.refresh(tokenRefreshRequest);
 
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, refreshTokenCookieService.create(tokenResult.refreshToken()).toString())
@@ -57,7 +53,7 @@ public class AuthController {
 	public ResponseEntity<ApiEmptyData> logout(HttpServletRequest request) {
 		refreshTokenCookieService.resolve(request)
 			.map(LogoutRequest::new)
-			.ifPresent(authLogoutService::logout);
+			.ifPresent(authenticationService::logout);
 
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, refreshTokenCookieService.expire().toString())

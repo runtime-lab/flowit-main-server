@@ -2,8 +2,7 @@ package dev.runtime_lab.flowit.domain.workspace.controller;
 
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
-import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceCreateService;
-import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceDeleteService;
+import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUser;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.web.response.ApiCreatedData;
@@ -24,15 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class WorkspaceController {
 
-	private final WorkspaceCreateService workspaceCreateService;
-	private final WorkspaceDeleteService workspaceDeleteService;
+	private final WorkspaceService workspaceService;
 
 	@PostMapping
 	public ResponseEntity<ApiCreatedData> create(
 		@AuthenticatedUser CurrentUser currentUser,
 		@Valid @RequestBody WorkspaceCreateRequest request
 	) {
-		WorkspaceCreateResponse response = workspaceCreateService.create(currentUser, request);
+		WorkspaceCreateResponse response = workspaceService.create(currentUser, request);
 
 		return ResponseEntity
 			.created(URI.create("/v1/workspaces/%d".formatted(response.id())))
@@ -44,7 +42,7 @@ public class WorkspaceController {
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId
 	) {
-		workspaceDeleteService.delete(currentUser, workspaceId);
+		workspaceService.delete(currentUser, workspaceId);
 
 		return ResponseEntity.ok(ApiEmptyData.empty());
 	}

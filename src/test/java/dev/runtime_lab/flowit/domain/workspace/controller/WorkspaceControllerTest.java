@@ -4,8 +4,7 @@ import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
-import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceCreateService;
-import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceDeleteService;
+import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUserArgumentResolver;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.web.exception.GlobalExceptionHandler;
@@ -40,8 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class WorkspaceControllerTest {
 
-	private final WorkspaceCreateService workspaceCreateService = mock(WorkspaceCreateService.class);
-	private final WorkspaceDeleteService workspaceDeleteService = mock(WorkspaceDeleteService.class);
+	private final WorkspaceService workspaceService = mock(WorkspaceService.class);
 	private MockMvc mockMvc;
 
 	@BeforeEach
@@ -50,7 +48,7 @@ class WorkspaceControllerTest {
 		validator.afterPropertiesSet();
 
 		mockMvc = MockMvcBuilders
-			.standaloneSetup(new WorkspaceController(workspaceCreateService, workspaceDeleteService))
+			.standaloneSetup(new WorkspaceController(workspaceService))
 			.setCustomArgumentResolvers(new AuthenticatedUserArgumentResolver())
 			.setControllerAdvice(new ApiResponseBodyAdvice(), new GlobalExceptionHandler())
 			.setValidator(validator)
@@ -73,7 +71,7 @@ class WorkspaceControllerTest {
 		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
 		ArgumentCaptor<WorkspaceCreateRequest> requestCaptor = ArgumentCaptor.forClass(WorkspaceCreateRequest.class);
 
-		when(workspaceCreateService.create(any(CurrentUser.class), any(WorkspaceCreateRequest.class)))
+		when(workspaceService.create(any(CurrentUser.class), any(WorkspaceCreateRequest.class)))
 			.thenReturn(new WorkspaceCreateResponse(10L, 1779889000L));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
@@ -89,7 +87,7 @@ class WorkspaceControllerTest {
 			.andExpect(jsonPath("$.data.createdId").value(10L))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(workspaceCreateService).create(currentUserCaptor.capture(), requestCaptor.capture());
+		verify(workspaceService).create(currentUserCaptor.capture(), requestCaptor.capture());
 		assertEquals(1L, currentUserCaptor.getValue().id());
 		assertEquals("user@example.com", currentUserCaptor.getValue().email());
 		assertEquals("nickname", currentUserCaptor.getValue().name());
@@ -157,7 +155,7 @@ class WorkspaceControllerTest {
 			.andExpect(jsonPath("$.data").isMap())
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(workspaceDeleteService).delete(currentUserCaptor.capture(), workspaceIdCaptor.capture());
+		verify(workspaceService).delete(currentUserCaptor.capture(), workspaceIdCaptor.capture());
 		assertEquals(1L, currentUserCaptor.getValue().id());
 		assertEquals("user@example.com", currentUserCaptor.getValue().email());
 		assertEquals("nickname", currentUserCaptor.getValue().name());
@@ -178,7 +176,7 @@ class WorkspaceControllerTest {
 	@Test
 	void deleteReturnsForbiddenWhenCurrentUserIsNotOwner() throws Exception {
 		doThrow(new WorkspaceAccessDeniedException())
-			.when(workspaceDeleteService)
+			.when(workspaceService)
 			.delete(any(CurrentUser.class), eq(10L));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
@@ -196,7 +194,7 @@ class WorkspaceControllerTest {
 	@Test
 	void deleteReturnsNotFoundWhenWorkspaceIsMissing() throws Exception {
 		doThrow(new WorkspaceNotFoundException())
-			.when(workspaceDeleteService)
+			.when(workspaceService)
 			.delete(any(CurrentUser.class), eq(10L));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())

@@ -175,7 +175,8 @@ public class UserRepository extends CustomJpaRepo<User, Long> {
 				status,
 				profileImageFileId,
 				UserMeResponse.profileImageUrl(profileImageFileId),
-				workspaces
+				workspaces,
+				List.of()
 			);
 		}
 	}

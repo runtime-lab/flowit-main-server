@@ -1,5 +1,6 @@
 package dev.runtime_lab.flowit.domain.user.dto;
 
+import dev.runtime_lab.flowit.domain.notification.dto.NotificationAlertResponse;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import java.util.List;
 
@@ -10,7 +11,8 @@ public record UserMeResponse(
 	UserStatus status,
 	Long profileImageFileId,
 	String profileImageUrl,
-	List<UserMeWorkspaceResponse> workspaces
+	List<UserMeWorkspaceResponse> workspaces,
+	List<NotificationAlertResponse> notificationAlerts
 ) {
 
 	private static final String PROFILE_IMAGE_URL = "/v1/users/me/profile-image";

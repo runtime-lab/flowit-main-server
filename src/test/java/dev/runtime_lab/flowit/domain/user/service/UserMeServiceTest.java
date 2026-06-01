@@ -32,7 +32,8 @@ class UserMeServiceTest {
 			UserStatus.ACTIVE,
 			null,
 			null,
-			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L))
+			List.of(new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L)),
+			List.of()
 		);
 
 		when(userRepository.findActiveMeById(1L)).thenReturn(Optional.of(expected));
@@ -43,6 +44,7 @@ class UserMeServiceTest {
 		assertEquals(10L, response.workspaces().get(0).id());
 		assertEquals(3L, response.workspaces().get(0).memberCount());
 		assertEquals(WorkspaceMemberRole.OWNER, response.workspaces().get(0).role());
+		assertEquals(List.of(), response.notificationAlerts());
 		verify(userRepository).findActiveMeById(1L);
 	}
 

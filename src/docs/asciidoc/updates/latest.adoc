@@ -1,6 +1,6 @@
 [.update-note-title]
 Integration Note
 
-Empty:: API 변경이 없습니다.
+Added:: `v1/user/me` 엔드포인트에 알림 응답이 추가되었습니다. (표기용 필드로 아직 구현되지 않았습니다.)
 
 

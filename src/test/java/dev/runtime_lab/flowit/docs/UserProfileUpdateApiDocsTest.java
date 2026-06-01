@@ -5,10 +5,8 @@ import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateRequest;
 import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.service.UserMeService;
-import dev.runtime_lab.flowit.domain.user.service.UserNicknameUpdateService;
 import dev.runtime_lab.flowit.domain.user.service.UserPasswordUpdateService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageContentService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageUpdateService;
+import dev.runtime_lab.flowit.domain.user.service.UserProfileService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUserArgumentResolver;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenCookieService;
@@ -57,10 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserProfileUpdateApiDocsTest {
 
 	private final UserMeService userMeService = mock(UserMeService.class);
-	private final UserNicknameUpdateService userNicknameUpdateService = mock(UserNicknameUpdateService.class);
+	private final UserProfileService userProfileService = mock(UserProfileService.class);
 	private final UserPasswordUpdateService userPasswordUpdateService = mock(UserPasswordUpdateService.class);
-	private final UserProfileImageUpdateService userProfileImageUpdateService = mock(UserProfileImageUpdateService.class);
-	private final UserProfileImageContentService userProfileImageContentService = mock(UserProfileImageContentService.class);
 	private final RefreshTokenCookieService refreshTokenCookieService = new RefreshTokenCookieService(
 		new JwtProperties(
 			"flowit-test",
@@ -86,10 +82,8 @@ class UserProfileUpdateApiDocsTest {
 		mockMvc = MockMvcBuilders
 			.standaloneSetup(new UserController(
 				userMeService,
-				userNicknameUpdateService,
+				userProfileService,
 				userPasswordUpdateService,
-				userProfileImageUpdateService,
-				userProfileImageContentService,
 				refreshTokenCookieService
 			))
 			.setCustomArgumentResolvers(new AuthenticatedUserArgumentResolver())
@@ -112,7 +106,7 @@ class UserProfileUpdateApiDocsTest {
 			}
 			""";
 
-		when(userNicknameUpdateService.update(any(CurrentUser.class), any(UserNicknameUpdateRequest.class)))
+		when(userProfileService.updateNickname(any(CurrentUser.class), any(UserNicknameUpdateRequest.class)))
 			.thenReturn(new UserNicknameUpdateResponse(
 				1003L,
 				"user@example.com",

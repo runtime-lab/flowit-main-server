@@ -7,10 +7,8 @@ import dev.runtime_lab.flowit.domain.user.dto.UserPasswordUpdateRequest;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.service.UserMeService;
-import dev.runtime_lab.flowit.domain.user.service.UserNicknameUpdateService;
 import dev.runtime_lab.flowit.domain.user.service.UserPasswordUpdateService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageContentService;
-import dev.runtime_lab.flowit.domain.user.service.UserProfileImageUpdateService;
+import dev.runtime_lab.flowit.domain.user.service.UserProfileService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUser;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenCookieService;
@@ -36,10 +34,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
 	private final UserMeService userMeService;
-	private final UserNicknameUpdateService userNicknameUpdateService;
+	private final UserProfileService userProfileService;
 	private final UserPasswordUpdateService userPasswordUpdateService;
-	private final UserProfileImageUpdateService userProfileImageUpdateService;
-	private final UserProfileImageContentService userProfileImageContentService;
 	private final RefreshTokenCookieService refreshTokenCookieService;
 
 	@GetMapping("/me")
@@ -52,7 +48,7 @@ public class UserController {
 		@AuthenticatedUser CurrentUser currentUser,
 		@Valid @RequestBody UserNicknameUpdateRequest request
 	) {
-		return userNicknameUpdateService.update(currentUser, request);
+		return userProfileService.updateNickname(currentUser, request);
 	}
 
 	@PatchMapping("/me/password")
@@ -72,7 +68,7 @@ public class UserController {
 		@AuthenticatedUser CurrentUser currentUser,
 		@RequestPart("file") MultipartFile file
 	) {
-		return userProfileImageUpdateService.replace(currentUser, file);
+		return userProfileService.replaceProfileImage(currentUser, file);
 	}
 
 	@GetMapping(
@@ -80,7 +76,7 @@ public class UserController {
 		produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE}
 	)
 	public ResponseEntity<byte[]> getProfileImage(@AuthenticatedUser CurrentUser currentUser) {
-		UserProfileImageContentResponse response = userProfileImageContentService.get(currentUser);
+		UserProfileImageContentResponse response = userProfileService.getProfileImage(currentUser);
 
 		return ResponseEntity.ok()
 			.contentType(MediaType.parseMediaType(response.contentType()))
