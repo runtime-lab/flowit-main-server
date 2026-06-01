@@ -163,6 +163,9 @@ try {
     Write-Host "Finalizing API docs for project.version=$version"
     Write-Host "Integration note metadata: slug=$Slug, impact=$Impact, target=$Target"
     Write-Host "Integration note summary: $Summary"
+    if ($ArchiveEmptyIntegrationNote) {
+        Write-Host 'ArchiveEmptyIntegrationNote is now the default behavior; continuing without extra Gradle properties.'
+    }
 
     if ($DryRun) {
         Write-Host "Dry run requested; no Gradle tasks were executed."
@@ -184,10 +187,6 @@ try {
     )
 
     $archiveArguments += "-PintegrationNoteSummary=$Summary"
-
-    if ($ArchiveEmptyIntegrationNote) {
-        $archiveArguments += '-ParchiveEmptyIntegrationNote=true'
-    }
 
     Invoke-Gradle -RepositoryRoot $repositoryRoot -Arguments $archiveArguments
 

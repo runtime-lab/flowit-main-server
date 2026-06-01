@@ -106,11 +106,7 @@ Use the OS-specific script from the project root when you want to run without a 
 ./local.sh start
 ```
 
-If `./local.sh` is not executable on Mac, run the following command once.
-
-```bash
-chmod +x local.sh
-```
+This repository tracks the executable bits for `local.sh` and `gradlew` for Mac/Linux usage. If you see a permission error, first make sure your local `main` branch is up to date.
 
 If a local JDK is installed, the existing Gradle command remains supported.
 
@@ -213,12 +209,6 @@ On Windows, `local.bat` skips Gradle Wrapper startup and runs PowerShell-based D
 ```
 
 `localStop` runs `docker compose down`. Docker volumes are preserved.
-
-If `./gradlew` is not executable on Mac, also run the following command once.
-
-```bash
-chmod +x gradlew
-```
 
 ```bash
 ./local.sh infra-start

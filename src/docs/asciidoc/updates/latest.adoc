@@ -1,6 +1,6 @@
 [.update-note-title]
 Integration Note
 
-Added:: `DELETE /v1/workspaces/{workspaceId}` 워크스페이스 삭제 API가 추가되었습니다.
+Empty:: API 변경이 없습니다.
 
 

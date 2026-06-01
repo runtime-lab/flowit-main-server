@@ -34,7 +34,7 @@ pass:[updates/latest.adoc]를 새 내용으로 바꾸기 전에 현재 내용을
 
 Integration Note의 기준 버전은 Gradle pass:[<code>project.version</code>]과 반드시 동일해야 합니다. pass:[<code>apiDocsVersion</code>] 또는 pass:[<code>integrationNoteVersion</code>]을 별도로 전달하더라도 pass:[<code>project.version</code>]과 다르면 문서 생성과 note 아카이브를 중단합니다.
 
-이미 다른 버전에 아카이브된 `latest` 내용은 새 버전으로 다시 이관하지 않습니다. `Empty::` note도 기본적으로 아카이브하지 않으며, 정말 기록해야 하는 경우에만 `-ParchiveEmptyIntegrationNote=true`를 함께 전달합니다.
+이미 다른 버전에 아카이브된 `latest` 내용은 새 버전으로 다시 이관하지 않습니다. 단, `Empty::` note는 릴리스 기록을 남기기 위해 버전마다 기본적으로 아카이브합니다.
 
 [source,powershell]
 ----

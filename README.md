@@ -106,11 +106,7 @@ http://localhost:8080/docs/docs-preview.html
 ./local.sh start
 ```
 
-Mac에서 `./local.sh` 실행 권한이 없다면 한 번만 아래 명령을 실행하십시오.
-
-```bash
-chmod +x local.sh
-```
+이 저장소는 Mac/Linux에서 사용할 `local.sh`와 `gradlew` 실행 권한을 Git에 포함해 추적합니다. 권한 오류가 발생하면 먼저 최신 `main`을 받고 있는지 확인하십시오.
 
 로컬 JDK가 설치되어 있다면 기존 Gradle 명령도 계속 사용할 수 있습니다.
 
@@ -213,12 +209,6 @@ Windows에서는 JDK 없이 실행할 때 `local.bat`를 사용하면 Gradle Wra
 ```
 
 `localStop`은 `docker compose down`을 실행합니다. Docker 볼륨은 유지됩니다.
-
-Mac에서 `./gradlew` 실행 권한이 없다면 한 번만 아래 명령을 실행하십시오.
-
-```bash
-chmod +x gradlew
-```
 
 ```bash
 ./local.sh infra-start

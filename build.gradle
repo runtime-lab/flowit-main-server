@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.2.5-volt'
+version = '0.2.6-volt'
 
 java {
 	toolchain {
@@ -1037,18 +1037,15 @@ tasks.register('archiveIntegrationNote') {
 		def summary = (project.findProperty('integrationNoteSummary') ?: slug.replace('-', ' ')).toString().trim()
 		def sourceHash = sha256Hex(latestContent.getBytes('UTF-8'))
 		def notesRoot = integrationNoteNotesDir.dir(safeVersion).asFile
+		def latestIsEmpty = isEmptyIntegrationNote(latestContent)
 
-		if (isEmptyIntegrationNote(latestContent) && !project.hasProperty('archiveEmptyIntegrationNote')) {
-			logger.lifecycle('Integration Note latest is Empty; skipping archive. Use -ParchiveEmptyIntegrationNote=true to force it.')
-			refreshIntegrationArchiveIndex()
-			return
-		}
-
-		def archivedByAnyVersion = findArchivedIntegrationNoteByHash(sourceHash)
-		if (archivedByAnyVersion != null) {
-			logger.lifecycle("Integration Note already archived: ${archivedByAnyVersion}")
-			refreshIntegrationArchiveIndex()
-			return
+		if (!latestIsEmpty) {
+			def archivedByAnyVersion = findArchivedIntegrationNoteByHash(sourceHash)
+			if (archivedByAnyVersion != null) {
+				logger.lifecycle("Integration Note already archived: ${archivedByAnyVersion}")
+				refreshIntegrationArchiveIndex()
+				return
+			}
 		}
 
 		notesRoot.mkdirs()

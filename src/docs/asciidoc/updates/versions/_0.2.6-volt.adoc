@@ -1,0 +1,24 @@
+[[integration-notes-0-2-6-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.6 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-01 20:23 KST
+|Empty
+|`updates/latest.adoc`
+|<<integration-note-0-2-6-volt-2026-06-01-2023-api,API 변경이 없습니다.>>
+
+|===
+
+include::../notes/0.2.6-volt/2026-06-01-2023-api.adoc[]
+
+++++
+</div>
+</details>
+++++
