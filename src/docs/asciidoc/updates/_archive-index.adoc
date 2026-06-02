@@ -3,9 +3,9 @@
 |Series |Latest Version |Versions |Notes |Link
 
 |0.2.x
-|`0.2.7-volt`
-|7
-|7
+|`0.2.8-volt`
+|8
+|8
 |pass:[<a href="integration-notes-0.2.html">0.2.x Integration Notes</a>]
 
 |0.1.x

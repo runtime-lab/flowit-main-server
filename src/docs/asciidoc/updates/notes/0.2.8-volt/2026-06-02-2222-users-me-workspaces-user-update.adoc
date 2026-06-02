@@ -1,0 +1,30 @@
+// integration-note-source-sha256: ccd7852df8394f31b14f5b77806e2e9c3bec0ac6ada571fc2f96e2731e4fea8c
+// integration-note-version: 0.2.8-volt
+// integration-note-time: 2026-06-02-2222
+// integration-note-time-human: 2026-06-02 22:22 KST
+// integration-note-impact: Changed
+// integration-note-target: GET /v1/users/me/workspaces, PATCH /v1/users/me
+// integration-note-summary: 현재 사용자 워크스페이스 목록 및 수정 API 반영
+// integration-note-anchor: integration-note-0-2-8-volt-2026-06-02-2222-users-me-workspaces-user-update
+
+[#integration-note-0-2-8-volt-2026-06-02-2222-users-me-workspaces-user-update]
+=== 현재 사용자 워크스페이스 목록 및 수정 API 반영
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.8-volt`
+|Archived At |2026-06-02 22:22 KST
+|Impact |Changed
+|Target |GET /v1/users/me/workspaces, PATCH /v1/users/me
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: 접속 중인 유저의 워크스페이스만 조회 할 수 있는 `v1/users/me/workspaces` 가 추가되었습니다.
+Changes:: `PATCH v1/users/me/nickname` 이 `PATCH v1/users/me` 로 변경되었습니다.
+--

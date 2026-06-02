@@ -6,10 +6,10 @@ import dev.runtime_lab.flowit.domain.file.repository.FileMetadataRepository;
 import dev.runtime_lab.flowit.domain.file.storage.LocalProfileImageStorage;
 import dev.runtime_lab.flowit.domain.file.storage.ProfileImageFileContent;
 import dev.runtime_lab.flowit.domain.file.storage.StoredProfileImageFile;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateRequest;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateRequest;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.repository.UserRepository;
@@ -48,13 +48,13 @@ class UserProfileServiceTest {
 	);
 
 	@Test
-	void updateNicknameChangesCurrentUserNickname() {
+	void updateChangesCurrentUserNickname() {
 		User user = activeUser(null);
 		when(userRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(user));
 
-		UserNicknameUpdateResponse response = service.updateNickname(
+		UserUpdateResponse response = service.update(
 			new CurrentUser(1L, "claim@example.com", "claim-name"),
-			new UserNicknameUpdateRequest("new-nickname")
+			new UserUpdateRequest("new-nickname")
 		);
 
 		assertEquals("new-nickname", user.getName());
@@ -68,29 +68,29 @@ class UserProfileServiceTest {
 	}
 
 	@Test
-	void updateNicknameRejectsMissingUser() {
+	void updateRejectsMissingUser() {
 		when(userRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.empty());
 
 		assertThrows(
 			InvalidAuthenticatedUserException.class,
-			() -> service.updateNickname(
+			() -> service.update(
 				new CurrentUser(1L, "user@example.com", "nickname"),
-				new UserNicknameUpdateRequest("new-nickname")
+				new UserUpdateRequest("new-nickname")
 			)
 		);
 		verify(userRepository).findActiveByIdForUpdate(1L);
 	}
 
 	@Test
-	void updateNicknameRejectsInactiveUser() {
+	void updateRejectsInactiveUser() {
 		User user = activeUser(null, UserStatus.LOCKED);
 		when(userRepository.findActiveByIdForUpdate(1L)).thenReturn(Optional.of(user));
 
 		assertThrows(
 			InvalidAuthenticatedUserException.class,
-			() -> service.updateNickname(
+			() -> service.update(
 				new CurrentUser(1L, "user@example.com", "nickname"),
-				new UserNicknameUpdateRequest("new-nickname")
+				new UserUpdateRequest("new-nickname")
 			)
 		);
 	}

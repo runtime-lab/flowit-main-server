@@ -9,4 +9,3 @@ API Status:: {api-version-stage-status}
 
 Maint:: `local.sh`, `gradlew` 를 실행 파일로 추적하도록 변경됩니다.
 Maint:: Auto-Fetch가 정상적으로 수행되지 않는 현상이 수정 되었습니다.
-Changed:: 응답 필드 설명의 출력 방식이 작은 화면에서도 정상적으로 동작하도록 변경 되었습니다.

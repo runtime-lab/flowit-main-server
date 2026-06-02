@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.2.7-volt'
+version = '0.2.8-volt'
 
 java {
 	toolchain {
@@ -53,6 +53,10 @@ def integrationNoteNotesDir = layout.projectDirectory.dir('src/docs/asciidoc/upd
 def integrationNoteSeriesDir = layout.projectDirectory.dir('src/docs/asciidoc/updates/series')
 def integrationNoteVersionsDir = layout.projectDirectory.dir('src/docs/asciidoc/updates/versions')
 def apiDocsAsciidocDir = layout.projectDirectory.dir('src/docs/asciidoc')
+def readmeApiVersionFiles = [
+	layout.projectDirectory.file('README.md'),
+	layout.projectDirectory.file('README.en.md')
+]
 def localInfrastructureServices = ['mysql', 'redis', 'prometheus', 'grafana']
 def localStackServices = ['app'] + localInfrastructureServices
 def localAppHealthUrl = 'http://127.0.0.1:8081/actuator/health'
@@ -175,6 +179,67 @@ def integrationNoteVersion = {
 def assertIntegrationNoteVersionAligned = {
 	assertApiDocsVersionAligned()
 	integrationNoteVersion()
+}
+
+def readmeApiVersionLine = { String version ->
+	"API Version: ${version} · up-to-date"
+}
+
+def readmeApiVersionLinePattern = ~/^API Version:\s+.+\s+·\s+up-to-date$/
+
+def updateReadmeApiVersion = { String version ->
+	def expectedLine = readmeApiVersionLine(version)
+
+	readmeApiVersionFiles.each { readmeProvider ->
+		def readmeFile = readmeProvider.asFile
+		if (!readmeFile.isFile()) {
+			throw new GradleException("README file does not exist: ${readmeFile}")
+		}
+
+		def lines = readmeFile.readLines('UTF-8')
+			.findAll { line -> !(line ==~ readmeApiVersionLinePattern) }
+
+		def updatedLines
+		if (!lines.isEmpty() && lines.first().startsWith('# ')) {
+			def bodyLines = new ArrayList<String>(lines.drop(1))
+			while (!bodyLines.isEmpty() && bodyLines.first().trim().isEmpty()) {
+				bodyLines.remove(0)
+			}
+			updatedLines = [lines.first(), '', expectedLine, ''] + bodyLines
+		}
+		else {
+			updatedLines = [expectedLine, ''] + lines
+		}
+
+		readmeFile.setText(updatedLines.join('\n') + '\n', 'UTF-8')
+	}
+}
+
+def assertReadmeApiVersionAligned = {
+	def expectedLine = readmeApiVersionLine(projectVersion())
+
+	readmeApiVersionFiles.each { readmeProvider ->
+		def readmeFile = readmeProvider.asFile
+		if (!readmeFile.isFile()) {
+			throw new GradleException("README file does not exist: ${readmeFile}")
+		}
+
+		def lines = readmeFile.readLines('UTF-8')
+		def versionLines = lines.findAll { line -> line ==~ readmeApiVersionLinePattern }
+		if (versionLines != [expectedLine]) {
+			throw new GradleException(
+				"README API version must match project.version. file=${readmeFile}, expected='${expectedLine}', actual=${versionLines}"
+			)
+		}
+
+		def expectedIndex = lines.isEmpty() || lines.first().startsWith('# ') ? 2 : 0
+		def actualIndex = lines.findIndexOf { it == expectedLine }
+		if (actualIndex != expectedIndex) {
+			throw new GradleException(
+				"README API version must be placed at the top. file=${readmeFile}, expectedLineIndex=${expectedIndex}, actualLineIndex=${actualIndex}"
+			)
+		}
+	}
 }
 
 def integrationNoteSafeName = { String value ->
@@ -364,6 +429,20 @@ def integrationNoteVersions = {
 
 def apiDocsVersionLocked = {
 	integrationNoteVersions().contains(projectVersion())
+}
+
+def assertCurrentApiDocsVersionArchived = {
+	if (!apiDocsVersionLocked()) {
+		throw new GradleException(
+			"API Version '${projectVersion()} · up-to-date' requires archived Integration Notes for the same version. " +
+				"Run archiveIntegrationNote before publishing or building release artifacts."
+		)
+	}
+}
+
+def assertReadmeApiVersionUpToDate = {
+	assertReadmeApiVersionAligned()
+	assertCurrentApiDocsVersionArchived()
 }
 
 def forceApiDocsPublication = {
@@ -1006,13 +1085,32 @@ tasks.register('refreshIntegrationNotes') {
 	}
 }
 
+tasks.register('assertReadmeApiVersion') {
+	description = 'Verifies README API version status matches project.version.'
+	group = 'verification'
+
+	doLast {
+		assertApiDocsVersionAligned()
+		assertReadmeApiVersionUpToDate()
+	}
+}
+
+tasks.named('check') {
+	dependsOn 'assertReadmeApiVersion'
+}
+
 tasks.register('archiveIntegrationNote') {
 	description = 'Archives the current updates/latest.adoc into a versioned Integration Note file.'
 	group = 'documentation'
 
 	doLast {
 		assertIntegrationNoteVersionAligned()
+		def version = integrationNoteVersion()
+		updateReadmeApiVersion(version)
+		assertReadmeApiVersionAligned()
+
 		if (apiDocsVersionLocked()) {
+			assertReadmeApiVersionUpToDate()
 			logApiDocsPublicationSkip('archiveIntegrationNote')
 			return
 		}
@@ -1027,7 +1125,6 @@ tasks.register('archiveIntegrationNote') {
 			throw new GradleException('Integration Note latest file is blank.')
 		}
 
-		def version = integrationNoteVersion()
 		def safeVersion = integrationNoteSafeName(version)
 		def timestamp = integrationNoteTimestamp()
 		def humanTime = integrationNoteHumanTime(timestamp)
@@ -1042,9 +1139,7 @@ tasks.register('archiveIntegrationNote') {
 		if (!latestIsEmpty) {
 			def archivedByAnyVersion = findArchivedIntegrationNoteByHash(sourceHash)
 			if (archivedByAnyVersion != null) {
-				logger.lifecycle("Integration Note already archived: ${archivedByAnyVersion}")
-				refreshIntegrationArchiveIndex()
-				return
+				logger.lifecycle("Integration Note content was already archived elsewhere: ${archivedByAnyVersion}. Archiving it for current project.version=${version}.")
 			}
 		}
 
@@ -1057,6 +1152,7 @@ tasks.register('archiveIntegrationNote') {
 		if (alreadyArchived != null) {
 			logger.lifecycle("Integration Note already archived: ${alreadyArchived}")
 			refreshIntegrationArchiveIndex()
+			assertReadmeApiVersionUpToDate()
 			return
 		}
 
@@ -1099,6 +1195,7 @@ ${latestContent}
 
 		noteFile.setText(archivedContent, 'UTF-8')
 		refreshIntegrationArchiveIndex()
+		assertReadmeApiVersionUpToDate()
 		logger.lifecycle("Integration Note archived: ${noteFile}")
 	}
 }

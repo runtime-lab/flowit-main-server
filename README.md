@@ -1,5 +1,7 @@
 # Flowit Main Server
 
+API Version: 0.2.8-volt · up-to-date
+
 [English](README.en.md)
 
 ## 기술 스택

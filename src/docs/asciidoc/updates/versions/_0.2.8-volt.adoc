@@ -1,0 +1,24 @@
+[[integration-notes-0-2-8-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.8 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-02 22:22 KST
+|Changed
+|GET /v1/users/me/workspaces, PATCH /v1/users/me
+|<<integration-note-0-2-8-volt-2026-06-02-2222-users-me-workspaces-user-update,현재 사용자 워크스페이스 목록 및 수정 API 반영>>
+
+|===
+
+include::../notes/0.2.8-volt/2026-06-02-2222-users-me-workspaces-user-update.adoc[]
+
+++++
+</div>
+</details>
+++++

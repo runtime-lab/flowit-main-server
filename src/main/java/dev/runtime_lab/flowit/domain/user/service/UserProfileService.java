@@ -6,10 +6,10 @@ import dev.runtime_lab.flowit.domain.file.repository.FileMetadataRepository;
 import dev.runtime_lab.flowit.domain.file.storage.LocalProfileImageStorage;
 import dev.runtime_lab.flowit.domain.file.storage.ProfileImageFileContent;
 import dev.runtime_lab.flowit.domain.file.storage.StoredProfileImageFile;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateRequest;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateRequest;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.repository.UserRepository;
@@ -36,14 +36,17 @@ public class UserProfileService {
 	private final Clock clock;
 
 	@Transactional
-	public UserNicknameUpdateResponse updateNickname(CurrentUser currentUser, UserNicknameUpdateRequest request) {
+	public UserUpdateResponse update(CurrentUser currentUser, UserUpdateRequest request) {
 		User user = userRepository.findActiveByIdForUpdate(currentUser.id())
 			.filter(foundUser -> foundUser.getStatus() == UserStatus.ACTIVE)
 			.orElseThrow(InvalidAuthenticatedUserException::new);
 
-		user.changeNickname(request.nickname(), Instant.now(clock).getEpochSecond());
+		Long updatedAt = Instant.now(clock).getEpochSecond();
+		if (request.nickname() != null) {
+			user.changeNickname(request.nickname(), updatedAt);
+		}
 
-		return UserNicknameUpdateResponse.from(user);
+		return UserUpdateResponse.from(user);
 	}
 
 	@Transactional

@@ -38,3 +38,4 @@ include::{snippets}/enum-reference/workspace-member-role.adoc[]
 
 * link:api-response.html[공통 응답 포맷]
 * link:users-me.html[현재 사용자 조회 API]
+* link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
