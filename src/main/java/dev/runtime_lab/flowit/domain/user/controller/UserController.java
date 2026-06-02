@@ -1,11 +1,12 @@
 package dev.runtime_lab.flowit.domain.user.controller;
 
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateRequest;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeResponse;
+import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserPasswordUpdateRequest;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateRequest;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.service.UserMeService;
 import dev.runtime_lab.flowit.domain.user.service.UserPasswordUpdateService;
 import dev.runtime_lab.flowit.domain.user.service.UserProfileService;
@@ -14,6 +15,7 @@ import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.security.jwt.RefreshTokenCookieService;
 import dev.runtime_lab.flowit.global.web.response.ApiEmptyData;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -43,12 +45,17 @@ public class UserController {
 		return userMeService.getMe(currentUser);
 	}
 
-	@PatchMapping("/me/nickname")
-	public UserNicknameUpdateResponse updateNickname(
+	@GetMapping("/me/workspaces")
+	public List<UserMeWorkspaceResponse> meWorkspaces(@AuthenticatedUser CurrentUser currentUser) {
+		return userMeService.getMeWorkspaces(currentUser);
+	}
+
+	@PatchMapping("/me")
+	public UserUpdateResponse update(
 		@AuthenticatedUser CurrentUser currentUser,
-		@Valid @RequestBody UserNicknameUpdateRequest request
+		@Valid @RequestBody UserUpdateRequest request
 	) {
-		return userProfileService.updateNickname(currentUser, request);
+		return userProfileService.update(currentUser, request);
 	}
 
 	@PatchMapping("/me/password")

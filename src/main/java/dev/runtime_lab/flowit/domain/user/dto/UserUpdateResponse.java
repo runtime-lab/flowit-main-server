@@ -3,7 +3,7 @@ package dev.runtime_lab.flowit.domain.user.dto;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 
-public record UserNicknameUpdateResponse(
+public record UserUpdateResponse(
 	Long id,
 	String email,
 	String nickname,
@@ -12,12 +12,12 @@ public record UserNicknameUpdateResponse(
 	Long updatedAt
 ) {
 
-	public static UserNicknameUpdateResponse from(User user) {
+	public static UserUpdateResponse from(User user) {
 		Long profileImageFileId = user.getProfileImageFile() == null
 			? null
 			: user.getProfileImageFile().getId();
 
-		return new UserNicknameUpdateResponse(
+		return new UserUpdateResponse(
 			user.getId(),
 			user.getEmail(),
 			user.getName(),

@@ -51,6 +51,8 @@ include::{snippets}/users-me/response-fields.adoc[]
 [.related-docs]
 == 관련 문서
 
+* link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
+* link:users-me-update.html[현재 사용자 수정 API]
 * link:users-join.html[회원가입 API]
 * link:enum-reference.html[Enum Reference]
 * link:api-response.html[공통 응답 포맷]

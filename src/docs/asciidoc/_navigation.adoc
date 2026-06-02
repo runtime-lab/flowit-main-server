@@ -99,12 +99,19 @@ ifndef::nav-users-me[]
 * link:users-me.html[현재 사용자 조회 API]
 endif::nav-users-me[]
 
-ifdef::nav-users-nickname[]
-* [.is-current]#현재 사용자 닉네임 변경 API#
-endif::nav-users-nickname[]
-ifndef::nav-users-nickname[]
-* link:users-nickname.html[현재 사용자 닉네임 변경 API]
-endif::nav-users-nickname[]
+ifdef::nav-users-me-workspaces[]
+* [.is-current]#현재 사용자 워크스페이스 목록 API#
+endif::nav-users-me-workspaces[]
+ifndef::nav-users-me-workspaces[]
+* link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
+endif::nav-users-me-workspaces[]
+
+ifdef::nav-users-me-update[]
+* [.is-current]#현재 사용자 수정 API#
+endif::nav-users-me-update[]
+ifndef::nav-users-me-update[]
+* link:users-me-update.html[현재 사용자 수정 API]
+endif::nav-users-me-update[]
 
 ifdef::nav-users-password[]
 * [.is-current]#현재 사용자 비밀번호 변경 API#

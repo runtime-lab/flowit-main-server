@@ -4,11 +4,11 @@ import dev.runtime_lab.flowit.domain.file.exception.InvalidProfileImageException
 import dev.runtime_lab.flowit.domain.file.exception.ProfileImageNotFoundException;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateRequest;
-import dev.runtime_lab.flowit.domain.user.dto.UserNicknameUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserPasswordUpdateRequest;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageContentResponse;
 import dev.runtime_lab.flowit.domain.user.dto.UserProfileImageUpdateResponse;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateRequest;
+import dev.runtime_lab.flowit.domain.user.dto.UserUpdateResponse;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.service.UserMeService;
 import dev.runtime_lab.flowit.domain.user.service.UserPasswordUpdateService;
@@ -141,6 +141,48 @@ class UserControllerTest {
 	}
 
 	@Test
+	void meWorkspacesReturnsCurrentUserWorkspaces() throws Exception {
+		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
+		List<UserMeWorkspaceResponse> response = List.of(
+			new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L)
+		);
+
+		when(userMeService.getMeWorkspaces(any(CurrentUser.class))).thenReturn(response);
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/users/me/workspaces")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data.items[0].id").value(10L))
+			.andExpect(jsonPath("$.data.items[0].name").value("Flowit"))
+			.andExpect(jsonPath("$.data.items[0].description").value("Team workspace"))
+			.andExpect(jsonPath("$.data.items[0].memberCount").value(3L))
+			.andExpect(jsonPath("$.data.items[0].role").value("OWNER"))
+			.andExpect(jsonPath("$.data.items[0].joinedAt").value(2L))
+			.andExpect(jsonPath("$.data.totalCount").value(1L))
+			.andExpect(jsonPath("$.extensions").isMap());
+
+		verify(userMeService).getMeWorkspaces(currentUserCaptor.capture());
+		assertEquals(1L, currentUserCaptor.getValue().id());
+		assertEquals("user@example.com", currentUserCaptor.getValue().email());
+		assertEquals("nickname", currentUserCaptor.getValue().name());
+	}
+
+	@Test
+	void meWorkspacesReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
+		mockMvc.perform(get("/v1/users/me/workspaces")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
+			.andExpect(jsonPath("$.error.message").value("Invalid authenticated user."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
 	void meReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
 		mockMvc.perform(get("/v1/users/me")
 				.accept(MediaType.APPLICATION_JSON))
@@ -152,22 +194,22 @@ class UserControllerTest {
 	}
 
 	@Test
-	void updateNicknameUpdatesCurrentUserNickname() throws Exception {
+	void updateUpdatesCurrentUserNickname() throws Exception {
 		String requestBody = """
 			{
 			  "nickname": "new-nickname"
 			}
 			""";
 		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
-		ArgumentCaptor<UserNicknameUpdateRequest> requestCaptor = ArgumentCaptor.forClass(UserNicknameUpdateRequest.class);
+		ArgumentCaptor<UserUpdateRequest> requestCaptor = ArgumentCaptor.forClass(UserUpdateRequest.class);
 
-		when(userProfileService.updateNickname(any(CurrentUser.class), any(UserNicknameUpdateRequest.class)))
-			.thenReturn(new UserNicknameUpdateResponse(1L, "user@example.com", "new-nickname", UserStatus.ACTIVE, null, 3L));
+		when(userProfileService.update(any(CurrentUser.class), any(UserUpdateRequest.class)))
+			.thenReturn(new UserUpdateResponse(1L, "user@example.com", "new-nickname", UserStatus.ACTIVE, null, 3L));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
 		);
 
-		mockMvc.perform(patch("/v1/users/me/nickname")
+		mockMvc.perform(patch("/v1/users/me")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.content(requestBody))
@@ -180,13 +222,13 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data.updatedAt").value(3L))
 			.andExpect(jsonPath("$.extensions").isMap());
 
-		verify(userProfileService).updateNickname(currentUserCaptor.capture(), requestCaptor.capture());
+		verify(userProfileService).update(currentUserCaptor.capture(), requestCaptor.capture());
 		assertEquals(1L, currentUserCaptor.getValue().id());
 		assertEquals("new-nickname", requestCaptor.getValue().nickname());
 	}
 
 	@Test
-	void updateNicknameReturnsBadRequestWhenNicknameIsBlank() throws Exception {
+	void updateReturnsBadRequestWhenNicknameIsBlank() throws Exception {
 		String requestBody = """
 			{
 			  "nickname": ""
@@ -196,7 +238,7 @@ class UserControllerTest {
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
 		);
 
-		mockMvc.perform(patch("/v1/users/me/nickname")
+		mockMvc.perform(patch("/v1/users/me")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.content(requestBody))
@@ -207,14 +249,34 @@ class UserControllerTest {
 	}
 
 	@Test
-	void updateNicknameReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
+	void updateReturnsBadRequestWhenNoUpdateFieldExists() throws Exception {
+		String requestBody = """
+			{
+			}
+			""";
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/users/me")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("VALIDATION_400_001"))
+			.andExpect(jsonPath("$.extensions.fieldErrors").isArray());
+	}
+
+	@Test
+	void updateReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
 		String requestBody = """
 			{
 			  "nickname": "new-nickname"
 			}
 			""";
 
-		mockMvc.perform(patch("/v1/users/me/nickname")
+		mockMvc.perform(patch("/v1/users/me")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.content(requestBody))
