@@ -36,14 +36,14 @@ class LocalProfileImageStorageDirectoryResolverTest {
 
 	@Test
 	void resolveDefaultUsesWindowsLocalAppDataDirectory() {
-		Path resolved = LocalProfileImageStorageDirectoryResolver.resolveDefault(
+		String resolved = LocalProfileImageStorageDirectoryResolver.resolveDefaultPathString(
 			"Windows 11",
 			"C:\\Users\\min",
 			Map.of("LOCALAPPDATA", "C:\\Users\\min\\AppData\\Local")
 		);
 
 		assertEquals(
-			Path.of("C:\\Users\\min\\AppData\\Local\\Flowit\\main-server\\profile-images"),
+			"C:\\Users\\min\\AppData\\Local\\Flowit\\main-server\\profile-images",
 			resolved
 		);
 	}

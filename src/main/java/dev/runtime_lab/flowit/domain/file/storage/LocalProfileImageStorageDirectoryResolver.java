@@ -28,28 +28,38 @@ public final class LocalProfileImageStorageDirectoryResolver {
 	}
 
 	static Path resolveDefault(String osName, String userHome, Map<String, String> environment) {
+		return Path.of(resolveDefaultPathString(osName, userHome, environment));
+	}
+
+	static String resolveDefaultPathString(String osName, String userHome, Map<String, String> environment) {
 		String normalizedOsName = osName == null ? "" : osName.toLowerCase(Locale.ROOT);
-		Path homeDirectory = Path.of(requiredUserHome(userHome));
+		String homeDirectory = requiredUserHome(userHome);
 
 		if (normalizedOsName.contains("win")) {
-			return windowsBaseDirectory(homeDirectory, environment)
-				.resolve(APP_DIRECTORY_WINDOWS_AND_MAC)
-				.resolve(SERVER_DIRECTORY)
-				.resolve(PROFILE_IMAGE_DIRECTORY);
+			return windowsPath(
+				windowsBaseDirectory(homeDirectory, environment),
+				APP_DIRECTORY_WINDOWS_AND_MAC,
+				SERVER_DIRECTORY,
+				PROFILE_IMAGE_DIRECTORY
+			);
 		}
+
+		Path homePath = Path.of(homeDirectory);
 		if (normalizedOsName.contains("mac") || normalizedOsName.contains("darwin")) {
-			return homeDirectory
+			return homePath
 				.resolve("Library")
 				.resolve("Application Support")
 				.resolve(APP_DIRECTORY_WINDOWS_AND_MAC)
 				.resolve(SERVER_DIRECTORY)
-				.resolve(PROFILE_IMAGE_DIRECTORY);
+				.resolve(PROFILE_IMAGE_DIRECTORY)
+				.toString();
 		}
 
-		return unixDataHome(homeDirectory, environment)
+		return unixDataHome(homePath, environment)
 			.resolve(APP_DIRECTORY_UNIX)
 			.resolve(SERVER_DIRECTORY)
-			.resolve(PROFILE_IMAGE_DIRECTORY);
+			.resolve(PROFILE_IMAGE_DIRECTORY)
+			.toString();
 	}
 
 	public static boolean isDedicatedProfileImageDirectory(Path directory) {
@@ -66,12 +76,12 @@ public final class LocalProfileImageStorageDirectoryResolver {
 			&& isFlowitApplicationDirectory(applicationDirectory.getFileName().toString());
 	}
 
-	private static Path windowsBaseDirectory(Path homeDirectory, Map<String, String> environment) {
+	private static String windowsBaseDirectory(String homeDirectory, Map<String, String> environment) {
 		String localAppData = environment.get("LOCALAPPDATA");
 		if (StringUtils.hasText(localAppData)) {
-			return Path.of(localAppData.trim());
+			return localAppData.trim();
 		}
-		return homeDirectory.resolve("AppData").resolve("Local");
+		return windowsPath(homeDirectory, "AppData", "Local");
 	}
 
 	private static Path unixDataHome(Path homeDirectory, Map<String, String> environment) {
@@ -85,6 +95,22 @@ public final class LocalProfileImageStorageDirectoryResolver {
 	private static boolean isFlowitApplicationDirectory(String directoryName) {
 		return APP_DIRECTORY_WINDOWS_AND_MAC.equals(directoryName)
 			|| APP_DIRECTORY_UNIX.equals(directoryName);
+	}
+
+	private static String windowsPath(String baseDirectory, String... pathSegments) {
+		String resolvedPath = trimTrailingWindowsSeparator(baseDirectory);
+		for (String pathSegment : pathSegments) {
+			resolvedPath += "\\" + pathSegment;
+		}
+		return resolvedPath;
+	}
+
+	private static String trimTrailingWindowsSeparator(String value) {
+		String trimmed = value.trim();
+		while (trimmed.length() > 3 && (trimmed.endsWith("\\") || trimmed.endsWith("/"))) {
+			trimmed = trimmed.substring(0, trimmed.length() - 1);
+		}
+		return trimmed;
 	}
 
 	private static String requiredUserHome(String userHome) {

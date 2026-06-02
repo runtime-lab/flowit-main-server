@@ -22,7 +22,7 @@ Flowit API 버전은 숫자 버전과 stage 키워드를 함께 사용합니다.
 [cols="1,4",role="endpoint-summary"]
 |===
 |형식 |`major.minor.patch-stage`
-|예시 |`0.1.2-chamber`, `0.2.0-volt`, `1.0.0-neon`
+|예시 |`0.1.2-chamber`, `0.2.0-volt`, `0.3.0-titan`, `0.4.0-basilisk`, `1.0.0-neon`
 |숫자 버전 |변경 범위와 호환성 기준을 표현합니다.
 |stage 키워드 |서버 애플리케이션의 개발/운영 국면과 클라이언트 통합 리스크를 표현합니다.
 |===
@@ -40,6 +40,14 @@ Flowit API 버전은 숫자 버전과 stage 키워드를 함께 사용합니다.
 |Volt
 |`0.2.x-volt`
 |개발 활동 지원 체계가 성립한 뒤의 고속 확장 구간입니다. API 변화가 여전히 빠르지만 Integration Notes, Response Field Stability, Enum Reference, Error Code 문서로 변경 추적을 강화합니다.
+
+|Titan
+|`0.3.x-titan`
+|클라이언트를 위한 Interactive API의 안정화가 끝나고 서버 내부 확장 단계입니다.
+
+|Basilisk
+|`0.4.x-basilisk`
+|클라우드 기동을 위한 준비가 시작됩니다. 개발 활동 지원이 일부 중단되며 보안 조치가 우선 적용됩니다.
 
 |Neon
 |`1.0.0-neon` 이후
