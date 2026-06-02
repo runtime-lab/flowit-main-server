@@ -6,7 +6,10 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
+import dev.runtime_lab.flowit.domain.user.entity.QUser;
 import dev.runtime_lab.flowit.domain.user.entity.User;
+import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMemberResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.QWorkspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.QWorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
@@ -90,6 +93,65 @@ class WorkspaceMemberRepositoryTest {
 		verify(query).where(any(Predicate.class), any(Predicate.class), any(Predicate.class));
 		verify(query).setLockMode(LockModeType.PESSIMISTIC_WRITE);
 		verify(query).fetchOne();
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	void findActiveByWorkspaceIdAndUserIdReturnsActiveMembership() {
+		JPAQuery<WorkspaceMember> query = mock(JPAQuery.class);
+		User user = activeUser();
+		Workspace workspace = workspace(user);
+		WorkspaceMember workspaceMember = WorkspaceMember.builder()
+			.id(100L)
+			.workspace(workspace)
+			.user(user)
+			.role(WorkspaceMemberRole.ADMIN)
+			.joinedAt(1L)
+			.createdAt(1L)
+			.updatedAt(1L)
+			.build();
+
+		when(queryFactory.selectFrom(QWorkspaceMember.workspaceMember)).thenReturn(query);
+		when(query.where(any(Predicate.class), any(Predicate.class), any(Predicate.class))).thenReturn(query);
+		when(query.fetchOne()).thenReturn(workspaceMember);
+
+		var found = repository.findActiveByWorkspaceIdAndUserId(10L, 1L);
+
+		assertTrue(found.isPresent());
+		assertEquals(workspaceMember, found.get());
+		verify(queryFactory).selectFrom(QWorkspaceMember.workspaceMember);
+		verify(query).where(any(Predicate.class), any(Predicate.class), any(Predicate.class));
+		verify(query).fetchOne();
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	void findActiveMembersByWorkspaceIdReturnsSortedProjectedMembers() {
+		JPAQuery<WorkspaceMemberResponse> query = mock(JPAQuery.class);
+		List<WorkspaceMemberResponse> responses = List.of(
+			new WorkspaceMemberResponse(100L, "Owner", UserStatus.ACTIVE, WorkspaceMemberRole.OWNER),
+			new WorkspaceMemberResponse(101L, "Admin", UserStatus.ACTIVE, WorkspaceMemberRole.ADMIN),
+			new WorkspaceMemberResponse(102L, "Member", UserStatus.ACTIVE, WorkspaceMemberRole.MEMBER)
+		);
+
+		when(queryFactory.select(org.mockito.ArgumentMatchers.<ConstructorExpression<WorkspaceMemberResponse>>any()))
+			.thenReturn(query);
+		when(query.from(QWorkspaceMember.workspaceMember)).thenReturn(query);
+		when(query.join(QWorkspaceMember.workspaceMember.user, QUser.user)).thenReturn(query);
+		when(query.where(any(Predicate.class), any(Predicate.class), any(Predicate.class))).thenReturn(query);
+		when(query.orderBy(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any()))
+			.thenReturn(query);
+		when(query.fetch()).thenReturn(responses);
+
+		List<WorkspaceMemberResponse> found = repository.findActiveMembersByWorkspaceId(10L);
+
+		assertEquals(responses, found);
+		verify(queryFactory).select(org.mockito.ArgumentMatchers.<ConstructorExpression<WorkspaceMemberResponse>>any());
+		verify(query).from(QWorkspaceMember.workspaceMember);
+		verify(query).join(QWorkspaceMember.workspaceMember.user, QUser.user);
+		verify(query).where(any(Predicate.class), any(Predicate.class), any(Predicate.class));
+		verify(query).orderBy(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
+		verify(query).fetch();
 	}
 
 	@Test

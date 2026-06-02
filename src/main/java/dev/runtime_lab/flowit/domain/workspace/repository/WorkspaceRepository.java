@@ -28,6 +28,19 @@ public class WorkspaceRepository extends CustomJpaRepo<Workspace, Long> {
 			.fetchFirst() != null;
 	}
 
+	public Optional<Workspace> findActiveById(Long id) {
+		QWorkspace workspace = QWorkspace.workspace;
+
+		return Optional.ofNullable(
+			queryFactory.selectFrom(workspace)
+				.where(
+					workspace.id.eq(id),
+					workspace.deletedAt.isNull()
+				)
+				.fetchOne()
+		);
+	}
+
 	public Optional<Workspace> findActiveByIdForUpdate(Long id) {
 		QWorkspace workspace = QWorkspace.workspace;
 

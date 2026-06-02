@@ -3,6 +3,8 @@ package dev.runtime_lab.flowit.domain.workspace.service;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.repository.UserRepository;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMemberResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMembersResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -28,6 +31,20 @@ public class WorkspaceMemberService {
 	private final WorkspaceRepository workspaceRepository;
 	private final WorkspaceMemberRepository workspaceMemberRepository;
 	private final Clock clock;
+
+	@Transactional(readOnly = true)
+	public WorkspaceMembersResponse members(CurrentUser currentUser, Long workspaceId) {
+		User requester = findActiveCurrentUser(currentUser);
+		Workspace workspace = workspaceRepository.findActiveById(workspaceId)
+			.orElseThrow(WorkspaceNotFoundException::new);
+
+		workspaceMemberRepository.findActiveByWorkspaceIdAndUserId(workspace.getId(), requester.getId())
+			.orElseThrow(() -> new WorkspaceMemberAccessDeniedException("Workspace membership is required."));
+
+		List<WorkspaceMemberResponse> members = workspaceMemberRepository.findActiveMembersByWorkspaceId(workspace.getId());
+
+		return new WorkspaceMembersResponse(workspace.getInviteCode(), members);
+	}
 
 	@Transactional
 	public void remove(CurrentUser currentUser, Long workspaceId, Long userId) {

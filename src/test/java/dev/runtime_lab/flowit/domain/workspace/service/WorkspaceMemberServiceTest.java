@@ -3,6 +3,8 @@ package dev.runtime_lab.flowit.domain.workspace.service;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
 import dev.runtime_lab.flowit.domain.user.repository.UserRepository;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMemberResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMembersResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
@@ -16,6 +18,7 @@ import dev.runtime_lab.flowit.global.security.authentication.InvalidAuthenticate
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +42,99 @@ class WorkspaceMemberServiceTest {
 		workspaceMemberRepository,
 		clock
 	);
+
+	@Test
+	void membersReturnsInviteCodeAndWorkspaceMembersWhenRequesterIsMember() {
+		CurrentUser currentUser = new CurrentUser(1L, "member@example.com", "member");
+		User requester = activeUser(1L);
+		Workspace workspace = workspace(requester);
+		WorkspaceMember requesterMembership = workspaceMember(100L, workspace, requester, WorkspaceMemberRole.MEMBER);
+		List<WorkspaceMemberResponse> members = List.of(
+			new WorkspaceMemberResponse(
+				200L,
+				"Owner",
+				UserStatus.ACTIVE,
+				WorkspaceMemberRole.OWNER
+			),
+			new WorkspaceMemberResponse(
+				201L,
+				"Member",
+				UserStatus.ACTIVE,
+				WorkspaceMemberRole.MEMBER
+			)
+		);
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(requester));
+		when(workspaceRepository.findActiveById(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserId(10L, 1L))
+			.thenReturn(Optional.of(requesterMembership));
+		when(workspaceMemberRepository.findActiveMembersByWorkspaceId(10L)).thenReturn(members);
+
+		WorkspaceMembersResponse response = workspaceMemberService.members(currentUser, 10L);
+
+		assertEquals("A1B2-C3D4-E5F6", response.inviteCode());
+		assertEquals(members, response.members());
+	}
+
+	@Test
+	void membersRejectsMissingWorkspace() {
+		CurrentUser currentUser = new CurrentUser(1L, "member@example.com", "member");
+		User requester = activeUser(1L);
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(requester));
+		when(workspaceRepository.findActiveById(10L)).thenReturn(Optional.empty());
+
+		assertThrows(WorkspaceNotFoundException.class,
+			() -> workspaceMemberService.members(currentUser, 10L));
+		verify(workspaceMemberRepository, never()).findActiveByWorkspaceIdAndUserId(10L, 1L);
+	}
+
+	@Test
+	void membersRejectsRequesterOutsideWorkspace() {
+		CurrentUser currentUser = new CurrentUser(1L, "member@example.com", "member");
+		User requester = activeUser(1L);
+		Workspace workspace = workspace(activeUser(2L));
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(requester));
+		when(workspaceRepository.findActiveById(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserId(10L, 1L))
+			.thenReturn(Optional.empty());
+
+		assertThrows(WorkspaceMemberAccessDeniedException.class,
+			() -> workspaceMemberService.members(currentUser, 10L));
+		verify(workspaceMemberRepository, never()).findActiveMembersByWorkspaceId(10L);
+	}
+
+	@Test
+	void membersRejectsMissingUser() {
+		CurrentUser currentUser = new CurrentUser(1L, "member@example.com", "member");
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.empty());
+
+		assertThrows(InvalidAuthenticatedUserException.class,
+			() -> workspaceMemberService.members(currentUser, 10L));
+		verify(workspaceRepository, never()).findActiveById(10L);
+	}
+
+	@Test
+	void membersRejectsInactiveUser() {
+		CurrentUser currentUser = new CurrentUser(1L, "member@example.com", "member");
+		User user = User.builder()
+			.id(1L)
+			.email("member@example.com")
+			.passwordHash("hash")
+			.name("member")
+			.status(UserStatus.LOCKED)
+			.createdAt(1L)
+			.updatedAt(1L)
+			.build();
+
+		when(userRepository.findActiveById(1L)).thenReturn(Optional.of(user));
+
+		assertThrows(InvalidAuthenticatedUserException.class,
+			() -> workspaceMemberService.members(currentUser, 10L));
+		verify(workspaceRepository, never()).findActiveById(10L);
+	}
 
 	@Test
 	void removeAllowsOwnerToRemoveAdmin() {

@@ -1,5 +1,9 @@
 package dev.runtime_lab.flowit.domain.workspace.controller;
 
+import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMemberResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMembersResponse;
+import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberNotFoundException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
@@ -28,7 +32,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +59,96 @@ class WorkspaceMemberControllerTest {
 	@AfterEach
 	void tearDown() {
 		SecurityContextHolder.clearContext();
+	}
+
+	@Test
+	void membersReturnsWorkspaceMembers() throws Exception {
+		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
+		ArgumentCaptor<Long> workspaceIdCaptor = ArgumentCaptor.forClass(Long.class);
+		WorkspaceMembersResponse response = new WorkspaceMembersResponse(
+			"A1B2-C3D4-E5F6",
+			List.of(
+				new WorkspaceMemberResponse(
+					100L,
+					"Owner",
+					UserStatus.ACTIVE,
+					WorkspaceMemberRole.OWNER
+				)
+			)
+		);
+
+		when(workspaceMemberService.members(any(CurrentUser.class), eq(10L))).thenReturn(response);
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}/members", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data.inviteCode").value("A1B2-C3D4-E5F6"))
+			.andExpect(jsonPath("$.data.members[0].memberId").value(100L))
+			.andExpect(jsonPath("$.data.members[0].name").value("Owner"))
+			.andExpect(jsonPath("$.data.members[0].status").value("ACTIVE"))
+			.andExpect(jsonPath("$.data.members[0].role").value("OWNER"))
+			.andExpect(jsonPath("$.data.members[0].userId").doesNotExist())
+			.andExpect(jsonPath("$.data.members[0].email").doesNotExist())
+			.andExpect(jsonPath("$.data.members[0].joinedAt").doesNotExist())
+			.andExpect(jsonPath("$.extensions").isMap());
+
+		verify(workspaceMemberService).members(
+			currentUserCaptor.capture(),
+			workspaceIdCaptor.capture()
+		);
+		assertEquals(1L, currentUserCaptor.getValue().id());
+		assertEquals("user@example.com", currentUserCaptor.getValue().email());
+		assertEquals("nickname", currentUserCaptor.getValue().name());
+		assertEquals(10L, workspaceIdCaptor.getValue());
+	}
+
+	@Test
+	void membersReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}/members", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
+			.andExpect(jsonPath("$.error.message").value("Invalid authenticated user."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void membersReturnsForbiddenWhenRequesterIsNotWorkspaceMember() throws Exception {
+		when(workspaceMemberService.members(any(CurrentUser.class), eq(10L)))
+			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace membership is required."));
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}/members", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isForbidden())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
+			.andExpect(jsonPath("$.error.message").value("Workspace membership is required."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void membersReturnsNotFoundWhenWorkspaceIsMissing() throws Exception {
+		when(workspaceMemberService.members(any(CurrentUser.class), eq(10L)))
+			.thenThrow(new WorkspaceNotFoundException());
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}/members", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
+			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
+			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
 	@Test

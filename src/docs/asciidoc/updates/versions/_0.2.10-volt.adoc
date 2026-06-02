@@ -1,0 +1,24 @@
+[[integration-notes-0-2-10-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.10 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-03 01:57 KST
+|Added
+|`GET /v1/workspaces/{workspaceId}/members`
+|<<integration-note-0-2-10-volt-2026-06-03-0157-get-v1-workspaces-workspaceid-members-api,GET /v1/workspaces/{workspaceId}/members 워크스페이스 멤버 목록 조회 API가 추가되었습니다.>>
+
+|===
+
+include::../notes/0.2.10-volt/2026-06-03-0157-get-v1-workspaces-workspaceid-members-api.adoc[]
+
+++++
+</div>
+</details>
+++++

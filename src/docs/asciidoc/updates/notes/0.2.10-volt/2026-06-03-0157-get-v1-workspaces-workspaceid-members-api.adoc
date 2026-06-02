@@ -1,0 +1,30 @@
+// integration-note-source-sha256: f264193dfcb46ba1be2c426ed920ec1e6535c0e9f8d67e79dbe63c7d3e27acb1
+// integration-note-version: 0.2.10-volt
+// integration-note-time: 2026-06-03-0157
+// integration-note-time-human: 2026-06-03 01:57 KST
+// integration-note-impact: Added
+// integration-note-target: `GET /v1/workspaces/{workspaceId}/members`
+// integration-note-summary: GET /v1/workspaces/{workspaceId}/members 워크스페이스 멤버 목록 조회 API가 추가되었습니다.
+// integration-note-anchor: integration-note-0-2-10-volt-2026-06-03-0157-get-v1-workspaces-workspaceid-members-api
+
+[#integration-note-0-2-10-volt-2026-06-03-0157-get-v1-workspaces-workspaceid-members-api]
+=== GET /v1/workspaces/{workspaceId}/members 워크스페이스 멤버 목록 조회 API가 추가되었습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.10-volt`
+|Archived At |2026-06-03 01:57 KST
+|Impact |Added
+|Target |`GET /v1/workspaces/{workspaceId}/members`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: `GET /v1/workspaces/{workspaceId}/members` 워크스페이스 멤버 목록 조회 API가 추가되었습니다.
+Additional:: 멤버 목록 응답은 워크스페이스 초대 코드와 활성 멤버 목록을 함께 제공합니다.
+--

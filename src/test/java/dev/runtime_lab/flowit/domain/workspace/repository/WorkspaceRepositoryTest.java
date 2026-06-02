@@ -59,6 +59,31 @@ class WorkspaceRepositoryTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
+	void findActiveByIdReturnsActiveWorkspace() {
+		JPAQuery<Workspace> query = mock(JPAQuery.class);
+		Workspace workspace = Workspace.builder()
+			.id(10L)
+			.name("Flowit")
+			.inviteCode("A1B2-C3D4-E5F6")
+			.createdAt(1L)
+			.updatedAt(1L)
+			.build();
+
+		when(queryFactory.selectFrom(QWorkspace.workspace)).thenReturn(query);
+		when(query.where(any(Predicate.class), any(Predicate.class))).thenReturn(query);
+		when(query.fetchOne()).thenReturn(workspace);
+
+		Optional<Workspace> found = repository.findActiveById(10L);
+
+		assertTrue(found.isPresent());
+		assertTrue(found.get() == workspace);
+		verify(queryFactory).selectFrom(QWorkspace.workspace);
+		verify(query).where(any(Predicate.class), any(Predicate.class));
+		verify(query).fetchOne();
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
 	void findActiveByIdForUpdateReturnsWorkspaceWithPessimisticWriteLock() {
 		JPAQuery<Workspace> query = mock(JPAQuery.class);
 		Workspace workspace = Workspace.builder()
