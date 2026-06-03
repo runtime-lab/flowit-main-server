@@ -101,6 +101,7 @@ public class WorkspaceMemberRepository extends CustomJpaRepo<WorkspaceMember, Lo
 				WorkspaceMemberResponse.class,
 				workspaceMember.id,
 				user.name,
+				user.email,
 				user.status,
 				workspaceMember.role
 			))

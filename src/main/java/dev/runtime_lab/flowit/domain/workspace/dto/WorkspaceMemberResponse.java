@@ -6,6 +6,7 @@ import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 public record WorkspaceMemberResponse(
 	Long memberId,
 	String name,
+	String email,
 	UserStatus status,
 	WorkspaceMemberRole role
 ) {

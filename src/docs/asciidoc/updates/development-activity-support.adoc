@@ -7,7 +7,4 @@ Development Activity Support
 Version Stage:: {api-version-stage} (pass:[<a href="version-policy.html">Version Policy</a>])
 API Status:: {api-version-stage-status}
 
-Docs:: API 문서가 에러를 포함하지 않는 현상을 수정했습니다.
-Docs:: `5xx` 에러 의 API 에러 계약을 명시적으로 정의했습니다.
-Additional:: `5xx` 계열 에러는 표준화된 `error.code`와 기본 메시지만 응답합니다.
-Maint:: 에러 핸들링 체계를 통합 중이므로 클라이언트는 사용자 표시 문구보다 `error.code` 기반 분기를 우선 적용해야 합니다.
+Docs:: API 문서가 에러를 포함하도록 개선했습니다.

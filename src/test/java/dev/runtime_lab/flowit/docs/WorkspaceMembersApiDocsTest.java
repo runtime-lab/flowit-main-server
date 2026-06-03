@@ -80,18 +80,21 @@ class WorkspaceMembersApiDocsTest {
 				new WorkspaceMemberResponse(
 					3001L,
 					"Owner",
+					"owner@example.com",
 					UserStatus.ACTIVE,
 					WorkspaceMemberRole.OWNER
 				),
 				new WorkspaceMemberResponse(
 					3002L,
 					"Admin",
+					"admin@example.com",
 					UserStatus.ACTIVE,
 					WorkspaceMemberRole.ADMIN
 				),
 				new WorkspaceMemberResponse(
 					3003L,
 					"Member",
+					"member@example.com",
 					UserStatus.ACTIVE,
 					WorkspaceMemberRole.MEMBER
 				)
@@ -127,6 +130,7 @@ class WorkspaceMembersApiDocsTest {
 					fieldWithPath("data.members").type(JsonFieldType.ARRAY).description("워크스페이스 활성 멤버 목록입니다."),
 					fieldWithPath("data.members[].memberId").type(JsonFieldType.NUMBER).description("워크스페이스 멤버 식별자입니다. 강퇴, 역할 변경 등 멤버십 대상 액션에 사용할 수 있습니다."),
 					fieldWithPath("data.members[].name").type(JsonFieldType.STRING).description("멤버 이름입니다."),
+					fieldWithPath("data.members[].email").type(JsonFieldType.STRING).description("멤버 이메일입니다."),
 					fieldWithPath("data.members[].status").type(JsonFieldType.STRING).description("멤버 사용자 상태입니다. link:enum-reference.html#user-status[UserStatus]를 참고합니다."),
 					fieldWithPath("data.members[].role").type(JsonFieldType.STRING).description("워크스페이스 멤버 역할입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")

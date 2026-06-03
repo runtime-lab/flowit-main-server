@@ -160,9 +160,9 @@ class WorkspaceMemberRepositoryTest {
 	void findActiveMembersByWorkspaceIdReturnsSortedProjectedMembers() {
 		JPAQuery<WorkspaceMemberResponse> query = mock(JPAQuery.class);
 		List<WorkspaceMemberResponse> responses = List.of(
-			new WorkspaceMemberResponse(100L, "Owner", UserStatus.ACTIVE, WorkspaceMemberRole.OWNER),
-			new WorkspaceMemberResponse(101L, "Admin", UserStatus.ACTIVE, WorkspaceMemberRole.ADMIN),
-			new WorkspaceMemberResponse(102L, "Member", UserStatus.ACTIVE, WorkspaceMemberRole.MEMBER)
+			new WorkspaceMemberResponse(100L, "Owner", "owner@example.com", UserStatus.ACTIVE, WorkspaceMemberRole.OWNER),
+			new WorkspaceMemberResponse(101L, "Admin", "admin@example.com", UserStatus.ACTIVE, WorkspaceMemberRole.ADMIN),
+			new WorkspaceMemberResponse(102L, "Member", "member@example.com", UserStatus.ACTIVE, WorkspaceMemberRole.MEMBER)
 		);
 
 		when(queryFactory.select(org.mockito.ArgumentMatchers.<ConstructorExpression<WorkspaceMemberResponse>>any()))
