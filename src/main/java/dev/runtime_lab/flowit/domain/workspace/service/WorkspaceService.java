@@ -4,11 +4,13 @@ import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
+import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceMemberRepository;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceRepository;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WorkspaceService {
 
 	private static final int MAX_INVITE_CODE_GENERATION_ATTEMPTS = 10;
+	private static final String MEMBERSHIP_REQUIRED_MESSAGE = "Workspace membership is required.";
 
 	private final CurrentUserProvider currentUserProvider;
 	private final WorkspaceRepository workspaceRepository;
@@ -55,6 +58,18 @@ public class WorkspaceService {
 			.build());
 
 		return WorkspaceCreateResponse.from(workspace);
+	}
+
+	@Transactional(readOnly = true)
+	public WorkspaceResponse get(CurrentUser currentUser, Long workspaceId) {
+		User requester = currentUserProvider.findActive(currentUser);
+		Workspace workspace = workspaceRepository.findActiveById(workspaceId)
+			.orElseThrow(WorkspaceNotFoundException::new);
+
+		workspaceMemberRepository.findActiveByWorkspaceIdAndUserId(workspace.getId(), requester.getId())
+			.orElseThrow(() -> new WorkspaceMemberAccessDeniedException(MEMBERSHIP_REQUIRED_MESSAGE));
+
+		return WorkspaceResponse.from(workspace);
 	}
 
 	@Transactional

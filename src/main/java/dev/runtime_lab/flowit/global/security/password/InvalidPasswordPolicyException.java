@@ -1,8 +1,11 @@
 package dev.runtime_lab.flowit.global.security.password;
 
-public class InvalidPasswordPolicyException extends RuntimeException {
+import dev.runtime_lab.flowit.global.web.exception.ErrorCode;
+import dev.runtime_lab.flowit.global.web.exception.FlowitException;
+
+public class InvalidPasswordPolicyException extends FlowitException {
 
 	public InvalidPasswordPolicyException() {
-		super("Password must not contain special characters");
+		super(ErrorCode.VALIDATION_400_001, "Password must not contain special characters");
 	}
 }

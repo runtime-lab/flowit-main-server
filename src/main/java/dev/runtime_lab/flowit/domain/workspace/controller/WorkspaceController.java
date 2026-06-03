@@ -2,6 +2,7 @@ package dev.runtime_lab.flowit.domain.workspace.controller;
 
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
 import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUser;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
@@ -12,6 +13,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +37,14 @@ public class WorkspaceController {
 		return ResponseEntity
 			.created(URI.create("/v1/workspaces/%d".formatted(response.id())))
 			.body(ApiCreatedData.afterCreated(response.id()));
+	}
+
+	@GetMapping("/{workspaceId}")
+	public WorkspaceResponse get(
+		@AuthenticatedUser CurrentUser currentUser,
+		@PathVariable Long workspaceId
+	) {
+		return workspaceService.get(currentUser, workspaceId);
 	}
 
 	@DeleteMapping("/{workspaceId}")

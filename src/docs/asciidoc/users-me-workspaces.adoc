@@ -48,6 +48,10 @@ include::{snippets}/users-me-workspaces/http-response.adoc[]
 
 include::{snippets}/users-me-workspaces/response-fields.adoc[]
 
+:api-error-auth-required:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
 [.related-docs]
 == 관련 문서
 

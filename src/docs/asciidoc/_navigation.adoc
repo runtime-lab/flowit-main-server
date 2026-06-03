@@ -137,6 +137,13 @@ ifndef::nav-workspaces-create[]
 * link:workspaces-create.html[워크스페이스 생성 API]
 endif::nav-workspaces-create[]
 
+ifdef::nav-workspaces-get[]
+* [.is-current]#워크스페이스 조회 API#
+endif::nav-workspaces-get[]
+ifndef::nav-workspaces-get[]
+* link:workspaces-get.html[워크스페이스 조회 API]
+endif::nav-workspaces-get[]
+
 ifdef::nav-workspaces-delete[]
 * [.is-current]#워크스페이스 삭제 API#
 endif::nav-workspaces-delete[]

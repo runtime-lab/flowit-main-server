@@ -2,7 +2,10 @@ package dev.runtime_lab.flowit.domain.workspace.controller;
 
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
+import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
+import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
 import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUserArgumentResolver;
@@ -32,6 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -137,6 +141,159 @@ class WorkspaceControllerTest {
 			.andExpect(jsonPath("$.error.code").value("VALIDATION_400_001"))
 			.andExpect(jsonPath("$.error.message").value("요청 값이 올바르지 않습니다."))
 			.andExpect(jsonPath("$.extensions.fieldErrors").isArray());
+	}
+
+	@Test
+	void createReturnsBadRequestWhenRequestBodyIsMalformed() throws Exception {
+		String requestBody = """
+			{
+			  "name": "Flowit",
+			}
+			""";
+
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(post("/v1/workspaces")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("VALIDATION_400_001"))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void createReturnsInternalServerErrorWhenInviteCodeGenerationFails() throws Exception {
+		String requestBody = """
+			{
+			  "name": "Flowit",
+			  "description": "Team workspace"
+			}
+			""";
+
+		when(workspaceService.create(any(CurrentUser.class), any(WorkspaceCreateRequest.class)))
+			.thenThrow(new WorkspaceInviteCodeGenerationException());
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(post("/v1/workspaces")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("WORKSPACE_500_001"))
+			.andExpect(jsonPath("$.error.message").value("워크스페이스 처리에 실패했습니다."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void getReturnsWorkspace() throws Exception {
+		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
+		ArgumentCaptor<Long> workspaceIdCaptor = ArgumentCaptor.forClass(Long.class);
+		WorkspaceResponse response = new WorkspaceResponse(
+			10L,
+			"Flowit",
+			"Team workspace",
+			"A1B2-C3D4-E5F6",
+			1779889000L,
+			1779889100L
+		);
+
+		when(workspaceService.get(any(CurrentUser.class), eq(10L))).thenReturn(response);
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data.id").value(10L))
+			.andExpect(jsonPath("$.data.name").value("Flowit"))
+			.andExpect(jsonPath("$.data.description").value("Team workspace"))
+			.andExpect(jsonPath("$.data.inviteCode").value("A1B2-C3D4-E5F6"))
+			.andExpect(jsonPath("$.data.createdAt").value(1779889000L))
+			.andExpect(jsonPath("$.data.updatedAt").value(1779889100L))
+			.andExpect(jsonPath("$.data.createdBy").doesNotExist())
+			.andExpect(jsonPath("$.data.deletedAt").doesNotExist())
+			.andExpect(jsonPath("$.data.members").doesNotExist())
+			.andExpect(jsonPath("$.data.memberCount").doesNotExist())
+			.andExpect(jsonPath("$.data.role").doesNotExist())
+			.andExpect(jsonPath("$.data.joinedAt").doesNotExist())
+			.andExpect(jsonPath("$.extensions").isMap());
+
+		verify(workspaceService).get(currentUserCaptor.capture(), workspaceIdCaptor.capture());
+		assertEquals(1L, currentUserCaptor.getValue().id());
+		assertEquals("user@example.com", currentUserCaptor.getValue().email());
+		assertEquals("nickname", currentUserCaptor.getValue().name());
+		assertEquals(10L, workspaceIdCaptor.getValue());
+	}
+
+	@Test
+	void getReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
+			.andExpect(jsonPath("$.error.message").value("Invalid authenticated user."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void getReturnsForbiddenWhenCurrentUserIsNotWorkspaceMember() throws Exception {
+		when(workspaceService.get(any(CurrentUser.class), eq(10L)))
+			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace membership is required."));
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isForbidden())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
+			.andExpect(jsonPath("$.error.message").value("Workspace membership is required."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void getReturnsNotFoundWhenWorkspaceIsMissing() throws Exception {
+		when(workspaceService.get(any(CurrentUser.class), eq(10L)))
+			.thenThrow(new WorkspaceNotFoundException());
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
+			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void getReturnsInternalServerErrorWhenUnexpectedFailureOccurs() throws Exception {
+		when(workspaceService.get(any(CurrentUser.class), eq(10L)))
+			.thenThrow(new IllegalStateException("database unavailable"));
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(get("/v1/workspaces/{workspaceId}", 10L)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("INTERNAL_500_001"))
+			.andExpect(jsonPath("$.error.message").value("서버 내부 오류가 발생했습니다."))
+			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
 	@Test

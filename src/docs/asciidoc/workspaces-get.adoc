@@ -1,0 +1,73 @@
+= 워크스페이스 조회 API
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-get:
+:breadcrumb-section: 워크스페이스 API
+:breadcrumb-current: 워크스페이스 조회 API
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 워크스페이스 조회
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |`GET`
+|경로 |`/v1/workspaces/{workspaceId}`
+|API 상태 |[.badge.stability.stable]#Stable#
+|목적 |특정 워크스페이스의 기본 정보를 조회합니다.
+|인증 |JWT access token이 필요합니다.
+|권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
+|응답 범위 |`WorkspaceMember` 정보는 포함하지 않고 `Workspace` 자체 정보만 반환합니다.
+|===
+
+=== HTTP 요청
+
+include::{snippets}/workspaces-get/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/workspaces-get/curl-request.adoc[]
+
+=== 경로 파라미터
+
+include::{snippets}/workspaces-get/path-parameters.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/workspaces-get/request-headers.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/workspaces-get/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/workspaces-get/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/workspaces-get/response-fields.adoc[]
+
+:api-error-auth-required:
+:api-error-workspace-member-required:
+:api-error-workspace-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-create.html[워크스페이스 생성 API]
+* link:workspaces-delete.html[워크스페이스 삭제 API]
+* link:workspaces-members.html[워크스페이스 멤버 목록 조회 API]
+* link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
+* link:api-response.html[공통 응답 포맷]
+* link:error-codes.html[에러 코드]

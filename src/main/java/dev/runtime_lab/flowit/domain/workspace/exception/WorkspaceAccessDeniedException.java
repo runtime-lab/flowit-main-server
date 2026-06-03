@@ -1,8 +1,10 @@
 package dev.runtime_lab.flowit.domain.workspace.exception;
 
-public class WorkspaceAccessDeniedException extends RuntimeException {
+import dev.runtime_lab.flowit.global.web.exception.ErrorCode;
+
+public class WorkspaceAccessDeniedException extends WorkspaceException {
 
 	public WorkspaceAccessDeniedException() {
-		super("Workspace owner permission is required.");
+		super(ErrorCode.AUTH_403_001, "Workspace owner permission is required.");
 	}
 }

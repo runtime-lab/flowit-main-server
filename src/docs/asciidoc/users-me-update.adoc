@@ -54,6 +54,11 @@ include::{snippets}/users-me-update/http-response.adoc[]
 
 include::{snippets}/users-me-update/response-fields.adoc[]
 
+:api-error-auth-required:
+:api-error-validation:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
 [.related-docs]
 == 관련 문서
 

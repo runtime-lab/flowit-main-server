@@ -1,6 +1,6 @@
 [.update-note-title]
 Integration Note
 
-Added:: `PATCH /v1/workspaces/{workspaceId}/members/{memberId}/role` 워크스페이스 멤버 역할 변경 API가 추가되었습니다.
-Additional:: 역할 변경은 `OWNER` 또는 `ADMIN`만 수행할 수 있습니다. `ADMIN`의 `OWNER` 부여와 마지막 `OWNER` 강등은 거부됩니다.
-Changed:: 멤버 강제 퇴장 API의 대상 식별자를 사용자 ID가 아닌 워크스페이스 멤버 ID(`memberId`) 기준으로 변경했습니다.
+Added:: `GET /v1/workspaces/{workspaceId}` 워크스페이스 정보 조회 API가 생성되었습니다.
+Additional:: 해당 워크스페이스에 활성 멤버가 아닌 유저의 요청은 `AUTH_403_001` 로 거부합니다.
+Additional:: 워크스페이스 정보 조회 API는 Member에 대한 정보를 포함하지 않습니다.

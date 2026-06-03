@@ -1,8 +1,10 @@
 package dev.runtime_lab.flowit.domain.workspace.exception;
 
-public class WorkspaceInviteCodeGenerationException extends RuntimeException {
+import dev.runtime_lab.flowit.global.web.exception.ErrorCode;
+
+public class WorkspaceInviteCodeGenerationException extends WorkspaceException {
 
 	public WorkspaceInviteCodeGenerationException() {
-		super("Could not generate a unique workspace invite code.");
+		super(ErrorCode.WORKSPACE_500_001, "Could not generate a unique workspace invite code.");
 	}
 }

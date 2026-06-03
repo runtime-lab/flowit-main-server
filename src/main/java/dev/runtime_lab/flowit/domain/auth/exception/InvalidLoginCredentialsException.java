@@ -1,8 +1,10 @@
 package dev.runtime_lab.flowit.domain.auth.exception;
 
-public class InvalidLoginCredentialsException extends RuntimeException {
+import dev.runtime_lab.flowit.global.web.exception.ErrorCode;
+
+public class InvalidLoginCredentialsException extends AuthException {
 
 	public InvalidLoginCredentialsException() {
-		super("Invalid email or password");
+		super(ErrorCode.AUTH_401_001, "Invalid email or password");
 	}
 }

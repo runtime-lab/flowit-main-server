@@ -58,6 +58,13 @@ include::{snippets}/workspaces-member-remove/response-headers.adoc[]
 
 include::{snippets}/workspaces-member-remove/response-fields.adoc[]
 
+:api-error-auth-required:
+:api-error-workspace-removal-denied:
+:api-error-workspace-not-found:
+:api-error-workspace-member-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
 [.related-docs]
 == 관련 문서
 
