@@ -1,0 +1,31 @@
+// integration-note-source-sha256: c85d89a8efde4f31ab9910581e5f8f4fa17389ffd3e1a3d8fc092ef62241a3f4
+// integration-note-version: 0.2.12-volt
+// integration-note-time: 2026-06-03-2051
+// integration-note-time-human: 2026-06-03 20:51 KST
+// integration-note-impact: Added
+// integration-note-target: `GET /v1/workspaces/{workspaceId}`
+// integration-note-summary: GET /v1/workspaces/{workspaceId} 워크스페이스 정보 조회 API가 생성되었습니다.
+// integration-note-anchor: integration-note-0-2-12-volt-2026-06-03-2051-get-v1-workspaces-workspaceid-api
+
+[#integration-note-0-2-12-volt-2026-06-03-2051-get-v1-workspaces-workspaceid-api]
+=== GET /v1/workspaces/{workspaceId} 워크스페이스 정보 조회 API가 생성되었습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.12-volt`
+|Archived At |2026-06-03 20:51 KST
+|Impact |Added
+|Target |`GET /v1/workspaces/{workspaceId}`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: `GET /v1/workspaces/{workspaceId}` 워크스페이스 정보 조회 API가 생성되었습니다.
+Additional:: 해당 워크스페이스에 활성 멤버가 아닌 유저의 요청은 `AUTH_403_001` 로 거부합니다.
+Additional:: 워크스페이스 정보 조회 API는 Member에 대한 정보를 포함하지 않습니다.
+--

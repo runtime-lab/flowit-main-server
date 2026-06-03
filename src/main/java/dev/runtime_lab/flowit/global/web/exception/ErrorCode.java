@@ -37,6 +37,11 @@ public enum ErrorCode {
 		"워크스페이스 멤버를 찾을 수 없습니다.",
 		"요청한 사용자가 해당 워크스페이스의 활성 멤버가 아니거나 이미 제거되었습니다."
 	),
+	WORKSPACE_500_001(
+		HttpStatus.INTERNAL_SERVER_ERROR,
+		"워크스페이스 처리에 실패했습니다.",
+		"워크스페이스 초대 코드 생성 등 워크스페이스 내부 처리 중 오류가 발생했습니다."
+	),
 	FILE_400_001(
 		HttpStatus.BAD_REQUEST,
 		"프로필 이미지 파일이 올바르지 않습니다.",
@@ -51,6 +56,11 @@ public enum ErrorCode {
 		HttpStatus.INTERNAL_SERVER_ERROR,
 		"프로필 이미지 파일 처리에 실패했습니다.",
 		"프로필 이미지 로컬 파일 저장, 조회 또는 정리 중 오류가 발생했습니다."
+	),
+	INTERNAL_500_001(
+		HttpStatus.INTERNAL_SERVER_ERROR,
+		"서버 내부 오류가 발생했습니다.",
+		"예상하지 못한 서버 내부 오류가 발생했습니다."
 	);
 
 	private final HttpStatus httpStatus;

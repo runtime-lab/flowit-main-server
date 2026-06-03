@@ -70,6 +70,18 @@ include::{snippets}/users-profile-image/http-response.adoc[]
 
 include::{snippets}/users-profile-image/response-fields.adoc[]
 
+:api-error-title: 프로필 이미지 교체 에러 응답
+:api-error-auth-required:
+:api-error-profile-image-invalid:
+:api-error-profile-image-storage:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+:!api-error-title:
+:!api-error-auth-required:
+:!api-error-profile-image-invalid:
+:!api-error-profile-image-storage:
+:!api-error-internal-server:
+
 == 프로필 이미지 조회
 
 [cols="1,4",role="endpoint-summary"]
@@ -103,6 +115,18 @@ include::{snippets}/users-profile-image-content/http-response.adoc[]
 === 조회 응답 헤더
 
 include::{snippets}/users-profile-image-content/response-headers.adoc[]
+
+:api-error-title: 프로필 이미지 조회 에러 응답
+:api-error-auth-required:
+:api-error-profile-image-not-found:
+:api-error-profile-image-storage:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+:!api-error-title:
+:!api-error-auth-required:
+:!api-error-profile-image-not-found:
+:!api-error-profile-image-storage:
+:!api-error-internal-server:
 
 [.related-docs]
 == 관련 문서

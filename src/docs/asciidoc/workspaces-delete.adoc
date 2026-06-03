@@ -57,6 +57,12 @@ include::{snippets}/workspaces-delete/response-headers.adoc[]
 
 include::{snippets}/workspaces-delete/response-fields.adoc[]
 
+:api-error-auth-required:
+:api-error-workspace-owner-required:
+:api-error-workspace-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
 [.related-docs]
 == 관련 문서
 

@@ -69,6 +69,11 @@ include::{snippets}/users-join-duplicate-email/http-response.adoc[]
 
 include::{snippets}/users-join-duplicate-email/response-fields.adoc[]
 
+:api-error-validation:
+:api-error-duplicate-email:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
 [.related-docs]
 == 관련 문서
 

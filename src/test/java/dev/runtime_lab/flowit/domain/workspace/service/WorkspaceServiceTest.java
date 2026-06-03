@@ -4,11 +4,13 @@ import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
+import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceMemberRepository;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceRepository;
@@ -153,6 +155,84 @@ class WorkspaceServiceTest {
 		assertThrows(WorkspaceInviteCodeGenerationException.class, () -> workspaceService.create(currentUser, request));
 		verify(workspaceRepository, never()).save(org.mockito.ArgumentMatchers.any(Workspace.class));
 		verify(workspaceMemberRepository, never()).save(org.mockito.ArgumentMatchers.any(WorkspaceMember.class));
+	}
+
+	@Test
+	void getReturnsWorkspaceWhenCurrentUserIsMember() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User user = activeUser();
+		Workspace workspace = Workspace.builder()
+			.id(10L)
+			.name("Flowit")
+			.description("Team workspace")
+			.inviteCode("A1B2-C3D4-E5F6")
+			.createdBy(user)
+			.createdAt(1779888000L)
+			.updatedAt(1779889000L)
+			.build();
+		WorkspaceMember membership = WorkspaceMember.builder()
+			.id(100L)
+			.workspace(workspace)
+			.user(user)
+			.role(WorkspaceMemberRole.MEMBER)
+			.joinedAt(1779888000L)
+			.createdAt(1779888000L)
+			.updatedAt(1779888000L)
+			.build();
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(user);
+		when(workspaceRepository.findActiveById(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserId(10L, 1L))
+			.thenReturn(Optional.of(membership));
+
+		WorkspaceResponse response = workspaceService.get(currentUser, 10L);
+
+		assertEquals(10L, response.id());
+		assertEquals("Flowit", response.name());
+		assertEquals("Team workspace", response.description());
+		assertEquals("A1B2-C3D4-E5F6", response.inviteCode());
+		assertEquals(1779888000L, response.createdAt());
+		assertEquals(1779889000L, response.updatedAt());
+	}
+
+	@Test
+	void getRejectsMissingUser() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+
+		when(currentUserProvider.findActive(currentUser)).thenThrow(new InvalidAuthenticatedUserException());
+
+		assertThrows(InvalidAuthenticatedUserException.class, () -> workspaceService.get(currentUser, 10L));
+		verify(workspaceRepository, never()).findActiveById(10L);
+		verify(workspaceMemberRepository, never()).findActiveByWorkspaceIdAndUserId(10L, 1L);
+	}
+
+	@Test
+	void getRejectsMissingWorkspace() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(activeUser());
+		when(workspaceRepository.findActiveById(10L)).thenReturn(Optional.empty());
+
+		assertThrows(WorkspaceNotFoundException.class, () -> workspaceService.get(currentUser, 10L));
+		verify(workspaceMemberRepository, never()).findActiveByWorkspaceIdAndUserId(10L, 1L);
+	}
+
+	@Test
+	void getRejectsNonMember() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User user = activeUser();
+		Workspace workspace = workspace();
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(user);
+		when(workspaceRepository.findActiveById(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserId(10L, 1L))
+			.thenReturn(Optional.empty());
+
+		WorkspaceMemberAccessDeniedException exception = assertThrows(
+			WorkspaceMemberAccessDeniedException.class,
+			() -> workspaceService.get(currentUser, 10L)
+		);
+		assertEquals("Workspace membership is required.", exception.getMessage());
 	}
 
 	@Test

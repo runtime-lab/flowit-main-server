@@ -131,6 +131,10 @@ a|`PUT /v1/users/me/profile-image` +
 |`POST /v1/workspaces`
 |인증된 사용자가 워크스페이스를 생성하는 요청/응답과 생성 리소스 위치를 설명합니다.
 
+|link:workspaces-get.html[워크스페이스 조회 API]
+|`GET /v1/workspaces/{workspaceId}`
+|워크스페이스 활성 멤버가 워크스페이스 자체 정보를 조회하는 요청/응답과 권한 제한을 설명합니다.
+
 |link:workspaces-delete.html[워크스페이스 삭제 API]
 |`DELETE /v1/workspaces/{workspaceId}`
 |워크스페이스 OWNER가 워크스페이스와 활성 멤버십을 소프트 삭제하는 요청/응답을 설명합니다.

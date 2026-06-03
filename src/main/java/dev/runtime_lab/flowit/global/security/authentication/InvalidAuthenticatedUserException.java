@@ -1,8 +1,11 @@
 package dev.runtime_lab.flowit.global.security.authentication;
 
-public class InvalidAuthenticatedUserException extends RuntimeException {
+import dev.runtime_lab.flowit.global.web.exception.ErrorCode;
+import dev.runtime_lab.flowit.global.web.exception.FlowitException;
+
+public class InvalidAuthenticatedUserException extends FlowitException {
 
 	public InvalidAuthenticatedUserException() {
-		super("Invalid authenticated user.");
+		super(ErrorCode.AUTH_401_001, "Invalid authenticated user.");
 	}
 }

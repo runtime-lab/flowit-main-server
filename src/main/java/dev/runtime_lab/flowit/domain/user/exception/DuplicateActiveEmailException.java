@@ -1,8 +1,10 @@
 package dev.runtime_lab.flowit.domain.user.exception;
 
-public class DuplicateActiveEmailException extends RuntimeException {
+import dev.runtime_lab.flowit.global.web.exception.ErrorCode;
+
+public class DuplicateActiveEmailException extends UserException {
 
 	public DuplicateActiveEmailException(String email) {
-		super("Active user email already exists: " + email);
+		super(ErrorCode.USER_409_001, "Active user email already exists: " + email);
 	}
 }

@@ -1,0 +1,121 @@
+ifdef::api-error-title[]
+== {api-error-title}
+endif::api-error-title[]
+ifndef::api-error-title[]
+== 에러 응답
+endif::api-error-title[]
+
+ifdef::api-error-none[]
+현재 문서화된 애플리케이션 `error.code`는 없습니다.
+endif::api-error-none[]
+ifndef::api-error-none[]
+[cols="18,22,60",options="header",role="error-code-table"]
+|===
+|HTTP status |error.code |발생 조건
+
+ifdef::api-error-validation[]
+|`400 Bad Request`
+|`VALIDATION_400_001`
+|요청 본문, multipart part, 또는 검증 대상 값이 유효하지 않습니다.
+endif::api-error-validation[]
+
+ifdef::api-error-login[]
+|`401 Unauthorized`
+|`AUTH_401_001`
+|이메일 또는 비밀번호가 올바르지 않거나, 해당 사용자가 활성 상태가 아닙니다.
+endif::api-error-login[]
+
+ifdef::api-error-refresh-token[]
+|`401 Unauthorized`
+|`AUTH_401_001`
+|refresh token cookie가 없거나, 만료되었거나, 이미 사용/폐기되어 유효하지 않습니다.
+endif::api-error-refresh-token[]
+
+ifdef::api-error-auth-required[]
+|`401 Unauthorized`
+|`AUTH_401_001`
+|JWT access token이 없거나 유효하지 않거나, 토큰의 사용자를 활성 사용자로 확인할 수 없습니다.
+endif::api-error-auth-required[]
+
+ifdef::api-error-current-password[]
+|`401 Unauthorized`
+|`AUTH_401_001`
+|현재 비밀번호가 일치하지 않습니다.
+endif::api-error-current-password[]
+
+ifdef::api-error-duplicate-email[]
+|`409 Conflict`
+|`USER_409_001`
+|활성 사용자 중 동일한 이메일이 이미 존재합니다.
+endif::api-error-duplicate-email[]
+
+ifdef::api-error-profile-image-invalid[]
+|`400 Bad Request`
+|`FILE_400_001`
+|프로필 이미지 파일이 비어 있거나, 허용 크기를 초과했거나, 지원하지 않는 이미지 형식입니다.
+endif::api-error-profile-image-invalid[]
+
+ifdef::api-error-profile-image-not-found[]
+|`404 Not Found`
+|`FILE_404_001`
+|현재 사용자에게 등록된 프로필 이미지가 없습니다.
+endif::api-error-profile-image-not-found[]
+
+ifdef::api-error-profile-image-storage[]
+|`500 Internal Server Error`
+|`FILE_500_001`
+|프로필 이미지 로컬 파일 저장소에서 저장, 조회, 정리 중 오류가 발생했습니다.
+endif::api-error-profile-image-storage[]
+
+ifdef::api-error-workspace-member-required[]
+|`403 Forbidden`
+|`AUTH_403_001`
+|요청 사용자가 해당 워크스페이스의 활성 멤버가 아닙니다.
+endif::api-error-workspace-member-required[]
+
+ifdef::api-error-workspace-owner-required[]
+|`403 Forbidden`
+|`AUTH_403_001`
+|요청 사용자가 해당 워크스페이스의 활성 `OWNER` 멤버가 아닙니다.
+endif::api-error-workspace-owner-required[]
+
+ifdef::api-error-workspace-role-update-denied[]
+|`403 Forbidden`
+|`AUTH_403_001`
+|요청 사용자의 역할로는 대상 역할 변경을 수행할 수 없거나, 워크스페이스의 마지막 `OWNER`를 제거하는 변경입니다.
+endif::api-error-workspace-role-update-denied[]
+
+ifdef::api-error-workspace-removal-denied[]
+|`403 Forbidden`
+|`AUTH_403_001`
+|요청 사용자의 역할로는 멤버를 강제 퇴장시킬 수 없거나, 자기 자신 또는 `OWNER` 멤버를 제거하려는 요청입니다.
+endif::api-error-workspace-removal-denied[]
+
+ifdef::api-error-workspace-not-found[]
+|`404 Not Found`
+|`WORKSPACE_404_001`
+|요청한 워크스페이스가 존재하지 않거나 삭제되었습니다.
+endif::api-error-workspace-not-found[]
+
+ifdef::api-error-workspace-member-not-found[]
+|`404 Not Found`
+|`WORKSPACE_MEMBER_404_001`
+|대상 워크스페이스 멤버가 존재하지 않거나 이미 제거되었습니다.
+endif::api-error-workspace-member-not-found[]
+
+ifdef::api-error-workspace-invite-code-generation[]
+|`500 Internal Server Error`
+|`WORKSPACE_500_001`
+|워크스페이스 초대 코드 생성 재시도 후에도 고유한 초대 코드를 만들지 못했습니다.
+endif::api-error-workspace-invite-code-generation[]
+
+ifdef::api-error-internal-server[]
+|`500 Internal Server Error`
+|`INTERNAL_500_001`
+|예상하지 못한 서버 내부 오류가 발생했습니다.
+endif::api-error-internal-server[]
+
+|===
+endif::api-error-none[]
+
+전체 에러 코드의 HTTP status와 기본 메시지는 link:error-codes.html[에러 코드 문서]를 참조하십시오.

@@ -62,6 +62,10 @@ include::{snippets}/docs-preview-create-task/response-headers.adoc[]
 
 include::{snippets}/docs-preview-create-task/response-fields.adoc[]
 
+:api-error-validation:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
 [.related-docs]
 == 관련 문서
 
