@@ -1,6 +1,4 @@
 [.update-note-title]
 Integration Note
 
-Added:: `GET /v1/workspaces/{workspaceId}` 워크스페이스 정보 조회 API가 생성되었습니다.
-Additional:: 해당 워크스페이스에 활성 멤버가 아닌 유저의 요청은 `AUTH_403_001` 로 거부합니다.
-Additional:: 워크스페이스 정보 조회 API는 Member에 대한 정보를 포함하지 않습니다.
+Maint:: `GET /v1/workspaces/{workspaceId}/members` 의 누락된 email 속성을 추가했습니다.

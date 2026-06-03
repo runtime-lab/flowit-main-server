@@ -1,0 +1,29 @@
+// integration-note-source-sha256: 92dad6dd9db0395462a61b58bd970dec0ae1b995b37af60f5bc5f0d0cd5f530e
+// integration-note-version: 0.2.13-volt
+// integration-note-time: 2026-06-03-2126
+// integration-note-time-human: 2026-06-03 21:26 KST
+// integration-note-impact: Maint
+// integration-note-target: `GET /v1/workspaces/{workspaceId}/members`
+// integration-note-summary: GET /v1/workspaces/{workspaceId}/members 의 누락된 email 속성을 추가했습니다.
+// integration-note-anchor: integration-note-0-2-13-volt-2026-06-03-2126-get-v1-workspaces-workspaceid-members-email
+
+[#integration-note-0-2-13-volt-2026-06-03-2126-get-v1-workspaces-workspaceid-members-email]
+=== GET /v1/workspaces/{workspaceId}/members 의 누락된 email 속성을 추가했습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.13-volt`
+|Archived At |2026-06-03 21:26 KST
+|Impact |Maint
+|Target |`GET /v1/workspaces/{workspaceId}/members`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Maint:: `GET /v1/workspaces/{workspaceId}/members` 의 누락된 email 속성을 추가했습니다.
+--

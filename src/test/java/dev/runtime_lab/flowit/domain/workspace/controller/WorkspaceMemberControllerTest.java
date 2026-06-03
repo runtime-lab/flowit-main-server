@@ -73,6 +73,7 @@ class WorkspaceMemberControllerTest {
 				new WorkspaceMemberResponse(
 					100L,
 					"Owner",
+					"owner@example.com",
 					UserStatus.ACTIVE,
 					WorkspaceMemberRole.OWNER
 				)
@@ -91,10 +92,10 @@ class WorkspaceMemberControllerTest {
 			.andExpect(jsonPath("$.data.inviteCode").value("A1B2-C3D4-E5F6"))
 			.andExpect(jsonPath("$.data.members[0].memberId").value(100L))
 			.andExpect(jsonPath("$.data.members[0].name").value("Owner"))
+			.andExpect(jsonPath("$.data.members[0].email").value("owner@example.com"))
 			.andExpect(jsonPath("$.data.members[0].status").value("ACTIVE"))
 			.andExpect(jsonPath("$.data.members[0].role").value("OWNER"))
 			.andExpect(jsonPath("$.data.members[0].userId").doesNotExist())
-			.andExpect(jsonPath("$.data.members[0].email").doesNotExist())
 			.andExpect(jsonPath("$.data.members[0].joinedAt").doesNotExist())
 			.andExpect(jsonPath("$.extensions").isMap());
 

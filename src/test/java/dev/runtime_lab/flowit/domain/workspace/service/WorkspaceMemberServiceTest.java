@@ -54,12 +54,14 @@ class WorkspaceMemberServiceTest {
 			new WorkspaceMemberResponse(
 				200L,
 				"Owner",
+				"owner@example.com",
 				UserStatus.ACTIVE,
 				WorkspaceMemberRole.OWNER
 			),
 			new WorkspaceMemberResponse(
 				201L,
 				"Member",
+				"member@example.com",
 				UserStatus.ACTIVE,
 				WorkspaceMemberRole.MEMBER
 			)
