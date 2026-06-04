@@ -31,6 +31,10 @@ public enum WorkspaceMemberRole {
 		return this == OWNER || this == ADMIN;
 	}
 
+	public boolean canManageJoinRequests() {
+		return this == OWNER || this == ADMIN;
+	}
+
 	public boolean canUpdateMemberRoleTo(WorkspaceMemberRole targetRole) {
 		if (this == OWNER) {
 			return true;

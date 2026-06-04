@@ -1,0 +1,6 @@
+services:
+  app:
+    environment:
+      SPRING_WEB_RESOURCES_STATIC_LOCATIONS: file:/app/runtime-static/,classpath:/static/
+    volumes:
+      - ./build/resources/main/static:/app/runtime-static:ro

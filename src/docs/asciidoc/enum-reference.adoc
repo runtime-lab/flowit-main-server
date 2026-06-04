@@ -33,6 +33,20 @@ include::{snippets}/enum-reference/user-status.adoc[]
 
 include::{snippets}/enum-reference/workspace-member-role.adoc[]
 
+[#workspace-join-request-status]
+== WorkspaceJoinRequestStatus
+
+워크스페이스 가입 요청의 현재 상태입니다.
+
+include::{snippets}/enum-reference/workspace-join-request-status.adoc[]
+
+[#workspace-join-request-method]
+== WorkspaceJoinRequestMethod
+
+워크스페이스 가입 요청이 생성된 수단입니다.
+
+include::{snippets}/enum-reference/workspace-join-request-method.adoc[]
+
 [.related-docs]
 == 관련 문서
 

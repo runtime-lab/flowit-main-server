@@ -42,6 +42,9 @@ function Write-Usage {
     Write-Info '  .\local.bat stop'
     Write-Info '  .\local.bat infra-start'
     Write-Info '  .\local.bat infra-stop'
+    Write-Info '  .\local.bat docs-refresh'
+    Write-Info ''
+    Write-Info 'Optional docs mount for Docker app: set FLOWIT_LOCAL_DOCS_MOUNT=true before start.'
 }
 
 function Normalize-Command {
@@ -55,6 +58,8 @@ function Normalize-Command {
         'localInfraStop' { return 'infra-stop' }
         'localStop' { return 'stop' }
         'localStatus' { return 'status' }
+        'localDocsRefresh' { return 'docs-refresh' }
+        'docsRefresh' { return 'docs-refresh' }
         'build' { return 'build-image' }
         default { return $Value }
     }
@@ -471,6 +476,9 @@ function Get-DockerComposeBaseArgs {
     if (Test-LinuxHost) {
         $args += @('-f', (Join-Path $AppHome 'compose.linux.yaml'))
     }
+    if (Test-Truthy $env:FLOWIT_LOCAL_DOCS_MOUNT) {
+        $args += @('-f', (Join-Path $AppHome 'compose.docs.yaml'))
+    }
     $args
 }
 
@@ -556,6 +564,18 @@ function Start-Local {
     Write-Info 'Logs: docker compose logs -f app'
 }
 
+function Refresh-Docs {
+    Write-Info 'Refreshing API docs without restarting the local application...'
+    Invoke-Checked -CommandLine @(
+        (Join-Path $AppHome 'gradlew.bat'),
+        'copyApiDocs',
+        '-PforceApiDocs=true'
+    )
+    Write-Info 'API docs refreshed: build/resources/main/static/docs'
+    Write-Info 'Reload http://127.0.0.1:8080/docs/index.html in the browser.'
+    Write-Info 'When the app runs in Docker, refreshed docs are visible only if it was started with FLOWIT_LOCAL_DOCS_MOUNT=true.'
+}
+
 $Command = Normalize-Command $Command
 $InvocationLabel = if ([string]::IsNullOrWhiteSpace($GradleFallbackTask)) {
     ".\local.bat $Command"
@@ -576,10 +596,15 @@ if ($Command -in @('help', '-h', '--help', '/?')) {
 }
 
 try {
-    $supportedCommands = @('start', 'build-image', 'infra-start', 'infra-stop', 'stop', 'status', 'logs')
+    $supportedCommands = @('start', 'build-image', 'infra-start', 'infra-stop', 'stop', 'status', 'logs', 'docs-refresh')
     if ($Command -notin $supportedCommands) {
         Write-Usage
         throw "ERROR: unsupported local Docker command: $Command"
+    }
+
+    if ($Command -eq 'docs-refresh') {
+        Refresh-Docs
+        exit 0
     }
 
     Assert-LocalDockerAllowed

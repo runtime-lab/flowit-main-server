@@ -21,7 +21,7 @@ include::_breadcrumb.adoc[]
 |===
 |메서드 |`GET`
 |경로 |`/v1/users/me/workspaces`
-|API 상태 |[.badge.stability.experimental]#Experimental#
+|API 상태 |[.badge.stability.stable]#Stable#
 |목적 |현재 사용자가 가입한 워크스페이스 목록을 조회합니다.
 |인증 |JWT access token이 필요합니다.
 |조회 기준 |워크스페이스 본체 전체 조회가 아니라 현재 사용자에게 연결된 활성 워크스페이스 멤버십을 기준으로 조회합니다.

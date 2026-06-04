@@ -54,4 +54,18 @@ public class WorkspaceRepository extends CustomJpaRepo<Workspace, Long> {
 				.fetchOne()
 		);
 	}
+
+	public Optional<Workspace> findActiveByInviteCodeForUpdate(String inviteCode) {
+		QWorkspace workspace = QWorkspace.workspace;
+
+		return Optional.ofNullable(
+			queryFactory.selectFrom(workspace)
+				.where(
+					workspace.inviteCode.eq(inviteCode),
+					workspace.deletedAt.isNull()
+				)
+				.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+				.fetchOne()
+		);
+	}
 }

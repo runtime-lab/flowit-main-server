@@ -5,6 +5,11 @@
 |===
 |Version |Stage |Notes |Description
 
+|<<integration-notes-0-2-14-volt,`0.2.14-volt`>>
+|Volt
+|1
+|0.2.14 volt 기록입니다.
+
 |<<integration-notes-0-2-13-volt,`0.2.13-volt`>>
 |Volt
 |1
@@ -71,6 +76,8 @@
 |0.2.1 volt 기록입니다.
 
 |===
+
+include::../versions/_0.2.14-volt.adoc[]
 
 include::../versions/_0.2.13-volt.adoc[]
 

@@ -42,6 +42,16 @@ public enum ErrorCode {
 		"워크스페이스 처리에 실패했습니다.",
 		"워크스페이스 초대 코드 생성 등 워크스페이스 내부 처리 중 오류가 발생했습니다."
 	),
+	WORKSPACE_JOIN_REQUEST_409_001(
+		HttpStatus.CONFLICT,
+		"워크스페이스 가입 요청이 현재 멤버십 상태와 충돌합니다.",
+		"요청 사용자가 이미 해당 워크스페이스의 활성 멤버입니다."
+	),
+	WORKSPACE_JOIN_REQUEST_409_002(
+		HttpStatus.CONFLICT,
+		"워크스페이스 가입 요청 상태 전이가 허용되지 않습니다.",
+		"요청한 워크스페이스 가입 요청 상태 전이가 유효하지 않습니다."
+	),
 	FILE_400_001(
 		HttpStatus.BAD_REQUEST,
 		"프로필 이미지 파일이 올바르지 않습니다.",
