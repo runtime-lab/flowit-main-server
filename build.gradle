@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.2.13-volt'
+version = '0.2.14-volt'
 
 java {
 	toolchain {
@@ -31,6 +31,7 @@ repositories {
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
 	set('querydslVersion', '5.1.0')
+	set('springStatemachineVersion', '4.0.1')
 }
 
 def apiDocsStaticDir = layout.buildDirectory.dir('resources/main/static/docs')
@@ -811,6 +812,12 @@ def buildLocalAppImage = { String sourceHash ->
 	runLoggedCommand(dockerBuildCommand(sourceHash))
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.statemachine:spring-statemachine-bom:${springStatemachineVersion}"
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -822,6 +829,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.statemachine:spring-statemachine-starter'
 	implementation "com.querydsl:querydsl-jpa:${querydslVersion}:jakarta"
 	implementation 'org.flywaydb:flyway-mysql'
 	compileOnly 'org.projectlombok:lombok'

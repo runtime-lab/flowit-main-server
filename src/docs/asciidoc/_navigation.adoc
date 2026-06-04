@@ -151,6 +151,20 @@ ifndef::nav-workspaces-delete[]
 * link:workspaces-delete.html[워크스페이스 삭제 API]
 endif::nav-workspaces-delete[]
 
+ifdef::nav-workspaces-join-requests-invite-code[]
+* [.is-current]#초대 코드 워크스페이스 가입 API#
+endif::nav-workspaces-join-requests-invite-code[]
+ifndef::nav-workspaces-join-requests-invite-code[]
+* link:workspaces-join-requests-invite-code.html[초대 코드 워크스페이스 가입 API]
+endif::nav-workspaces-join-requests-invite-code[]
+
+ifdef::nav-workspaces-join-requests[]
+* [.is-current]#워크스페이스 가입 요청 이력 API#
+endif::nav-workspaces-join-requests[]
+ifndef::nav-workspaces-join-requests[]
+* link:workspaces-join-requests.html[워크스페이스 가입 요청 이력 API]
+endif::nav-workspaces-join-requests[]
+
 ifdef::nav-workspaces-members[]
 * [.is-current]#워크스페이스 멤버 목록 조회 API#
 endif::nav-workspaces-members[]

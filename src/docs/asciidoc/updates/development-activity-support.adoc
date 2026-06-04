@@ -7,4 +7,5 @@ Development Activity Support
 Version Stage:: {api-version-stage} (pass:[<a href="version-policy.html">Version Policy</a>])
 API Status:: {api-version-stage-status}
 
-Docs:: API 문서가 에러를 포함하도록 개선했습니다.
+Enhancement:: 안정적인 상태 전이를 위해 `Spring Statemachine` 을 도입했습니다.
+Guard Point:: 상태 머신의 가드 포인트를 통과하지 못한 전이는 실패합니다.

@@ -1,0 +1,31 @@
+// integration-note-source-sha256: b59c2cf2a04471bbf2b6ff7690f9e1d301df0c3f3c49b55b9c3243db0cea9e79
+// integration-note-version: 0.2.14-volt
+// integration-note-time: 2026-06-05-0046
+// integration-note-time-human: 2026-06-05 00:46 KST
+// integration-note-impact: Added
+// integration-note-target: `POST /v1/workspaces/join-requests/invite-code`
+// integration-note-summary: POST /v1/workspaces/join-requests/invite-code 초대 코드 워크스페이스 가입 API가 추가되었습니다.
+// integration-note-anchor: integration-note-0-2-14-volt-2026-06-05-0046-post-v1-workspaces-join-requests-invite-code-api
+
+[#integration-note-0-2-14-volt-2026-06-05-0046-post-v1-workspaces-join-requests-invite-code-api]
+=== POST /v1/workspaces/join-requests/invite-code 초대 코드 워크스페이스 가입 API가 추가되었습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.14-volt`
+|Archived At |2026-06-05 00:46 KST
+|Impact |Added
+|Target |`POST /v1/workspaces/join-requests/invite-code`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: `POST /v1/workspaces/join-requests/invite-code` 초대 코드 워크스페이스 가입 API가 추가되었습니다.
+Added:: `GET /v1/workspaces/{workspaceId}/join-requests` 워크스페이스 가입 요청 이력 조회 API가 추가되었습니다.
+Additional:: 가입 요청은 `PENDING -> READY -> APPROVED -> JOINED` 상태로 전이됩니다. 내부 전이 실패는 `FAILED` 상태와 이력으로 저장됩니다. 현재 차시에서는 초대 코드 입력 시 자동 승인 후 즉시 가입됩니다.
+--

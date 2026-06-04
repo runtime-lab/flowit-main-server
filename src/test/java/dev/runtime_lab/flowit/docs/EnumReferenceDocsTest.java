@@ -1,6 +1,8 @@
 package dev.runtime_lab.flowit.docs;
 
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
+import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestMethod;
+import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestStatus;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,29 +20,53 @@ class EnumReferenceDocsTest {
 	void generateEnumReferenceTablesFromEnums() throws Exception {
 		Path userStatusSnippetPath = Path.of("build/generated-snippets/enum-reference/user-status.adoc");
 		Path workspaceMemberRoleSnippetPath = Path.of("build/generated-snippets/enum-reference/workspace-member-role.adoc");
+		Path workspaceJoinRequestStatusSnippetPath =
+			Path.of("build/generated-snippets/enum-reference/workspace-join-request-status.adoc");
+		Path workspaceJoinRequestMethodSnippetPath =
+			Path.of("build/generated-snippets/enum-reference/workspace-join-request-method.adoc");
 
 		Files.createDirectories(userStatusSnippetPath.getParent());
 		Files.writeString(
 			userStatusSnippetPath,
 			enumTable(UserStatus.values(), Map.of(
-				UserStatus.ACTIVE, "정상적으로 사용할 수 있는 활성 사용자입니다.",
-				UserStatus.LOCKED, "잠금 처리되어 인증 또는 주요 기능 사용이 제한된 사용자입니다.",
-				UserStatus.WITHDRAWN, "탈퇴 처리된 사용자입니다."
+				UserStatus.ACTIVE, "활성 사용자 계정입니다.",
+				UserStatus.LOCKED, "잠긴 사용자 계정입니다.",
+				UserStatus.WITHDRAWN, "탈퇴한 사용자 계정입니다."
 			)),
 			StandardCharsets.UTF_8
 		);
 		Files.writeString(
 			workspaceMemberRoleSnippetPath,
 			enumTable(WorkspaceMemberRole.values(), Map.of(
-				WorkspaceMemberRole.OWNER, "워크스페이스 소유자 권한입니다.",
-				WorkspaceMemberRole.ADMIN, "워크스페이스를 관리할 수 있는 관리자 권한입니다.",
-				WorkspaceMemberRole.MEMBER, "워크스페이스에 참여한 일반 멤버 권한입니다."
+				WorkspaceMemberRole.OWNER, "워크스페이스 소유자 역할입니다.",
+				WorkspaceMemberRole.ADMIN, "워크스페이스 관리자 역할입니다.",
+				WorkspaceMemberRole.MEMBER, "워크스페이스 일반 멤버 역할입니다."
+			)),
+			StandardCharsets.UTF_8
+		);
+		Files.writeString(
+			workspaceJoinRequestStatusSnippetPath,
+			enumTable(WorkspaceJoinRequestStatus.values(), Map.of(
+				WorkspaceJoinRequestStatus.PENDING, "워크스페이스 가입 요청이 생성된 상태입니다.",
+				WorkspaceJoinRequestStatus.READY, "가입 요청이 기본 검증을 통과해 승인 가능한 상태입니다.",
+				WorkspaceJoinRequestStatus.APPROVED, "가입 요청이 승인된 상태입니다.",
+				WorkspaceJoinRequestStatus.JOINED, "워크스페이스 멤버십 생성이 완료된 상태입니다.",
+				WorkspaceJoinRequestStatus.FAILED, "요청 생성 이후 가입 흐름 처리에 실패한 상태입니다."
+			)),
+			StandardCharsets.UTF_8
+		);
+		Files.writeString(
+			workspaceJoinRequestMethodSnippetPath,
+			enumTable(WorkspaceJoinRequestMethod.values(), Map.of(
+				WorkspaceJoinRequestMethod.INVITE_CODE, "초대 코드로 생성된 워크스페이스 가입 요청입니다."
 			)),
 			StandardCharsets.UTF_8
 		);
 
 		assertTrue(Files.exists(userStatusSnippetPath));
 		assertTrue(Files.exists(workspaceMemberRoleSnippetPath));
+		assertTrue(Files.exists(workspaceJoinRequestStatusSnippetPath));
+		assertTrue(Files.exists(workspaceJoinRequestMethodSnippetPath));
 	}
 
 	private <E extends Enum<E>> String enumTable(E[] values, Map<E, String> descriptions) {
