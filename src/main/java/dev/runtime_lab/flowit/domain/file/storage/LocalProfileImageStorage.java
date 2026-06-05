@@ -122,14 +122,11 @@ public class LocalProfileImageStorage {
 			return;
 		}
 		validateBaseDirectoryForCleanup(baseDirectory);
-		boolean shouldKeepOwnershipMarker = !activeStorageKeys.isEmpty();
 
-		Set<Path> activePaths = new HashSet<>(activeStorageKeys.stream()
-			.map(this::resolveStorageKey)
-			.collect(java.util.stream.Collectors.toSet()));
-		if (shouldKeepOwnershipMarker) {
-			activePaths.add(ownershipMarkerPath(baseDirectory));
-		}
+		Set<Path> activePaths = activeStorageKeys.stream()
+                .map(this::resolveStorageKey).collect(java.util.stream.Collectors.toSet());
+
+		activePaths.add(ownershipMarkerPath(baseDirectory));
 
 		try (java.util.stream.Stream<Path> paths = Files.walk(baseDirectory)) {
 			paths.sorted(Comparator.reverseOrder())
@@ -366,7 +363,6 @@ public class LocalProfileImageStorage {
 	private void deleteIfOrphan(Path path, Set<Path> activePaths) {
 		Path baseDirectory = baseDirectory();
 		if (path.equals(baseDirectory)) {
-			deleteDirectoryIfEmpty(path);
 			return;
 		}
 		if (!path.normalize().startsWith(baseDirectory)) {
@@ -412,6 +408,9 @@ public class LocalProfileImageStorage {
 		Path baseDirectory = baseDirectory();
 		Path current = directory;
 		while (current != null && current.startsWith(baseDirectory)) {
+			if (current.equals(baseDirectory)) {
+				return;
+			}
 			if (Files.isSymbolicLink(current) || !Files.isDirectory(current, LinkOption.NOFOLLOW_LINKS)) {
 				return;
 			}
@@ -421,9 +420,6 @@ public class LocalProfileImageStorage {
 				}
 			}
 			Files.deleteIfExists(current);
-			if (current.equals(baseDirectory)) {
-				return;
-			}
 			current = current.getParent();
 		}
 	}
