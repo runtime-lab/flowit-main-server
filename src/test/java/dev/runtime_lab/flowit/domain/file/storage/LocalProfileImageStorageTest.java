@@ -127,7 +127,7 @@ class LocalProfileImageStorageTest {
 	}
 
 	@Test
-	void deleteOrphanFilesDeletesBaseDirectoryWhenNoRowsRemain() throws Exception {
+	void deleteOrphanFilesKeepsBaseDirectoryAndMarkerWhenNoRowsRemain() throws Exception {
 		Path baseDirectory = storageDirectory();
 		Path orphanFile = baseDirectory.resolve("users/1/orphan.png");
 		Files.createDirectories(orphanFile.getParent());
@@ -136,7 +136,21 @@ class LocalProfileImageStorageTest {
 
 		storage(baseDirectory).deleteOrphanFiles(Set.of());
 
-		assertFalse(Files.exists(baseDirectory));
+		assertFalse(Files.exists(orphanFile));
+		assertFalse(Files.exists(orphanFile.getParent()));
+		assertTrue(Files.exists(baseDirectory));
+		assertTrue(Files.exists(baseDirectory.resolve(".flowit-profile-images")));
+	}
+
+	@Test
+	void deleteOrphanFilesKeepsEmptyBaseDirectoryAndCreatesMarkerWhenNoRowsRemain() throws Exception {
+		Path baseDirectory = storageDirectory();
+		Files.createDirectories(baseDirectory);
+
+		storage(baseDirectory).deleteOrphanFiles(Set.of());
+
+		assertTrue(Files.exists(baseDirectory));
+		assertTrue(Files.exists(baseDirectory.resolve(".flowit-profile-images")));
 	}
 
 	@Test

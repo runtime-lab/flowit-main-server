@@ -1,0 +1,29 @@
+// integration-note-source-sha256: 7e20341f16aa273b37dea887f57a1ce6143d87f7e83e043146ef8143fec8771c
+// integration-note-version: 0.2.17-volt
+// integration-note-time: 2026-06-06-0048
+// integration-note-time-human: 2026-06-06 00:48 KST
+// integration-note-impact: Empty
+// integration-note-target: `updates/latest.adoc`
+// integration-note-summary: API 변경이 없습니다.
+// integration-note-anchor: integration-note-0-2-17-volt-2026-06-06-0048-api
+
+[#integration-note-0-2-17-volt-2026-06-06-0048-api]
+=== API 변경이 없습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.17-volt`
+|Archived At |2026-06-06 00:48 KST
+|Impact |Empty
+|Target |`updates/latest.adoc`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Empty:: API 변경이 없습니다.
+--
