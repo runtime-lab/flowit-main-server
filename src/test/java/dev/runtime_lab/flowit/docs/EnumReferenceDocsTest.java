@@ -80,7 +80,7 @@ class EnumReferenceDocsTest {
 
 		for (E value : values) {
 			builder.append('\n');
-			builder.append("|`").append(value.name()).append("`\n");
+			builder.append("|``").append(value.name()).append("``\n");
 			builder.append("|").append(escapeCell(descriptions.get(value))).append('\n');
 		}
 

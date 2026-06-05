@@ -94,7 +94,7 @@ class WorkspaceGetApiDocsTest {
 					parameterWithName("workspaceId").description("조회할 워크스페이스 식별자입니다.")
 				),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식으로 전달합니다."),
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식으로 전달합니다."),
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				responseHeaders(

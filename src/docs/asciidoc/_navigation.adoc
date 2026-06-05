@@ -185,4 +185,11 @@ endif::nav-workspaces-member-remove[]
 ifndef::nav-workspaces-member-remove[]
 * link:workspaces-member-remove.html[워크스페이스 멤버 강제 퇴장 API]
 endif::nav-workspaces-member-remove[]
+
+ifdef::nav-workspaces-member-withdraw[]
+* [.is-current]#워크스페이스 멤버 탈퇴 API#
+endif::nav-workspaces-member-withdraw[]
+ifndef::nav-workspaces-member-withdraw[]
+* link:workspaces-member-withdraw.html[워크스페이스 멤버 탈퇴 API]
+endif::nav-workspaces-member-withdraw[]
 --

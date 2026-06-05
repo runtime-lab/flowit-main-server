@@ -21,10 +21,10 @@ Flowit API는 JSON 응답을 공통 envelope으로 감싸서 반환합니다.
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|`success` |요청 처리 성공 여부입니다.
-|`data` |성공 응답의 본문 데이터입니다. 데이터가 없는 성공 응답에서는 빈 객체입니다.
-|`error` |실패 응답의 에러 코드와 메시지입니다. 성공 응답에서는 포함하지 않습니다.
-|`extensions` |화면 표시나 디버깅 보조 정보처럼 응답 본문 외에 덧붙일 수 있는 자유 필드입니다.
+|``success`` |요청 처리 성공 여부입니다.
+|``data`` |성공 응답의 본문 데이터입니다. 데이터가 없는 성공 응답에서는 빈 객체입니다.
+|``error`` |실패 응답의 에러 코드와 메시지입니다. 성공 응답에서는 포함하지 않습니다.
+|``extensions`` |화면 표시나 디버깅 보조 정보처럼 응답 본문 외에 덧붙일 수 있는 자유 필드입니다.
 |===
 
 == 응답 필드 안정성
@@ -40,7 +40,7 @@ Flowit API는 JSON 응답을 공통 envelope으로 감싸서 반환합니다.
 
 == extensions 작성 방식
 
-`extensions`에 값을 추가해야 하는 경우 컨트롤러나 서비스에서 `ApiResponse`에 직접 인자를 전달하지 않고 `ResponseExtensionContext.addProperty(...)`를 사용합니다.
+``extensions``에 값을 추가해야 하는 경우 컨트롤러나 서비스에서 ``ApiResponse``에 직접 인자를 전달하지 않고 ``ResponseExtensionContext.addProperty(...)``를 사용합니다.
 
 [source,java]
 ----
@@ -57,7 +57,7 @@ class SampleExtensions {
 }
 ----
 
-추가된 값은 응답 직전에 공통 응답 래퍼가 `extensions`로 병합하며, 병합 후 컨텍스트는 자동으로 정리됩니다.
+추가된 값은 응답 직전에 공통 응답 래퍼가 ``extensions``로 병합하며, 병합 후 컨텍스트는 자동으로 정리됩니다.
 
 == 객체형 성공 응답
 
@@ -71,7 +71,7 @@ include::{snippets}/api-response-object/response-fields.adoc[]
 
 == 배열 성공 응답
 
-배열 응답은 `data.items`와 `data.totalCount`로 감싸서 반환합니다.
+배열 응답은 ``data.items``와 ``data.totalCount``로 감싸서 반환합니다.
 
 === HTTP 응답
 
@@ -83,7 +83,7 @@ include::{snippets}/api-response-list/response-fields.adoc[]
 
 == 데이터가 없는 성공 응답
 
-데이터가 없는 성공 응답은 `data`를 빈 객체로 반환합니다.
+데이터가 없는 성공 응답은 ``data``를 빈 객체로 반환합니다.
 
 === HTTP 응답
 
@@ -95,7 +95,7 @@ include::{snippets}/api-response-empty/response-fields.adoc[]
 
 == 에러 응답
 
-에러 응답은 `success=false` 와 `error.code`, `error.message` 를 반환합니다. 클라이언트는 다국어 처리와 에러 분기를 위해 `error.code` 를 사용합니다.
+에러 응답은 ``success=false`` 와 ``error.code``, ``error.message`` 를 반환합니다. 클라이언트는 다국어 처리와 에러 분기를 위해 ``error.code`` 를 사용합니다.
 
 전체 에러 코드 목록은 link:error-codes.html[에러 코드 문서]를 참조하십시오.
 

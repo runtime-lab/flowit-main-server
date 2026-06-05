@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.1.2-chamber`
+|Version |``0.1.2-chamber``
 |Archived At |2026-05-30 11:29 KST
 |Impact |Added
 |Target |POST /v1/workspaces
-|Source |`updates/latest.adoc`
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,5 +25,5 @@
 [.update-note-title]
 Integration Note
 
-Added:: `POST /v1/workspaces` 워크스페이스 생성 API가 추가되었습니다.
+Added:: ``POST /v1/workspaces`` 워크스페이스 생성 API가 추가되었습니다.
 --

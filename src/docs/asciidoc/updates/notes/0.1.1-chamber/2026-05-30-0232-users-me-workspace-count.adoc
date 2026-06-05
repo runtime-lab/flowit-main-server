@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.1.1-chamber`
+|Version |``0.1.1-chamber``
 |Archived At |2026-05-30 02:32 KST
 |Impact |Enhancement
 |Target |GET /v1/users/me
-|Source |`updates/latest.adoc`
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note

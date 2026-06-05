@@ -19,8 +19,8 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`POST`
-|경로 |`/v1/public/users/join`
+|메서드 |``POST``
+|경로 |``/v1/public/users/join``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |이메일, 평문 비밀번호, 닉네임으로 신규 사용자를 생성합니다.
 |인증 |필요하지 않습니다.
@@ -59,7 +59,7 @@ include::{snippets}/users-join/response-fields.adoc[]
 
 == 회원가입 실패: 중복 이메일
 
-활성 계정 기준으로 이미 존재하는 이메일이면 `409 Conflict`를 반환합니다.
+활성 계정 기준으로 이미 존재하는 이메일이면 ``409 Conflict``를 반환합니다.
 
 === HTTP 응답
 

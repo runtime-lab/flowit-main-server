@@ -44,7 +44,7 @@ function Write-Usage {
     Write-Info '  .\local.bat infra-stop'
     Write-Info '  .\local.bat docs-refresh'
     Write-Info ''
-    Write-Info 'Optional docs mount for Docker app: set FLOWIT_LOCAL_DOCS_MOUNT=true before start.'
+    Write-Info 'Local docs mount is enabled by default. Set FLOWIT_LOCAL_DOCS_MOUNT=false before start to disable it.'
 }
 
 function Normalize-Command {
@@ -476,7 +476,11 @@ function Get-DockerComposeBaseArgs {
     if (Test-LinuxHost) {
         $args += @('-f', (Join-Path $AppHome 'compose.linux.yaml'))
     }
-    if (Test-Truthy $env:FLOWIT_LOCAL_DOCS_MOUNT) {
+    $docsMountValue = ''
+    if ($null -ne $env:FLOWIT_LOCAL_DOCS_MOUNT) {
+        $docsMountValue = $env:FLOWIT_LOCAL_DOCS_MOUNT.Trim().ToLowerInvariant()
+    }
+    if ($docsMountValue -notin @('false', '0', 'no', 'n', 'off')) {
         $args += @('-f', (Join-Path $AppHome 'compose.docs.yaml'))
     }
     $args
@@ -573,7 +577,7 @@ function Refresh-Docs {
     )
     Write-Info 'API docs refreshed: build/resources/main/static/docs'
     Write-Info 'Reload http://127.0.0.1:8080/docs/index.html in the browser.'
-    Write-Info 'When the app runs in Docker, refreshed docs are visible only if it was started with FLOWIT_LOCAL_DOCS_MOUNT=true.'
+    Write-Info 'When the app runs in Docker, refreshed docs are visible after reload if it was started with the default docs mount.'
 }
 
 $Command = Normalize-Command $Command

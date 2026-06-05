@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.12-volt`
+|Version |``0.2.12-volt``
 |Archived At |2026-06-03 20:51 KST
 |Impact |Added
-|Target |`GET /v1/workspaces/{workspaceId}`
-|Source |`updates/latest.adoc`
+|Target |``GET /v1/workspaces/{workspaceId}``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,7 +25,7 @@
 [.update-note-title]
 Integration Note
 
-Added:: `GET /v1/workspaces/{workspaceId}` 워크스페이스 정보 조회 API가 생성되었습니다.
-Additional:: 해당 워크스페이스에 활성 멤버가 아닌 유저의 요청은 `AUTH_403_001` 로 거부합니다.
+Added:: ``GET /v1/workspaces/{workspaceId}`` 워크스페이스 정보 조회 API가 생성되었습니다.
+Additional:: 해당 워크스페이스에 활성 멤버가 아닌 유저의 요청은 ``AUTH_403_001`` 로 거부합니다.
 Additional:: 워크스페이스 정보 조회 API는 Member에 대한 정보를 포함하지 않습니다.
 --

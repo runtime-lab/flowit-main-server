@@ -21,8 +21,8 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`POST`
-|경로 |`/api/docs-preview/projects/{projectId}/tasks`
+|메서드 |``POST``
+|경로 |``/api/docs-preview/projects/{projectId}/tasks``
 |목적 |샘플 작업을 생성하고 문서 테마에서 사용하는 핵심 스니펫을 보여줍니다.
 |===
 

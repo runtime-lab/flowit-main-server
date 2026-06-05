@@ -19,14 +19,14 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`DELETE`
-|경로 |`/v1/workspaces/{workspaceId}`
+|메서드 |``DELETE``
+|경로 |``/v1/workspaces/{workspaceId}``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |워크스페이스 OWNER가 워크스페이스를 삭제합니다.
 |인증 |JWT access token이 필요합니다.
-|권한 |삭제 대상 워크스페이스의 활성 `OWNER` 멤버만 삭제할 수 있습니다.
+|권한 |삭제 대상 워크스페이스의 활성 ``OWNER`` 멤버만 삭제할 수 있습니다.
 |삭제 방식 |워크스페이스와 활성 멤버십을 함께 소프트 삭제합니다.
-|성공 응답 |`200 OK`와 빈 성공 응답 본문을 반환합니다.
+|성공 응답 |``200 OK``와 빈 성공 응답 본문을 반환합니다.
 |===
 
 === HTTP 요청

@@ -19,15 +19,15 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`PATCH`
-|경로 |`/v1/workspaces/{workspaceId}/members/{memberId}/role`
+|메서드 |``PATCH``
+|경로 |``/v1/workspaces/{workspaceId}/members/{memberId}/role``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |워크스페이스 멤버의 역할을 변경합니다.
 |인증 |JWT access token이 필요합니다.
-|권한 |요청자는 해당 워크스페이스의 활성 `OWNER` 또는 `ADMIN`이어야 합니다. `MEMBER`는 멤버 역할을 변경할 수 없고, `ADMIN`은 대상 역할을 `OWNER`로 변경할 수 없습니다.
-|OWNER 제한 |대상 멤버가 `OWNER`이고 변경 후 역할이 `OWNER`가 아니라면, 변경 후에도 워크스페이스에 최소 1명의 `OWNER`가 남아 있어야 합니다.
+|권한 |요청자는 해당 워크스페이스의 활성 ``OWNER`` 또는 ``ADMIN``이어야 합니다. ``MEMBER``는 멤버 역할을 변경할 수 없고, ``ADMIN``은 대상 역할을 ``OWNER``로 변경할 수 없습니다.
+|OWNER 제한 |대상 멤버가 ``OWNER``이고 변경 후 역할이 ``OWNER``가 아니라면, 변경 후에도 워크스페이스에 최소 1명의 ``OWNER``가 남아 있어야 합니다.
 |처리 방식 |대상 워크스페이스 멤버십의 역할과 최종 수정 시각을 변경합니다.
-|성공 응답 |`200 OK`와 빈 성공 응답 본문을 반환합니다.
+|성공 응답 |``200 OK``와 빈 성공 응답 본문을 반환합니다.
 |===
 
 === HTTP 요청

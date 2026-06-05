@@ -1,6 +1,5 @@
 [.update-note-title]
 Integration Note
 
-Added:: `POST /v1/workspaces/join-requests/invite-code` 초대 코드 워크스페이스 가입 API가 추가되었습니다.
-Added:: `GET /v1/workspaces/{workspaceId}/join-requests` 워크스페이스 가입 요청 이력 조회 API가 추가되었습니다.
-Additional:: 가입 요청은 `PENDING -> READY -> APPROVED -> JOINED` 상태로 전이됩니다. 내부 전이 실패는 `FAILED` 상태와 이력으로 저장됩니다. 현재 차시에서는 초대 코드 입력 시 자동 승인 후 즉시 가입됩니다.
+Added:: ``DELETE /v1/workspaces/{workspaceId}/members/withdraw`` 워크스페이스 멤버 탈퇴 API가 추가되었습니다.
+Additional:: ``OWNER``가 탈퇴 요청 시 가장 오래된 ``ADMIN``이 권한을 승계합니다. ``ADMIN``이 존재하지 않을 시 ``OWNER``의 탈퇴는 거부됩니다.

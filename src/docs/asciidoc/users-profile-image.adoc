@@ -19,13 +19,13 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`PUT`
-|경로 |`/v1/users/me/profile-image`
+|메서드 |``PUT``
+|경로 |``/v1/users/me/profile-image``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |인증된 사용자의 프로필 이미지를 새 이미지로 교체합니다.
 |인증 |JWT access token이 필요합니다.
-|요청 형식 |`multipart/form-data` 요청의 `file` part로 이미지를 전달합니다.
-|지원 형식 |`image/jpeg`, `image/png`, `image/gif`
+|요청 형식 |``multipart/form-data`` 요청의 ``file`` part로 이미지를 전달합니다.
+|지원 형식 |``image/jpeg``, ``image/png``, ``image/gif``
 |크기 제한 |기본 5MB입니다. 서버 설정 pass:[<code>FLOWIT_PROFILE_IMAGE_MAX_SIZE</code>]에 따라 달라질 수 있습니다.
 |동작 방식 |기존 프로필 이미지 메타데이터 row는 트랜잭션 안에서 제거하고 새 row를 연결합니다. 기존 로컬 파일은 커밋 이후 삭제합니다.
 |===
@@ -86,14 +86,14 @@ include::_api-errors.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`GET`
-|경로 |`/v1/users/me/profile-image`
+|메서드 |``GET``
+|경로 |``/v1/users/me/profile-image``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |인증된 사용자의 현재 프로필 이미지 파일을 이미지 바이너리로 전송합니다.
 |인증 |JWT access token이 필요합니다.
 |응답 형식 |공통 JSON envelope을 사용하지 않고 이미지 바이너리를 직접 반환합니다.
-|캐시 |프로필 이미지 변경 직후 오래된 이미지가 재사용되지 않도록 `Cache-Control: no-store`로 응답합니다.
-|이미지 없음 |현재 사용자에게 등록된 프로필 이미지가 없으면 `FILE_404_001` 에러를 반환합니다.
+|캐시 |프로필 이미지 변경 직후 오래된 이미지가 재사용되지 않도록 ``Cache-Control: no-store``로 응답합니다.
+|이미지 없음 |현재 사용자에게 등록된 프로필 이미지가 없으면 ``FILE_404_001`` 에러를 반환합니다.
 |===
 
 === 조회 HTTP 요청

@@ -19,15 +19,15 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`GET`
-|경로 |`/v1/workspaces/{workspaceId}/members`
+|메서드 |``GET``
+|경로 |``/v1/workspaces/{workspaceId}/members``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |워크스페이스의 활성 멤버 목록과 워크스페이스 초대 코드를 조회합니다.
 |인증 |JWT access token이 필요합니다.
 |권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
-|정렬 |`OWNER` -> `ADMIN` -> `MEMBER` 순으로 정렬합니다. 같은 역할 안에서는 이름 사전순, 사용자 ID 오름차순으로 정렬합니다.
+|정렬 |``OWNER`` -> ``ADMIN`` -> ``MEMBER`` 순으로 정렬합니다. 같은 역할 안에서는 이름 사전순, 사용자 ID 오름차순으로 정렬합니다.
 |응답 활용 |``memberId``, ``name``, ``email``, ``role``, ``status``는 강퇴, 역할 변경 등 멤버 대상 액션을 구성하는 기준 데이터입니다.
-|초대 코드 |`inviteCode`는 워크스페이스 컨텍스트 정보로 응답 상위 필드에 포함됩니다.
+|초대 코드 |``inviteCode``는 워크스페이스 컨텍스트 정보로 응답 상위 필드에 포함됩니다.
 |===
 
 === HTTP 요청

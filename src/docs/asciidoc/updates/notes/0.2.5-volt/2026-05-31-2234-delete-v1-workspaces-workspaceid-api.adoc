@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.5-volt`
+|Version |``0.2.5-volt``
 |Archived At |2026-05-31 22:34 KST
 |Impact |Added
-|Target |`DELETE /v1/workspaces/{workspaceId}`
-|Source |`updates/latest.adoc`
+|Target |``DELETE /v1/workspaces/{workspaceId}``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,5 +25,5 @@
 [.update-note-title]
 Integration Note
 
-Added:: `DELETE /v1/workspaces/{workspaceId}` 워크스페이스 삭제 API가 추가되었습니다.
+Added:: ``DELETE /v1/workspaces/{workspaceId}`` 워크스페이스 삭제 API가 추가되었습니다.
 --

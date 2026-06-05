@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.8-volt`
+|Version |``0.2.8-volt``
 |Archived At |2026-06-02 22:22 KST
 |Impact |Changed
 |Target |GET /v1/users/me/workspaces, PATCH /v1/users/me
-|Source |`updates/latest.adoc`
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,6 +25,6 @@
 [.update-note-title]
 Integration Note
 
-Added:: 접속 중인 유저의 워크스페이스만 조회 할 수 있는 `v1/users/me/workspaces` 가 추가되었습니다.
-Changes:: `PATCH v1/users/me/nickname` 이 `PATCH v1/users/me` 로 변경되었습니다.
+Added:: 접속 중인 유저의 워크스페이스만 조회 할 수 있는 ``v1/users/me/workspaces`` 가 추가되었습니다.
+Changes:: ``PATCH v1/users/me/nickname`` 이 ``PATCH v1/users/me`` 로 변경되었습니다.
 --

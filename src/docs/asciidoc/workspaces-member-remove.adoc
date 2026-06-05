@@ -19,15 +19,15 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`DELETE`
-|경로 |`/v1/workspaces/{workspaceId}/members/{memberId}`
+|메서드 |``DELETE``
+|경로 |``/v1/workspaces/{workspaceId}/members/{memberId}``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |워크스페이스 OWNER 또는 ADMIN이 대상 멤버를 강제 퇴장시킵니다.
 |인증 |JWT access token이 필요합니다.
-|권한 |요청자는 해당 워크스페이스의 활성 `OWNER` 또는 `ADMIN`이어야 합니다.
-|대상 제한 |`OWNER`는 강제 퇴장 대상이 될 수 없습니다. 요청자 자신도 강제 퇴장시킬 수 없습니다.
+|권한 |요청자는 해당 워크스페이스의 활성 ``OWNER`` 또는 ``ADMIN``이어야 합니다.
+|대상 제한 |``OWNER``는 강제 퇴장 대상이 될 수 없습니다. 요청자 자신도 강제 퇴장시킬 수 없습니다.
 |처리 방식 |대상 워크스페이스 멤버십을 soft delete 처리합니다.
-|성공 응답 |`200 OK`와 빈 성공 응답 본문을 반환합니다.
+|성공 응답 |``200 OK``와 빈 성공 응답 본문을 반환합니다.
 |===
 
 === HTTP 요청
@@ -71,6 +71,7 @@ include::_api-errors.adoc[]
 * link:workspaces-create.html[워크스페이스 생성 API]
 * link:workspaces-delete.html[워크스페이스 삭제 API]
 * link:workspaces-member-role-update.html[워크스페이스 멤버 역할 변경 API]
+* link:workspaces-member-withdraw.html[워크스페이스 멤버 탈퇴 API]
 * link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
 * link:api-response.html[공통 응답 포맷]
 * link:error-codes.html[에러 코드]

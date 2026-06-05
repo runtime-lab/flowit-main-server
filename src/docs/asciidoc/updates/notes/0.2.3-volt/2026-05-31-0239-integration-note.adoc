@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.3-volt`
+|Version |``0.2.3-volt``
 |Archived At |2026-05-31 02:39 KST
 |Impact |Changed
-|Target |`updates/latest.adoc`
-|Source |`updates/latest.adoc`
+|Target |``updates/latest.adoc``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,7 +25,7 @@
 [.update-note-title]
 Integration Note
 
-Changed:: 워크스페이스 권한 계약이 변경되었습니다. (`LEADER`, `MEMBER` > `OWNER`, `ADMIN`, `MEMBER`)
-Changed:: 워크스페이스장의 초기 권한 상수가 변경됩니다. (`LEADER` > `OWNER`)
-Changed:: `/user/me` 응답의 워크스페이스 권한으로 변경 된 상수가 적용됩니다.
+Changed:: 워크스페이스 권한 계약이 변경되었습니다. (``LEADER``, ``MEMBER`` > ``OWNER``, ``ADMIN``, ``MEMBER``)
+Changed:: 워크스페이스장의 초기 권한 상수가 변경됩니다. (``LEADER`` > ``OWNER``)
+Changed:: ``/user/me`` 응답의 워크스페이스 권한으로 변경 된 상수가 적용됩니다.
 --

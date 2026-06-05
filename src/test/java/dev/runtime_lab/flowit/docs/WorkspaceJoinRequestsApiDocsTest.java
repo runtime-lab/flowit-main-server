@@ -103,7 +103,7 @@ class WorkspaceJoinRequestsApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식입니다."),
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식입니다."),
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 media type입니다."),
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 media type입니다.").optional()
 				),
@@ -139,7 +139,7 @@ class WorkspaceJoinRequestsApiDocsTest {
 					parameterWithName("workspaceId").description("가입 요청 이력을 조회할 워크스페이스 ID입니다.")
 				),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식입니다."),
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식입니다."),
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 media type입니다.").optional()
 				),
 				responseHeaders(
@@ -162,7 +162,7 @@ class WorkspaceJoinRequestsApiDocsTest {
 					fieldWithPath("data.joinRequests[].userEmail").type(JsonFieldType.STRING)
 						.description("가입 요청자 이메일입니다."),
 					fieldWithPath("data.joinRequests[].memberId").type(JsonFieldType.NUMBER)
-						.description("생성된 워크스페이스 멤버 ID입니다. `JOINED` 이전에는 `null` 입니다.").optional(),
+						.description("생성된 워크스페이스 멤버 ID입니다. ``JOINED`` 이전에는 ``null`` 입니다.").optional(),
 					fieldWithPath("data.joinRequests[].method").type(JsonFieldType.STRING)
 						.description("가입 요청 생성 수단입니다. link:enum-reference.html#workspace-join-request-method[WorkspaceJoinRequestMethod]를 참고합니다."),
 					fieldWithPath("data.joinRequests[].inviteCode").type(JsonFieldType.STRING)
@@ -188,7 +188,7 @@ class WorkspaceJoinRequestsApiDocsTest {
 					fieldWithPath("data.joinRequests[].histories[].historyId").type(JsonFieldType.NUMBER)
 						.description("상태 전이 이력 ID입니다."),
 					fieldWithPath("data.joinRequests[].histories[].fromStatus").type(JsonFieldType.STRING)
-						.description("이전 상태입니다. 최초 요청 이력에서는 `null`입니다.").optional(),
+						.description("이전 상태입니다. 최초 요청 이력에서는 ``null``입니다.").optional(),
 					fieldWithPath("data.joinRequests[].histories[].toStatus").type(JsonFieldType.STRING)
 						.description("다음 상태입니다."),
 					fieldWithPath("data.joinRequests[].histories[].changedByUserId").type(JsonFieldType.NUMBER)

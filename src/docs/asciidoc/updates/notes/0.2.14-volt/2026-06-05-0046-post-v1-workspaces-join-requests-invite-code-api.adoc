@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.14-volt`
+|Version |``0.2.14-volt``
 |Archived At |2026-06-05 00:46 KST
 |Impact |Added
-|Target |`POST /v1/workspaces/join-requests/invite-code`
-|Source |`updates/latest.adoc`
+|Target |``POST /v1/workspaces/join-requests/invite-code``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,7 +25,7 @@
 [.update-note-title]
 Integration Note
 
-Added:: `POST /v1/workspaces/join-requests/invite-code` 초대 코드 워크스페이스 가입 API가 추가되었습니다.
-Added:: `GET /v1/workspaces/{workspaceId}/join-requests` 워크스페이스 가입 요청 이력 조회 API가 추가되었습니다.
-Additional:: 가입 요청은 `PENDING -> READY -> APPROVED -> JOINED` 상태로 전이됩니다. 내부 전이 실패는 `FAILED` 상태와 이력으로 저장됩니다. 현재 차시에서는 초대 코드 입력 시 자동 승인 후 즉시 가입됩니다.
+Added:: ``POST /v1/workspaces/join-requests/invite-code`` 초대 코드 워크스페이스 가입 API가 추가되었습니다.
+Added:: ``GET /v1/workspaces/{workspaceId}/join-requests`` 워크스페이스 가입 요청 이력 조회 API가 추가되었습니다.
+Additional:: 가입 요청은 ``PENDING -> READY -> APPROVED -> JOINED`` 상태로 전이됩니다. 내부 전이 실패는 ``FAILED`` 상태와 이력으로 저장됩니다. 현재 차시에서는 초대 코드 입력 시 자동 승인 후 즉시 가입됩니다.
 --

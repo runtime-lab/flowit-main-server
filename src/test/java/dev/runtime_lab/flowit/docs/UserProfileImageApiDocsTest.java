@@ -123,12 +123,12 @@ class UserProfileImageApiDocsTest {
 				preprocessRequest(omitMultipartBinaryContent()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식으로 전달합니다."),
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다. `multipart/form-data`를 사용합니다."),
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식으로 전달합니다."),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다. ``multipart/form-data``를 사용합니다."),
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				requestParts(
-					partWithName("file").description("교체할 프로필 이미지 파일입니다. `image/jpeg`, `image/png`, `image/gif`를 지원합니다.")
+					partWithName("file").description("교체할 프로필 이미지 파일입니다. ``image/jpeg``, ``image/png``, ``image/gif``를 지원합니다.")
 				),
 				responseFields(
 					fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 처리 성공 여부입니다."),
@@ -159,13 +159,13 @@ class UserProfileImageApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(omitBinaryResponseContent()),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식으로 전달합니다."),
-					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 이미지 응답 미디어 타입입니다. `image/jpeg`, `image/png`, `image/gif`, `*/*`를 사용할 수 있습니다.").optional()
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식으로 전달합니다."),
+					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 이미지 응답 미디어 타입입니다. ``image/jpeg``, ``image/png``, ``image/gif``, ``*/*``를 사용할 수 있습니다.").optional()
 				),
 				responseHeaders(
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("전송되는 프로필 이미지의 MIME type입니다."),
 					headerWithName(HttpHeaders.CONTENT_LENGTH).description("전송되는 이미지 파일 크기입니다. bytes 기준입니다."),
-					headerWithName(HttpHeaders.CACHE_CONTROL).description("프로필 이미지 변경 직후 오래된 이미지가 재사용되지 않도록 `no-store`로 응답합니다.")
+					headerWithName(HttpHeaders.CACHE_CONTROL).description("프로필 이미지 변경 직후 오래된 이미지가 재사용되지 않도록 ``no-store``로 응답합니다.")
 				)
 			));
 	}

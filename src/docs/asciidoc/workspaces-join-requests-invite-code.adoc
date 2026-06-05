@@ -19,15 +19,15 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`POST`
-|경로 |`/v1/workspaces/join-requests/invite-code`
+|메서드 |``POST``
+|경로 |``/v1/workspaces/join-requests/invite-code``
 |API 상태 |[.badge.stability.experimental]#Experimental#
 |목적 |초대 코드로 워크스페이스 가입 요청을 생성하고 현재 자동 승인 가입 흐름을 즉시 완료합니다.
 |인증 |JWT access token이 필요합니다.
-|상태 흐름 |정상 흐름은 `PENDING -> READY -> APPROVED -> JOINED` 입니다. 요청 생성 이후 내부 전이 실패가 발생하면 `PENDING/READY/APPROVED -> FAILED` 로 기록됩니다.
-|응답 범위 |가입 API 응답에는 최종 상태(`status`)와 가입 완료 시각(`joinedAt`)만 포함하고, 상태 전이 이력(`histories`)과 내부 전이 시각은 포함하지 않습니다. 이력은 가입 요청 이력 조회 API에서 확인합니다.
-|결과 |`201 Created` 와 함께 `Location: /v1/workspaces/{workspaceId}/join-requests/{joinRequestId}` 응답 헤더를 반환합니다.
-|확장 가능성 |향후 `OWNER` 또는 `ADMIN` 승인 API가 추가되면 동일한 가입 요청 상태 머신에서 `APPROVE` 전이를 별도 승인 단계로 분리할 수 있습니다.
+|상태 흐름 |정상 흐름은 ``PENDING -> READY -> APPROVED -> JOINED`` 입니다. 요청 생성 이후 내부 전이 실패가 발생하면 ``PENDING/READY/APPROVED -> FAILED`` 로 기록됩니다.
+|응답 범위 |가입 API 응답에는 최종 상태(``status``)와 가입 완료 시각(``joinedAt``)만 포함하고, 상태 전이 이력(``histories``)과 내부 전이 시각은 포함하지 않습니다. 이력은 가입 요청 이력 조회 API에서 확인합니다.
+|결과 |``201 Created`` 와 함께 ``Location: /v1/workspaces/{workspaceId}/join-requests/{joinRequestId}`` 응답 헤더를 반환합니다.
+|확장 가능성 |향후 ``OWNER`` 또는 ``ADMIN`` 승인 API가 추가되면 동일한 가입 요청 상태 머신에서 ``APPROVE`` 전이를 별도 승인 단계로 분리할 수 있습니다.
 |===
 
 === HTTP 요청

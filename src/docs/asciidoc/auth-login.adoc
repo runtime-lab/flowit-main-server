@@ -19,17 +19,17 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`POST`
-|경로 |`/v1/public/auth/login`
+|메서드 |``POST``
+|경로 |``/v1/public/auth/login``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |이메일과 비밀번호로 access token을 발급하고 refresh token을 HttpOnly 쿠키로 전달합니다.
 |인증 |필요하지 않습니다.
-|Refresh Token |응답 본문에 노출하지 않고 `Set-Cookie` 헤더로만 전달합니다.
+|Refresh Token |응답 본문에 노출하지 않고 ``Set-Cookie`` 헤더로만 전달합니다.
 |===
 
 == Refresh Token Cookie
 
-로그인 성공 응답은 `Set-Cookie` 헤더로 `flowit_refresh_token` 쿠키를 전달합니다. 이 쿠키는 JavaScript에서 읽을 수 없는 `HttpOnly` 쿠키이며, 클라이언트는 refresh token 값을 직접 저장하거나 요청 본문에 담지 않습니다.
+로그인 성공 응답은 ``Set-Cookie`` 헤더로 ``flowit_refresh_token`` 쿠키를 전달합니다. 이 쿠키는 JavaScript에서 읽을 수 없는 ``HttpOnly`` 쿠키이며, 클라이언트는 refresh token 값을 직접 저장하거나 요청 본문에 담지 않습니다.
 
 [source,http]
 ----

@@ -1,0 +1,75 @@
+= 워크스페이스 멤버 탈퇴 API
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-member-withdraw:
+:breadcrumb-section: 워크스페이스 API
+:breadcrumb-current: 워크스페이스 멤버 탈퇴 API
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 워크스페이스 멤버 탈퇴
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |``DELETE``
+|경로 |``/v1/workspaces/{workspaceId}/members/withdraw``
+|API 상태 |[.badge.stability.stable]#Stable#
+|목적 |현재 인증된 사용자가 자신이 가입된 워크스페이스에서 스스로 탈퇴합니다.
+|인증 |JWT access token이 필요합니다.
+|권한 |요청 사용자는 해당 워크스페이스의 활성 멤버여야 합니다.
+|OWNER 탈퇴 |OWNER가 탈퇴할 때 활성 ADMIN이 존재하면 ADMIN으로 지정된 지 가장 오래된 멤버를 OWNER로 승격한 뒤 탈퇴합니다. 활성 ADMIN이 없으면 탈퇴를 거부합니다.
+|처리 방식 |요청 사용자의 워크스페이스 멤버십을 soft delete 처리하고, 탈퇴 이력을 강제 퇴장 이력과 별도 테이블에 저장합니다.
+|성공 응답 |``200 OK``와 빈 성공 응답 본문을 반환합니다.
+|===
+
+=== HTTP 요청
+
+include::{snippets}/workspaces-member-withdraw/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/workspaces-member-withdraw/curl-request.adoc[]
+
+=== 경로 파라미터
+
+include::{snippets}/workspaces-member-withdraw/path-parameters.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/workspaces-member-withdraw/request-headers.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/workspaces-member-withdraw/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/workspaces-member-withdraw/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/workspaces-member-withdraw/response-fields.adoc[]
+
+:api-error-auth-required:
+:api-error-workspace-withdrawal-denied:
+:api-error-workspace-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-members.html[워크스페이스 멤버 목록 조회 API]
+* link:workspaces-member-remove.html[워크스페이스 멤버 강제 퇴장 API]
+* link:workspaces-member-role-update.html[워크스페이스 멤버 역할 변경 API]
+* link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
+* link:api-response.html[공통 응답 포맷]
+* link:error-codes.html[에러 코드]

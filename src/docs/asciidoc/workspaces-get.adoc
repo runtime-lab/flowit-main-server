@@ -19,13 +19,13 @@ include::_breadcrumb.adoc[]
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|메서드 |`GET`
-|경로 |`/v1/workspaces/{workspaceId}`
+|메서드 |``GET``
+|경로 |``/v1/workspaces/{workspaceId}``
 |API 상태 |[.badge.stability.stable]#Stable#
 |목적 |특정 워크스페이스의 기본 정보를 조회합니다.
 |인증 |JWT access token이 필요합니다.
 |권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
-|응답 범위 |`WorkspaceMember` 정보는 포함하지 않고 `Workspace` 자체 정보만 반환합니다.
+|응답 범위 |``WorkspaceMember`` 정보는 포함하지 않고 ``Workspace`` 자체 정보만 반환합니다.
 |===
 
 === HTTP 요청

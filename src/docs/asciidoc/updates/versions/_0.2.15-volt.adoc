@@ -1,0 +1,24 @@
+[[integration-notes-0-2-15-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.15 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-05 23:23 KST
+|Added
+|`DELETE /v1/workspaces/{workspaceId}/members/withdraw`
+|<<integration-note-0-2-15-volt-2026-06-05-2323-delete-v1-workspaces-workspaceid-members-withdraw-api,`DELETE /v1/workspaces/{workspaceId}/members/withdraw` 워크스페이스 멤버 탈퇴 API가 추가되었습니다.>>
+
+|===
+
+include::../notes/0.2.15-volt/2026-06-05-2323-delete-v1-workspaces-workspaceid-members-withdraw-api.adoc[]
+
+++++
+</div>
+</details>
+++++

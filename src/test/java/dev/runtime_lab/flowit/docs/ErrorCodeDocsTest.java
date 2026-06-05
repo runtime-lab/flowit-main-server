@@ -40,7 +40,7 @@ class ErrorCodeDocsTest {
 
 		for (ErrorCode errorCode : errorCodes) {
 			builder.append('\n');
-			builder.append("|`").append(errorCode.getCode()).append("`\n");
+			builder.append("|``").append(errorCode.getCode()).append("``\n");
 			builder.append("|`")
 				.append(errorCode.getHttpStatus().value())
 				.append(' ')

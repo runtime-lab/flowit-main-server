@@ -129,8 +129,8 @@ class UserProfileUpdateApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식으로 전달합니다."),
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다. `application/json`을 사용합니다."),
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식으로 전달합니다."),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다. ``application/json``을 사용합니다."),
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				requestFields(
@@ -143,7 +143,7 @@ class UserProfileUpdateApiDocsTest {
 					fieldWithPath("data.email").type(JsonFieldType.STRING).description("현재 사용자 이메일입니다."),
 					fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("변경된 닉네임입니다."),
 					fieldWithPath("data.status").type(JsonFieldType.STRING).description("현재 사용자 상태입니다. link:enum-reference.html#user-status[UserStatus]를 참고합니다."),
-					fieldWithPath("data.profileImageFileId").type(JsonFieldType.NUMBER).description("프로필 이미지 파일 식별자입니다. 등록된 이미지가 없으면 `null`입니다.").optional(),
+					fieldWithPath("data.profileImageFileId").type(JsonFieldType.NUMBER).description("프로필 이미지 파일 식별자입니다. 등록된 이미지가 없으면 ``null``입니다.").optional(),
 					fieldWithPath("data.updatedAt").type(JsonFieldType.NUMBER).description("사용자 정보 최종 수정 시각입니다. Unix epoch seconds 기준입니다."),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
@@ -174,8 +174,8 @@ class UserProfileUpdateApiDocsTest {
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
-					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. `Bearer {token}` 형식으로 전달합니다."),
-					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다. `application/json`을 사용합니다."),
+					headerWithName(HttpHeaders.AUTHORIZATION).description("JWT access token입니다. ``Bearer {token}`` 형식으로 전달합니다."),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("요청 본문 미디어 타입입니다. ``application/json``을 사용합니다."),
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				responseHeaders(

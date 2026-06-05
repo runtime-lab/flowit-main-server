@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.2-volt`
+|Version |``0.2.2-volt``
 |Archived At |2026-05-30 23:48 KST
 |Impact |Changed
-|Target |`updates/latest.adoc`
-|Source |`updates/latest.adoc`
+|Target |``updates/latest.adoc``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,9 +25,9 @@
 [.update-note-title]
 Integration Note
 
-Added:: `PATCH /v1/users/me/nickname` 현재 사용자 닉네임 변경 API가 추가되었습니다.
-Added:: `PATCH /v1/users/me/password` 현재 사용자 비밀번호 변경 API가 추가되었습니다.
-Added:: `GET /v1/users/me/profile-image` 현재 사용자의 프로필 이미지를 바이너리로 조회하는 API가 추가되었습니다.
-Changed:: 비밀번호 변경 성공 시 `token_version`이 증가하며, 이전 버전의 access token은 보호 API에서 거부됩니다. refresh token 쿠키도 만료 처리됩니다.
-Changed:: `GET /v1/users/me` 응답에 프로필 이미지 조회 URL인 pass:[<code>profileImageUrl</code>]이 추가되었습니다.
+Added:: ``PATCH /v1/users/me/nickname`` 현재 사용자 닉네임 변경 API가 추가되었습니다.
+Added:: ``PATCH /v1/users/me/password`` 현재 사용자 비밀번호 변경 API가 추가되었습니다.
+Added:: ``GET /v1/users/me/profile-image`` 현재 사용자의 프로필 이미지를 바이너리로 조회하는 API가 추가되었습니다.
+Changed:: 비밀번호 변경 성공 시 ``token_version``이 증가하며, 이전 버전의 access token은 보호 API에서 거부됩니다. refresh token 쿠키도 만료 처리됩니다.
+Changed:: ``GET /v1/users/me`` 응답에 프로필 이미지 조회 URL인 pass:[<code>profileImageUrl</code>]이 추가되었습니다.
 --

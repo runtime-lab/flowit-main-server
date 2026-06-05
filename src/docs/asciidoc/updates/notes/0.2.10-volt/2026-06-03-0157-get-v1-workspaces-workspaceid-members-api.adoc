@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.10-volt`
+|Version |``0.2.10-volt``
 |Archived At |2026-06-03 01:57 KST
 |Impact |Added
-|Target |`GET /v1/workspaces/{workspaceId}/members`
-|Source |`updates/latest.adoc`
+|Target |``GET /v1/workspaces/{workspaceId}/members``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,6 +25,6 @@
 [.update-note-title]
 Integration Note
 
-Added:: `GET /v1/workspaces/{workspaceId}/members` 워크스페이스 멤버 목록 조회 API가 추가되었습니다.
+Added:: ``GET /v1/workspaces/{workspaceId}/members`` 워크스페이스 멤버 목록 조회 API가 추가되었습니다.
 Additional:: 멤버 목록 응답은 워크스페이스 초대 코드와 활성 멤버 목록을 함께 제공합니다.
 --

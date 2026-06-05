@@ -12,11 +12,11 @@
 
 [cols="1,4",role="endpoint-summary"]
 |===
-|Version |`0.2.13-volt`
+|Version |``0.2.13-volt``
 |Archived At |2026-06-03 21:26 KST
 |Impact |Maint
-|Target |`GET /v1/workspaces/{workspaceId}/members`
-|Source |`updates/latest.adoc`
+|Target |``GET /v1/workspaces/{workspaceId}/members``
+|Source |``updates/latest.adoc``
 |===
 
 .Archived integration note
@@ -25,5 +25,5 @@
 [.update-note-title]
 Integration Note
 
-Maint:: `GET /v1/workspaces/{workspaceId}/members` 의 누락된 email 속성을 추가했습니다.
+Maint:: ``GET /v1/workspaces/{workspaceId}/members`` 의 누락된 email 속성을 추가했습니다.
 --
