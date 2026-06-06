@@ -1,6 +1,6 @@
 package dev.runtime_lab.flowit.domain.workspace.statemachine;
 
-import dev.runtime_lab.flowit.domain.activity.service.WorkspaceActivityRecorder;
+import dev.runtime_lab.flowit.domain.activity.service.internal.WorkspaceActivityRecorder;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequest;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestEvent;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestHistory;

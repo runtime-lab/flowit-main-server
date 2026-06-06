@@ -24,6 +24,9 @@ public class ProfileImageFileService {
 	private final LocalProfileImageStorage localProfileImageStorage;
 	private final Clock clock;
 
+	// TODO: user <-> file persistence boundary 재설계
+	// TODO: 이미지 플로우 contract 기반 분리 + JPA 매핑 + 테스트 작업 편성
+
 	@Transactional
 	public FileMetadata store(Long userId, MultipartFile imageFile) {
 		StoredProfileImageFile storedFile = localProfileImageStorage.store(userId, imageFile);

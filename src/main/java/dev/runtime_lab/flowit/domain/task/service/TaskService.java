@@ -1,6 +1,6 @@
 package dev.runtime_lab.flowit.domain.task.service;
 
-import dev.runtime_lab.flowit.domain.activity.service.WorkspaceActivityRecorder;
+import dev.runtime_lab.flowit.domain.activity.service.internal.WorkspaceActivityRecorder;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskDetailResponse;
@@ -25,7 +25,7 @@ import dev.runtime_lab.flowit.domain.task.repository.TaskTagRepository;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
-import dev.runtime_lab.flowit.domain.workspace.service.internal.WorkspaceAccessContext;
+import dev.runtime_lab.flowit.domain.workspace.service.internal.contract.WorkspaceAccessContext;
 import dev.runtime_lab.flowit.domain.workspace.service.internal.WorkspaceAccessService;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.web.response.ApiListData;

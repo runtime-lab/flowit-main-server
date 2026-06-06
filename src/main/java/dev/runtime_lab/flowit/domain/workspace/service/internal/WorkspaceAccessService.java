@@ -8,6 +8,7 @@ import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDe
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceMemberRepository;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceRepository;
+import dev.runtime_lab.flowit.domain.workspace.service.internal.contract.WorkspaceAccessContext;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import dev.runtime_lab.flowit.global.stereotype.InternalService;
 import java.util.Optional;

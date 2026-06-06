@@ -1,6 +1,6 @@
 package dev.runtime_lab.flowit.domain.workspace.service;
 
-import dev.runtime_lab.flowit.domain.activity.service.WorkspaceActivityRecorder;
+import dev.runtime_lab.flowit.domain.activity.service.internal.WorkspaceActivityRecorder;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMemberRoleUpdateRequest;

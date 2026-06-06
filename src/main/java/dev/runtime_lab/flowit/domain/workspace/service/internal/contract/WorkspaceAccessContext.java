@@ -1,4 +1,4 @@
-package dev.runtime_lab.flowit.domain.workspace.service.internal;
+package dev.runtime_lab.flowit.domain.workspace.service.internal.contract;
 
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;

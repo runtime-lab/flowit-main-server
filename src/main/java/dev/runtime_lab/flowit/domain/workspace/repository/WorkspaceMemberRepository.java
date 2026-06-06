@@ -5,7 +5,6 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
 import dev.runtime_lab.flowit.domain.user.entity.QUser;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceMemberResponse;
@@ -14,6 +13,7 @@ import dev.runtime_lab.flowit.domain.workspace.entity.QWorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
+import dev.runtime_lab.flowit.domain.workspace.repository.projection.WorkspaceMembershipProjection;
 import dev.runtime_lab.flowit.global.jpa.repository.CustomJpaRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -189,13 +189,13 @@ public class WorkspaceMemberRepository extends CustomJpaRepo<WorkspaceMember, Lo
 			.execute();
 	}
 
-	public List<UserMeWorkspaceResponse> findActiveUserWorkspaces(Long userId) {
+	public List<WorkspaceMembershipProjection> findActiveMembershipsByUserId(Long userId) {
 		QWorkspaceMember workspaceMember = QWorkspaceMember.workspaceMember;
 		QWorkspaceMember workspaceMemberCount = new QWorkspaceMember("workspaceMemberCount");
 		QWorkspace workspace = QWorkspace.workspace;
 
 		return queryFactory.select(Projections.constructor(
-				UserMeWorkspaceResponse.class,
+				WorkspaceMembershipProjection.class,
 				workspace.id,
 				workspace.name,
 				workspace.description,

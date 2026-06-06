@@ -53,6 +53,7 @@ public class User {
 	@Column(name = "name", nullable = false, length = 100)
 	private String name;
 
+	// TODO: user <-> file persistence boundary 재설계
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(
 		name = "profile_image_file_id",

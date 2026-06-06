@@ -1,4 +1,4 @@
-package dev.runtime_lab.flowit.domain.activity.service;
+package dev.runtime_lab.flowit.domain.activity.service.internal;
 
 import dev.runtime_lab.flowit.domain.activity.dto.ActivityChangeElement;
 import dev.runtime_lab.flowit.domain.activity.dto.ActivityChangeResponse;
@@ -18,14 +18,14 @@ import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRemovalHist
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRoleHistory;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberWithdrawalHistory;
+import dev.runtime_lab.flowit.global.stereotype.InternalService;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
-@Component
+@InternalService
 @RequiredArgsConstructor
 public class WorkspaceActivityRecorder {
 

@@ -1,0 +1,24 @@
+[[integration-notes-0-2-19-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.19 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-07 02:35 KST
+|Empty
+|`POST /v1/workspaces/{workspaceId}/tasks`
+|<<integration-note-0-2-19-volt-2026-06-07-0235-api,API 변경이 없습니다. 직전 내용을 유지합니다.>>
+
+|===
+
+include::../notes/0.2.19-volt/2026-06-07-0235-api.adoc[]
+
+++++
+</div>
+</details>
+++++

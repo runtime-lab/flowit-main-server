@@ -5,7 +5,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import dev.runtime_lab.flowit.domain.user.dto.UserMeWorkspaceResponse;
 import dev.runtime_lab.flowit.domain.user.entity.QUser;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.entity.UserStatus;
@@ -15,6 +14,7 @@ import dev.runtime_lab.flowit.domain.workspace.entity.QWorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
+import dev.runtime_lab.flowit.domain.workspace.repository.projection.WorkspaceMembershipProjection;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
@@ -259,13 +259,13 @@ class WorkspaceMemberRepositoryTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	void findActiveUserWorkspacesReturnsProjectedWorkspaceMemberships() {
-		JPAQuery<UserMeWorkspaceResponse> query = mock(JPAQuery.class);
-		List<UserMeWorkspaceResponse> responses = List.of(
-			new UserMeWorkspaceResponse(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L)
+	void findActiveMembershipsByUserIdReturnsProjectedWorkspaceMemberships() {
+		JPAQuery<WorkspaceMembershipProjection> query = mock(JPAQuery.class);
+		List<WorkspaceMembershipProjection> responses = List.of(
+			new WorkspaceMembershipProjection(10L, "Flowit", "Team workspace", 3L, WorkspaceMemberRole.OWNER, 2L)
 		);
 
-		when(queryFactory.select(org.mockito.ArgumentMatchers.<ConstructorExpression<UserMeWorkspaceResponse>>any()))
+		when(queryFactory.select(org.mockito.ArgumentMatchers.<ConstructorExpression<WorkspaceMembershipProjection>>any()))
 			.thenReturn(query);
 		when(query.from(QWorkspaceMember.workspaceMember)).thenReturn(query);
 		when(query.join(QWorkspaceMember.workspaceMember.workspace, QWorkspace.workspace)).thenReturn(query);
@@ -273,10 +273,10 @@ class WorkspaceMemberRepositoryTest {
 		when(query.orderBy(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any())).thenReturn(query);
 		when(query.fetch()).thenReturn(responses);
 
-		List<UserMeWorkspaceResponse> found = repository.findActiveUserWorkspaces(1L);
+		List<WorkspaceMembershipProjection> found = repository.findActiveMembershipsByUserId(1L);
 
 		assertEquals(responses, found);
-		verify(queryFactory).select(org.mockito.ArgumentMatchers.<ConstructorExpression<UserMeWorkspaceResponse>>any());
+		verify(queryFactory).select(org.mockito.ArgumentMatchers.<ConstructorExpression<WorkspaceMembershipProjection>>any());
 		verify(query).from(QWorkspaceMember.workspaceMember);
 		verify(query).join(QWorkspaceMember.workspaceMember.workspace, QWorkspace.workspace);
 		verify(query).where(any(Predicate.class), any(Predicate.class), any(Predicate.class));

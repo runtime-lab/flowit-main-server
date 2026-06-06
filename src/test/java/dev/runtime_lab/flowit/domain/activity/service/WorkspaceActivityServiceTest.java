@@ -12,7 +12,7 @@ import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
-import dev.runtime_lab.flowit.domain.workspace.service.internal.WorkspaceAccessContext;
+import dev.runtime_lab.flowit.domain.workspace.service.internal.contract.WorkspaceAccessContext;
 import dev.runtime_lab.flowit.domain.workspace.service.internal.WorkspaceAccessService;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import java.time.Clock;

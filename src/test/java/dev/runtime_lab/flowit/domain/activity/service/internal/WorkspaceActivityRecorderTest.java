@@ -1,4 +1,4 @@
-package dev.runtime_lab.flowit.domain.activity.service;
+package dev.runtime_lab.flowit.domain.activity.service.internal;
 
 import dev.runtime_lab.flowit.domain.activity.dto.ActivityRecordAction;
 import dev.runtime_lab.flowit.domain.activity.dto.ActivityRecordDomain;
