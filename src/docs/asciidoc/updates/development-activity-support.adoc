@@ -8,4 +8,4 @@ Version Stage:: {api-version-stage} (pass:[<a href="version-policy.html">Version
 API Status:: {api-version-stage-status}
 
 Docs:: API 섹션 구분을 구체적으로 변경했습니다.
-Docs:: 일부 문서의 필드 설명에 적용되지 않은 효과를 수정했습니다.
+Docs:: 네비게이션 스크롤을 현재 문서의 위치로 보정하도록 개선했습니다.

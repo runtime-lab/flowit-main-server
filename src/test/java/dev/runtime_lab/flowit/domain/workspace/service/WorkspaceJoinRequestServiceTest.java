@@ -4,7 +4,7 @@ import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinByInviteCodeRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestResultResponse;
-import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestsResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinDetailsResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequest;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestEvent;
@@ -117,7 +117,7 @@ class WorkspaceJoinRequestServiceTest {
 			.thenReturn(Optional.of(ownerMembership));
 		when(workspaceJoinRequestRepository.findByWorkspaceIdWithHistories(10L)).thenReturn(List.of(joinRequest));
 
-		WorkspaceJoinRequestsResponse response = service.requests(currentUser, 10L);
+		WorkspaceJoinDetailsResponse response = service.requests(currentUser, 10L);
 
 		assertEquals(1, response.joinRequests().size());
 		assertEquals(200L, response.joinRequests().get(0).joinRequestId());

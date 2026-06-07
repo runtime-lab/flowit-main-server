@@ -135,6 +135,10 @@ a|``PUT /v1/users/me/profile-image`` +
 |``GET /v1/workspaces/{workspaceId}``
 |워크스페이스 활성 멤버가 워크스페이스 자체 정보를 조회하는 요청/응답과 권한 제한을 설명합니다.
 
+|link:workspaces-update.html[워크스페이스 수정 API]
+|``PATCH /v1/workspaces/{workspaceId}``
+|워크스페이스 OWNER 또는 ADMIN이 워크스페이스 이름과 설명을 부분 수정하는 요청/응답과 권한 제한을 설명합니다.
+
 |link:workspaces-activity-records.html[워크스페이스 최근 활동 API]
 |``GET /v1/workspaces/{workspaceId}/activity-records``
 |작업과 멤버십 변경을 통합한 워크스페이스 최근 활동 조회 API를 설명합니다.

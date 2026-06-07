@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'dev.runtime-lab'
-version = '0.2.19-volt'
+version = '0.2.20-volt'
 
 java {
 	toolchain {
@@ -1238,6 +1238,7 @@ tasks.named('asciidoctor', AsciidoctorTask) {
 	resources {
 		from(apiDocsSourceDir) {
 			include 'css/**'
+			include 'js/**'
 		}
 	}
 }

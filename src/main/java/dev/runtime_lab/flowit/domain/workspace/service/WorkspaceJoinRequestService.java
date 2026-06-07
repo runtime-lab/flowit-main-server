@@ -3,9 +3,9 @@ package dev.runtime_lab.flowit.domain.workspace.service;
 import dev.runtime_lab.flowit.domain.user.entity.User;
 import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinByInviteCodeRequest;
-import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinDetailResponse;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestResultResponse;
-import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestsResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinDetailsResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestEvent;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
@@ -51,7 +51,7 @@ public class WorkspaceJoinRequestService {
 	}
 
 	@Transactional(readOnly = true)
-	public WorkspaceJoinRequestsResponse requests(CurrentUser currentUser, Long workspaceId) {
+	public WorkspaceJoinDetailsResponse requests(CurrentUser currentUser, Long workspaceId) {
 		User requester = currentUserProvider.findActive(currentUser);
 		Workspace workspace = workspaceRepository.findActiveById(workspaceId)
 			.orElseThrow(WorkspaceNotFoundException::new);
@@ -63,9 +63,9 @@ public class WorkspaceJoinRequestService {
 			throw new WorkspaceMemberAccessDeniedException(JOIN_REQUEST_HISTORY_ACCESS_DENIED);
 		}
 
-		return new WorkspaceJoinRequestsResponse(
+		return new WorkspaceJoinDetailsResponse(
 			workspaceJoinRequestRepository.findByWorkspaceIdWithHistories(workspace.getId()).stream()
-				.map(WorkspaceJoinRequestResponse::from)
+				.map(WorkspaceJoinDetailResponse::from)
 				.toList()
 		);
 	}

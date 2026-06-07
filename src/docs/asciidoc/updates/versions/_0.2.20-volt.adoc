@@ -1,0 +1,24 @@
+[[integration-notes-0-2-20-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.20 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-07 23:09 KST
+|Added
+|`PATCH /v1/workspaces/{workspaceId}`
+|<<integration-note-0-2-20-volt-2026-06-07-2309-patch-v1-workspaces-workspaceid-api,`PATCH /v1/workspaces/{workspaceId}` 워크스페이스 수정 API가 추가되었습니다.>>
+
+|===
+
+include::../notes/0.2.20-volt/2026-06-07-2309-patch-v1-workspaces-workspaceid-api.adoc[]
+
+++++
+</div>
+</details>
+++++

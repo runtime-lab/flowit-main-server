@@ -5,13 +5,11 @@ import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceUpdateRequest;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
-import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
-import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
-import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
-import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceNotFoundException;
+import dev.runtime_lab.flowit.domain.workspace.exception.*;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceMemberRepository;
 import dev.runtime_lab.flowit.domain.workspace.repository.WorkspaceRepository;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
@@ -20,8 +18,10 @@ import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.MEMBERSHIP_REQUIRED;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.WORKSPACE_UPDATE_NOT_ALLOWED;
 import static dev.runtime_lab.flowit.domain.workspace.policy.WorkspaceInviteCodePolicy.MAX_GENERATION_ATTEMPTS;
 
 @Service
@@ -58,6 +58,44 @@ public class WorkspaceService {
 			.build());
 
 		return WorkspaceCreateResponse.from(workspace);
+	}
+
+	@Transactional
+	public WorkspaceResponse update(CurrentUser currentUser, Long workspaceId, WorkspaceUpdateRequest request) {
+		User requester = currentUserProvider.findActive(currentUser);
+
+		Workspace workspace = workspaceRepository.findActiveByIdForUpdate(workspaceId)
+				.orElseThrow(WorkspaceNotFoundException::new);
+
+		WorkspaceMember requesterMembership = workspaceMemberRepository
+				.findActiveByWorkspaceIdAndUserIdForUpdate(workspace.getId(), requester.getId())
+				.orElseThrow(() -> new WorkspaceMemberAccessDeniedException(MEMBERSHIP_REQUIRED));
+
+		if (!requesterMembership.getRole().canUpdateWorkspace()) {
+			throw new WorkspaceMemberAccessDeniedException(WORKSPACE_UPDATE_NOT_ALLOWED);
+		}
+
+		boolean isChanged = false;
+
+		if (request.name() != null) {
+			if (!StringUtils.hasText(request.name())) {
+				throw new InvalidWorkspaceUpdateException();
+			}
+
+			workspace.setWorkspaceName(request.name());
+			isChanged = true;
+		}
+
+		if (request.description() != null) {
+			workspace.setWorkspaceDescription(request.description().isBlank() ? null : request.description());
+			isChanged = true;
+		}
+
+		if (isChanged) {
+			workspace.setUpdatedAt(Instant.now(clock).getEpochSecond());
+		}
+
+		return WorkspaceResponse.from(workspace);
 	}
 
 	@Transactional(readOnly = true)

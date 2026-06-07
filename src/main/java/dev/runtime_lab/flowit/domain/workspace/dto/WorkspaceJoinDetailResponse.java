@@ -5,7 +5,7 @@ import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestMethod
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestStatus;
 import java.util.List;
 
-public record WorkspaceJoinRequestResponse(
+public record WorkspaceJoinDetailResponse(
 	Long joinRequestId,
 	Long workspaceId,
 	String workspaceName,
@@ -26,10 +26,10 @@ public record WorkspaceJoinRequestResponse(
 	List<WorkspaceJoinRequestHistoryResponse> histories
 ) {
 
-	public static WorkspaceJoinRequestResponse from(WorkspaceJoinRequest joinRequest) {
+	public static WorkspaceJoinDetailResponse from(WorkspaceJoinRequest joinRequest) {
 		Long memberId = joinRequest.getWorkspaceMember() == null ? null : joinRequest.getWorkspaceMember().getId();
 
-		return new WorkspaceJoinRequestResponse(
+		return new WorkspaceJoinDetailResponse(
 			joinRequest.getId(),
 			joinRequest.getWorkspace().getId(),
 			joinRequest.getWorkspace().getName(),

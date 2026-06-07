@@ -19,6 +19,12 @@ ifdef::api-error-validation[]
 |요청 본문, multipart part, 또는 검증 대상 값이 유효하지 않습니다.
 endif::api-error-validation[]
 
+ifdef::api-error-workspace-update-invalid[]
+|``400 Bad Request``
+|``WORKSPACE_400_001``
+|워크스페이스 수정 요청에 허용할 수 없는 값이 포함되어 있습니다. 빈 ``name``은 거부됩니다.
+endif::api-error-workspace-update-invalid[]
+
 ifdef::api-error-login[]
 |``401 Unauthorized``
 |``AUTH_401_001``
@@ -78,6 +84,12 @@ ifdef::api-error-workspace-owner-required[]
 |``AUTH_403_001``
 |요청 사용자가 해당 워크스페이스의 활성 ``OWNER`` 멤버가 아닙니다.
 endif::api-error-workspace-owner-required[]
+
+ifdef::api-error-workspace-update-denied[]
+|``403 Forbidden``
+|``AUTH_403_001``
+|요청 사용자는 활성 워크스페이스 멤버이지만 워크스페이스 프로필 필드를 수정할 수 있는 역할이 아닙니다. ``OWNER`` 또는 ``ADMIN`` 역할이 필요합니다.
+endif::api-error-workspace-update-denied[]
 
 ifdef::api-error-workspace-role-update-denied[]
 |``403 Forbidden``

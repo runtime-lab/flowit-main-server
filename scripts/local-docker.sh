@@ -107,17 +107,19 @@ usage () {
     info "  ./local.sh stop"
     info "  ./local.sh infra-start"
     info "  ./local.sh infra-stop"
+    info "  ./local.sh docs-refresh"
 }
 
 normalize_command () {
     case "${1:-start}" in
-      "" | start | build-image | infra-start | infra-stop | stop | status | logs | help | -h | --help) printf '%s' "${1:-start}" ;;
+      "" | start | build-image | infra-start | infra-stop | stop | status | logs | docs-refresh | help | -h | --help) printf '%s' "${1:-start}" ;;
       localStart) printf '%s' "start" ;;
       localBuildImage | build) printf '%s' "build-image" ;;
       localInfraStart) printf '%s' "infra-start" ;;
       localInfraStop) printf '%s' "infra-stop" ;;
       localStop) printf '%s' "stop" ;;
       localStatus) printf '%s' "status" ;;
+      localDocsRefresh | docsRefresh) printf '%s' "docs-refresh" ;;
       *) printf '%s' "$1" ;;
     esac
 }
@@ -396,6 +398,14 @@ local_start () {
     info "Logs: docker compose logs -f app"
 }
 
+refresh_docs () {
+    info "Refreshing API docs without restarting the local application..."
+    "$APP_HOME/gradlew" copyApiDocs --rerun-tasks -PforceApiDocs=true || exit $?
+    info "API docs refreshed: build/resources/main/static/docs"
+    info "Reload http://127.0.0.1:8080/docs/index.html in the browser."
+    info "When the app runs in Docker, refreshed docs are visible after reload if it was started with the default docs mount."
+}
+
 COMMAND=$(normalize_command "$COMMAND")
 if [ -n "${FLOWIT_GRADLE_FALLBACK_TASK:-}" ]; then
     INVOCATION_LABEL="./gradlew $FLOWIT_GRADLE_FALLBACK_TASK"
@@ -413,12 +423,17 @@ case "$COMMAND" in
 esac
 
 case "$COMMAND" in
-  start | build-image | infra-start | infra-stop | stop | status | logs) ;;
+  start | build-image | infra-start | infra-stop | stop | status | logs | docs-refresh) ;;
   *)
     usage
     fail "ERROR: unsupported local Docker command: $COMMAND"
     ;;
 esac
+
+if [ "$COMMAND" = "docs-refresh" ]; then
+    refresh_docs
+    exit 0
+fi
 
 assert_local_docker_allowed
 require_docker

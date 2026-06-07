@@ -67,6 +67,7 @@ include::_api-errors.adoc[]
 == 관련 문서
 
 * link:workspaces-create.html[워크스페이스 생성 API]
+* link:workspaces-update.html[워크스페이스 수정 API]
 * link:users-me.html[현재 사용자 조회 API]
 * link:api-response.html[공통 응답 포맷]
 * link:error-codes.html[에러 코드]

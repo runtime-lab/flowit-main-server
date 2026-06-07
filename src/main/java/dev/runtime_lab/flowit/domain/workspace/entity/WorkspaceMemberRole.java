@@ -46,4 +46,8 @@ public enum WorkspaceMemberRole {
 
 		return false;
 	}
+
+	public boolean canUpdateWorkspace() {
+		return this == OWNER || this == ADMIN;
+	}
 }

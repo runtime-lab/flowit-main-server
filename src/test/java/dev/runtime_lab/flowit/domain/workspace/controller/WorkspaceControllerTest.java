@@ -13,6 +13,8 @@ import dev.runtime_lab.flowit.domain.activity.service.WorkspaceActivityService;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceUpdateRequest;
+import dev.runtime_lab.flowit.domain.workspace.exception.InvalidWorkspaceUpdateException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
@@ -48,6 +50,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -201,6 +204,151 @@ class WorkspaceControllerTest {
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_500_001"))
 			.andExpect(jsonPath("$.error.message").value("워크스페이스 처리에 실패했습니다."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void updateUpdatesWorkspace() throws Exception {
+		String requestBody = """
+			{
+			  "name": "Flowit Renamed",
+			  "description": "Updated workspace"
+			}
+			""";
+		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
+		ArgumentCaptor<Long> workspaceIdCaptor = ArgumentCaptor.forClass(Long.class);
+		ArgumentCaptor<WorkspaceUpdateRequest> requestCaptor = ArgumentCaptor.forClass(WorkspaceUpdateRequest.class);
+		WorkspaceResponse response = new WorkspaceResponse(
+			10L,
+			"Flowit Renamed",
+			"Updated workspace",
+			"A1B2-C3D4-E5F6",
+			1779889000L,
+			1779889100L
+		);
+
+		when(workspaceService.update(any(CurrentUser.class), eq(10L), any(WorkspaceUpdateRequest.class)))
+			.thenReturn(response);
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}", 10L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data.id").value(10L))
+			.andExpect(jsonPath("$.data.name").value("Flowit Renamed"))
+			.andExpect(jsonPath("$.data.description").value("Updated workspace"))
+			.andExpect(jsonPath("$.data.inviteCode").value("A1B2-C3D4-E5F6"))
+			.andExpect(jsonPath("$.data.createdAt").value(1779889000L))
+			.andExpect(jsonPath("$.data.updatedAt").value(1779889100L))
+			.andExpect(jsonPath("$.extensions").isMap());
+
+		verify(workspaceService).update(
+			currentUserCaptor.capture(),
+			workspaceIdCaptor.capture(),
+			requestCaptor.capture()
+		);
+		assertEquals(1L, currentUserCaptor.getValue().id());
+		assertEquals(10L, workspaceIdCaptor.getValue());
+		assertEquals("Flowit Renamed", requestCaptor.getValue().name());
+		assertEquals("Updated workspace", requestCaptor.getValue().description());
+	}
+
+	@Test
+	void updateReturnsUnauthorizedWhenAuthenticationIsMissing() throws Exception {
+		String requestBody = """
+			{
+			  "name": "Flowit Renamed"
+			}
+			""";
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}", 10L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
+			.andExpect(jsonPath("$.error.message").value("Invalid authenticated user."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void updateReturnsBadRequestWhenWorkspaceUpdateRequestIsInvalid() throws Exception {
+		String requestBody = """
+			{
+			  "name": ""
+			}
+			""";
+
+		when(workspaceService.update(any(CurrentUser.class), eq(10L), any(WorkspaceUpdateRequest.class)))
+			.thenThrow(new InvalidWorkspaceUpdateException());
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}", 10L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("WORKSPACE_400_001"))
+			.andExpect(jsonPath("$.error.message").value("Invalid workspace update."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void updateReturnsForbiddenWhenCurrentUserCannotUpdateWorkspace() throws Exception {
+		String requestBody = """
+			{
+			  "name": "Flowit Renamed"
+			}
+			""";
+
+		when(workspaceService.update(any(CurrentUser.class), eq(10L), any(WorkspaceUpdateRequest.class)))
+			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace update is not allowed."));
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}", 10L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isForbidden())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
+			.andExpect(jsonPath("$.error.message").value("Workspace update is not allowed."))
+			.andExpect(jsonPath("$.extensions").isMap());
+	}
+
+	@Test
+	void updateReturnsNotFoundWhenWorkspaceIsMissing() throws Exception {
+		String requestBody = """
+			{
+			  "name": "Flowit Renamed"
+			}
+			""";
+
+		when(workspaceService.update(any(CurrentUser.class), eq(10L), any(WorkspaceUpdateRequest.class)))
+			.thenThrow(new WorkspaceNotFoundException());
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}", 10L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
+			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 

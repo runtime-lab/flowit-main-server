@@ -66,4 +66,16 @@ public class Workspace {
 		this.deletedAt = deletedAt;
 		this.updatedAt = deletedAt;
 	}
+
+	public void setWorkspaceName(String name) {
+		this.name = name;
+	}
+
+	public void setWorkspaceDescription(String description) {
+		this.description = description;
+	}
+
+	public void setUpdatedAt(long epoch) {
+		this.updatedAt = epoch;
+	}
 }

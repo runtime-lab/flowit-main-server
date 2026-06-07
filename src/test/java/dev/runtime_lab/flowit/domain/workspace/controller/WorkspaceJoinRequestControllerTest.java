@@ -2,9 +2,9 @@ package dev.runtime_lab.flowit.domain.workspace.controller;
 
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinByInviteCodeRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestHistoryResponse;
-import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinDetailResponse;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestResultResponse;
-import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestsResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinDetailsResponse;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestMethod;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceJoinRequestStatus;
 import dev.runtime_lab.flowit.domain.workspace.exception.DuplicateWorkspaceMemberException;
@@ -194,7 +194,7 @@ class WorkspaceJoinRequestControllerTest {
 	void requestsReturnsWorkspaceJoinRequests() throws Exception {
 		ArgumentCaptor<CurrentUser> currentUserCaptor = ArgumentCaptor.forClass(CurrentUser.class);
 		ArgumentCaptor<Long> workspaceIdCaptor = ArgumentCaptor.forClass(Long.class);
-		WorkspaceJoinRequestsResponse response = new WorkspaceJoinRequestsResponse(List.of(joinedResponse()));
+		WorkspaceJoinDetailsResponse response = new WorkspaceJoinDetailsResponse(List.of(joinedResponse()));
 
 		when(workspaceJoinRequestService.requests(any(CurrentUser.class), eq(10L))).thenReturn(response);
 		SecurityContextHolder.getContext().setAuthentication(
@@ -268,8 +268,8 @@ class WorkspaceJoinRequestControllerTest {
 		);
 	}
 
-	private WorkspaceJoinRequestResponse joinedResponse() {
-		return new WorkspaceJoinRequestResponse(
+	private WorkspaceJoinDetailResponse joinedResponse() {
+		return new WorkspaceJoinDetailResponse(
 			100L,
 			10L,
 			"Flowit",

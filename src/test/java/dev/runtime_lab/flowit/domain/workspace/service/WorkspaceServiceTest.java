@@ -5,9 +5,11 @@ import dev.runtime_lab.flowit.domain.user.service.internal.CurrentUserProvider;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceCreateResponse;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceUpdateRequest;
 import dev.runtime_lab.flowit.domain.workspace.entity.Workspace;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMember;
 import dev.runtime_lab.flowit.domain.workspace.entity.WorkspaceMemberRole;
+import dev.runtime_lab.flowit.domain.workspace.exception.InvalidWorkspaceUpdateException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessDeniedException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceInviteCodeGenerationException;
 import dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceMemberAccessDeniedException;
@@ -155,6 +157,142 @@ class WorkspaceServiceTest {
 		assertThrows(WorkspaceInviteCodeGenerationException.class, () -> workspaceService.create(currentUser, request));
 		verify(workspaceRepository, never()).save(org.mockito.ArgumentMatchers.any(Workspace.class));
 		verify(workspaceMemberRepository, never()).save(org.mockito.ArgumentMatchers.any(WorkspaceMember.class));
+	}
+
+	@Test
+	void updateChangesWorkspaceFieldsWhenRequesterCanUpdateWorkspace() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User requester = activeUser();
+		Workspace workspace = workspace();
+		WorkspaceMember requesterMembership = workspaceMember(workspace, requester, WorkspaceMemberRole.ADMIN);
+		WorkspaceUpdateRequest request = new WorkspaceUpdateRequest("Flowit Renamed", "Updated workspace");
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(requester);
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L))
+			.thenReturn(Optional.of(requesterMembership));
+
+		WorkspaceResponse response = workspaceService.update(currentUser, 10L, request);
+
+		assertEquals("Flowit Renamed", workspace.getName());
+		assertEquals("Updated workspace", workspace.getDescription());
+		assertEquals(1779889000L, workspace.getUpdatedAt());
+		assertEquals("Flowit Renamed", response.name());
+		assertEquals("Updated workspace", response.description());
+		assertEquals(1779889000L, response.updatedAt());
+		verify(workspaceRepository).findActiveByIdForUpdate(10L);
+		verify(workspaceMemberRepository).findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L);
+	}
+
+	@Test
+	void updateClearsDescriptionWhenDescriptionIsBlank() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User requester = activeUser();
+		Workspace workspace = workspace();
+		WorkspaceMember requesterMembership = workspaceMember(workspace, requester, WorkspaceMemberRole.OWNER);
+		WorkspaceUpdateRequest request = new WorkspaceUpdateRequest(null, "   ");
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(requester);
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L))
+			.thenReturn(Optional.of(requesterMembership));
+
+		WorkspaceResponse response = workspaceService.update(currentUser, 10L, request);
+
+		assertEquals("Flowit", workspace.getName());
+		assertNull(workspace.getDescription());
+		assertEquals(1779889000L, workspace.getUpdatedAt());
+		assertNull(response.description());
+	}
+
+	@Test
+	void updateDoesNotTouchUpdatedAtWhenRequestHasNoFields() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User requester = activeUser();
+		Workspace workspace = workspace();
+		WorkspaceMember requesterMembership = workspaceMember(workspace, requester, WorkspaceMemberRole.OWNER);
+		WorkspaceUpdateRequest request = new WorkspaceUpdateRequest(null, null);
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(requester);
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L))
+			.thenReturn(Optional.of(requesterMembership));
+
+		WorkspaceResponse response = workspaceService.update(currentUser, 10L, request);
+
+		assertEquals("Flowit", workspace.getName());
+		assertEquals("Team workspace", workspace.getDescription());
+		assertEquals(1L, workspace.getUpdatedAt());
+		assertEquals(1L, response.updatedAt());
+	}
+
+	@Test
+	void updateRejectsMissingWorkspace() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(activeUser());
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.empty());
+
+		assertThrows(WorkspaceNotFoundException.class, () ->
+			workspaceService.update(currentUser, 10L, new WorkspaceUpdateRequest("Flowit", null))
+		);
+		verify(workspaceMemberRepository, never()).findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L);
+	}
+
+	@Test
+	void updateRejectsNonMember() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User requester = activeUser();
+		Workspace workspace = workspace();
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(requester);
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L))
+			.thenReturn(Optional.empty());
+
+		WorkspaceMemberAccessDeniedException exception = assertThrows(
+			WorkspaceMemberAccessDeniedException.class,
+			() -> workspaceService.update(currentUser, 10L, new WorkspaceUpdateRequest("Flowit", null))
+		);
+		assertEquals("Workspace membership is required.", exception.getMessage());
+	}
+
+	@Test
+	void updateRejectsRequesterWithoutWorkspaceUpdatePermission() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User requester = activeUser();
+		Workspace workspace = workspace();
+		WorkspaceMember requesterMembership = workspaceMember(workspace, requester, WorkspaceMemberRole.MEMBER);
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(requester);
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L))
+			.thenReturn(Optional.of(requesterMembership));
+
+		WorkspaceMemberAccessDeniedException exception = assertThrows(
+			WorkspaceMemberAccessDeniedException.class,
+			() -> workspaceService.update(currentUser, 10L, new WorkspaceUpdateRequest("Flowit Renamed", null))
+		);
+		assertEquals("Workspace update is not allowed.", exception.getMessage());
+	}
+
+	@Test
+	void updateRejectsBlankWorkspaceName() {
+		CurrentUser currentUser = new CurrentUser(1L, "user@example.com", "nickname");
+		User requester = activeUser();
+		Workspace workspace = workspace();
+		WorkspaceMember requesterMembership = workspaceMember(workspace, requester, WorkspaceMemberRole.ADMIN);
+
+		when(currentUserProvider.findActive(currentUser)).thenReturn(requester);
+		when(workspaceRepository.findActiveByIdForUpdate(10L)).thenReturn(Optional.of(workspace));
+		when(workspaceMemberRepository.findActiveByWorkspaceIdAndUserIdForUpdate(10L, 1L))
+			.thenReturn(Optional.of(requesterMembership));
+
+		assertThrows(InvalidWorkspaceUpdateException.class, () ->
+			workspaceService.update(currentUser, 10L, new WorkspaceUpdateRequest(" ", null))
+		);
+		assertEquals("Flowit", workspace.getName());
+		assertEquals(1L, workspace.getUpdatedAt());
 	}
 
 	@Test
@@ -314,8 +452,21 @@ class WorkspaceServiceTest {
 		return Workspace.builder()
 			.id(10L)
 			.name("Flowit")
+			.description("Team workspace")
 			.inviteCode("A1B2-C3D4-E5F6")
 			.createdBy(activeUser())
+			.createdAt(1L)
+			.updatedAt(1L)
+			.build();
+	}
+
+	private WorkspaceMember workspaceMember(Workspace workspace, User user, WorkspaceMemberRole role) {
+		return WorkspaceMember.builder()
+			.id(100L)
+			.workspace(workspace)
+			.user(user)
+			.role(role)
+			.joinedAt(1L)
 			.createdAt(1L)
 			.updatedAt(1L)
 			.build();

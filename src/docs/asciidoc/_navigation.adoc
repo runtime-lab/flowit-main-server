@@ -144,6 +144,13 @@ ifndef::nav-workspaces-get[]
 * link:workspaces-get.html[워크스페이스 조회 API]
 endif::nav-workspaces-get[]
 
+ifdef::nav-workspaces-update[]
+* [.is-current]#워크스페이스 수정 API#
+endif::nav-workspaces-update[]
+ifndef::nav-workspaces-update[]
+* link:workspaces-update.html[워크스페이스 수정 API]
+endif::nav-workspaces-update[]
+
 ifdef::nav-workspaces-activity-records[]
 * [.is-current]#워크스페이스 최근 활동 API#
 endif::nav-workspaces-activity-records[]
@@ -248,3 +255,7 @@ ifndef::nav-workspaces-tasks-histories[]
 * link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
 endif::nav-workspaces-tasks-histories[]
 --
+
+++++
+<script src="js/restdocs-navigation.js?v=20260607-details-transition" defer></script>
+++++

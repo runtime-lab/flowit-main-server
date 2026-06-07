@@ -1,3 +1,27 @@
+// integration-note-source-sha256: ac1afae8b6fff2ca88c34e59ee3547c45e8517252b94a1c948b7138a12031059
+// integration-note-version: 0.2.20-volt
+// integration-note-time: 2026-06-07-2309
+// integration-note-time-human: 2026-06-07 23:09 KST
+// integration-note-impact: Added
+// integration-note-target: `PATCH /v1/workspaces/{workspaceId}`
+// integration-note-summary: `PATCH /v1/workspaces/{workspaceId}` 워크스페이스 수정 API가 추가되었습니다.
+// integration-note-anchor: integration-note-0-2-20-volt-2026-06-07-2309-patch-v1-workspaces-workspaceid-api
+
+[#integration-note-0-2-20-volt-2026-06-07-2309-patch-v1-workspaces-workspaceid-api]
+=== `PATCH /v1/workspaces/{workspaceId}` 워크스페이스 수정 API가 추가되었습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.20-volt`
+|Archived At |2026-06-07 23:09 KST
+|Impact |Added
+|Target |`PATCH /v1/workspaces/{workspaceId}`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
 [.update-note-title]
 Integration Note
 
@@ -13,4 +37,4 @@ Additional:: 작업 설명은 ``descriptionMarkdown`` 원문 문자열로 저장
 Additional:: 작업 진행도는 작업 일반 수정 API가 아니라 ``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/progress``에서만 변경합니다.
 Additional:: 최근 활동 응답의 ``items[]`` 레코드 하나가 기본 목록의 한 줄 렌더링 단위입니다. 서버는 문장을 강제하지 않고 ``actor``, ``target``, ``action``, ``changeCount``, ``changedElements`` 의미 키를 반환합니다.
 Additional:: 최근 활동의 ``changes[]``는 단일 ``action``에 딸린 상세 diff 목록입니다. 기본 목록 렌더링이 아니라 펼침 또는 상세 UI에서 사용합니다.
-
+--

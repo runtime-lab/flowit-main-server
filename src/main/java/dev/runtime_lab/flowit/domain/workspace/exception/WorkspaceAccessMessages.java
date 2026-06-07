@@ -11,4 +11,5 @@ public final class WorkspaceAccessMessages {
 	public static final String ROLE_UPDATE_NOT_ALLOWED = "Workspace member role update is not allowed.";
 	public static final String JOIN_REQUEST_HISTORY_ACCESS_DENIED =
 		"Workspace join request history access is not allowed.";
+	public static final String WORKSPACE_UPDATE_NOT_ALLOWED = "Workspace update is not allowed.";
 }

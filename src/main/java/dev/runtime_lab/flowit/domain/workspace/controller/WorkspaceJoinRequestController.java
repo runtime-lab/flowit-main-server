@@ -2,7 +2,7 @@ package dev.runtime_lab.flowit.domain.workspace.controller;
 
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinByInviteCodeRequest;
 import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestResultResponse;
-import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinRequestsResponse;
+import dev.runtime_lab.flowit.domain.workspace.dto.WorkspaceJoinDetailsResponse;
 import dev.runtime_lab.flowit.domain.workspace.service.WorkspaceJoinRequestService;
 import dev.runtime_lab.flowit.global.security.authentication.AuthenticatedUser;
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
@@ -40,7 +40,7 @@ public class WorkspaceJoinRequestController {
 	}
 
 	@GetMapping("/{workspaceId}/join-requests")
-	public WorkspaceJoinRequestsResponse requests(
+	public WorkspaceJoinDetailsResponse requests(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId
 	) {

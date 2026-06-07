@@ -573,6 +573,7 @@ function Refresh-Docs {
     Invoke-Checked -CommandLine @(
         (Join-Path $AppHome 'gradlew.bat'),
         'copyApiDocs',
+        '--rerun-tasks',
         '-PforceApiDocs=true'
     )
     Write-Info 'API docs refreshed: build/resources/main/static/docs'

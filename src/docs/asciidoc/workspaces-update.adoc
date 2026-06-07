@@ -1,0 +1,79 @@
+= 워크스페이스 수정 API
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-update:
+:breadcrumb-section: 워크스페이스 API
+:breadcrumb-current: 워크스페이스 수정 API
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 워크스페이스 수정
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |``PATCH``
+|경로 |``/v1/workspaces/{workspaceId}``
+|API 상태 |[.badge.stability.experimental]#Experimental#
+|목적 |워크스페이스 이름과 설명처럼 수정 가능한 프로필 필드를 변경합니다.
+|인증 |JWT access token이 필요합니다.
+|권한 |요청자는 해당 워크스페이스의 활성 ``OWNER`` 또는 ``ADMIN`` 멤버여야 합니다.
+|PATCH 규칙 |생략한 필드는 변경하지 않습니다. 빈 ``name``은 거부하고, 빈 ``description``은 설명 제거로 처리합니다.
+|성공 응답 |수정된 ``Workspace`` 응답 본문을 반환합니다.
+|===
+
+=== HTTP 요청
+
+include::{snippets}/workspaces-update/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/workspaces-update/curl-request.adoc[]
+
+=== 경로 파라미터
+
+include::{snippets}/workspaces-update/path-parameters.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/workspaces-update/request-headers.adoc[]
+
+=== 요청 필드
+
+include::{snippets}/workspaces-update/request-fields.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/workspaces-update/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/workspaces-update/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/workspaces-update/response-fields.adoc[]
+
+:api-error-auth-required:
+:api-error-workspace-update-invalid:
+:api-error-workspace-member-required:
+:api-error-workspace-update-denied:
+:api-error-workspace-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-create.html[워크스페이스 생성 API]
+* link:workspaces-get.html[워크스페이스 조회 API]
+* link:workspaces-delete.html[워크스페이스 삭제 API]
+* link:api-response.html[공통 API 응답 포맷]
+* link:error-codes.html[에러 코드]
