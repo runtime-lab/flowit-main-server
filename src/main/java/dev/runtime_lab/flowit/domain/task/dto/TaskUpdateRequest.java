@@ -5,7 +5,6 @@ import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import java.util.List;
 
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.DESCRIPTION_MARKDOWN_MAX_LENGTH;
@@ -29,9 +28,9 @@ public record TaskUpdateRequest(
 	@NotNull
 	TaskPriority priority,
 
-	LocalDate startDate,
+	Long startDate,
 
-	LocalDate dueDate,
+	Long dueDate,
 
 	@Size(max = TAG_MAX_COUNT)
 	List<@NotBlank @Size(max = TAG_MAX_LENGTH) String> tags

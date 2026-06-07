@@ -32,7 +32,6 @@ import dev.runtime_lab.flowit.global.web.response.ApiListData;
 import java.text.Normalizer;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -274,8 +273,8 @@ public class TaskService {
 		addChangeIfChanged(changes, TaskHistoryElement.STATUS, task.getStatus(), request.status());
 		addChangeIfChanged(changes, TaskHistoryElement.ASSIGNEE, memberValue(task.getAssignee()), memberValue(assignee));
 		addChangeIfChanged(changes, TaskHistoryElement.PRIORITY, task.getPriority(), request.priority());
-		addChangeIfChanged(changes, TaskHistoryElement.START_DATE, dateValue(task.getStartDate()), dateValue(request.startDate()));
-		addChangeIfChanged(changes, TaskHistoryElement.DUE_DATE, dateValue(task.getDueDate()), dateValue(request.dueDate()));
+		addChangeIfChanged(changes, TaskHistoryElement.START_DATE, task.getStartDate(), request.startDate());
+		addChangeIfChanged(changes, TaskHistoryElement.DUE_DATE, task.getDueDate(), request.dueDate());
 		addChangeIfChanged(changes, TaskHistoryElement.TAGS, oldTags, newTags);
 
 		return changes;
@@ -329,10 +328,6 @@ public class TaskService {
 			"userId", workspaceMember.getUser().getId(),
 			"displayName", workspaceMember.getUser().getName()
 		);
-	}
-
-	private String dateValue(LocalDate date) {
-		return date == null ? null : date.toString();
 	}
 
 	private void insertTags(Task task, List<TagValue> tags, long now) {

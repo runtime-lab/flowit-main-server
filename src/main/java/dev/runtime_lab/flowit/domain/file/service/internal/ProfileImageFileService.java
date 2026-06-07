@@ -32,7 +32,7 @@ public class ProfileImageFileService {
 		StoredProfileImageFile storedFile = localProfileImageStorage.store(userId, imageFile);
 		registerNewFileRollbackCleanup(storedFile.storageKey());
 
-		Instant now = Instant.now(clock);
+		long now = Instant.now(clock).getEpochSecond();
 		return fileMetadataRepository.save(
 			FileMetadata.builder()
 				.storageKey(storedFile.storageKey())
@@ -41,8 +41,8 @@ public class ProfileImageFileService {
 				.sizeBytes(storedFile.sizeBytes())
 				.width(storedFile.width())
 				.height(storedFile.height())
-				.createdAt(now.toEpochMilli())
-				.updatedAt(now.toEpochMilli())
+				.createdAt(now)
+				.updatedAt(now)
 				.build()
 		);
 	}

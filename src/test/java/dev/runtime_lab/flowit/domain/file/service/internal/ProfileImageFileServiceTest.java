@@ -54,8 +54,8 @@ class ProfileImageFileServiceTest {
 		assertEquals(68L, fileMetadataToSave.getSizeBytes());
 		assertEquals(1, fileMetadataToSave.getWidth());
 		assertEquals(1, fileMetadataToSave.getHeight());
-		assertEquals(1_780_142_400_000L, fileMetadataToSave.getCreatedAt());
-		assertEquals(1_780_142_400_000L, fileMetadataToSave.getUpdatedAt());
+		assertEquals(1_780_142_400L, fileMetadataToSave.getCreatedAt());
+		assertEquals(1_780_142_400L, fileMetadataToSave.getUpdatedAt());
 	}
 
 	@Test

@@ -1,0 +1,24 @@
+[[integration-notes-0-2-21-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.21 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-08 00:44 KST
+|Fix
+|`updates/latest.adoc`
+|<<integration-note-0-2-21-volt-2026-06-08-0044-api-api,작업 API 전역, 프로필 파일 API의 잘못된 날짜 타입을 수정했습니다.>>
+
+|===
+
+include::../notes/0.2.21-volt/2026-06-08-0044-api-api.adoc[]
+
+++++
+</div>
+</details>
+++++

@@ -24,7 +24,6 @@ import dev.runtime_lab.flowit.global.web.exception.GlobalExceptionHandler;
 import dev.runtime_lab.flowit.global.web.response.ApiListData;
 import dev.runtime_lab.flowit.global.web.response.ApiResponseBodyAdvice;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,6 +67,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(RestDocumentationExtension.class)
 class TaskApiDocsTest {
 
+	private static final Long START_DATE = 1780876800L;
+	private static final Long DUE_DATE = 1781222400L;
+
 	private final TaskService taskService = mock(TaskService.class);
 	private MockMvc mockMvc;
 
@@ -99,8 +101,8 @@ class TaskApiDocsTest {
 			  "status": "TO_DO",
 			  "assigneeMemberId": 3002,
 			  "priority": "HIGH",
-			  "startDate": "2026-06-08",
-			  "dueDate": "2026-06-12",
+			  "startDate": 1780876800,
+			  "dueDate": 1781222400,
 			  "tags": ["frontend", "ui"]
 			}
 			""";
@@ -140,8 +142,8 @@ class TaskApiDocsTest {
 				TaskStatus.IN_PROGRESS,
 				assignee,
 				TaskPriority.HIGH,
-				LocalDate.of(2026, 6, 8),
-				LocalDate.of(2026, 6, 12),
+				START_DATE,
+				DUE_DATE,
 				List.of("frontend", "ui"),
 				35,
 				1780916400L,
@@ -159,8 +161,8 @@ class TaskApiDocsTest {
 				.param("assigneeMemberId", "3002")
 				.param("tag", "frontend")
 				.param("keyword", "login")
-				.param("dueFrom", "2026-06-08")
-				.param("dueTo", "2026-06-12")
+				.param("dueFrom", "1780876800")
+				.param("dueTo", "1781222400")
 				.param("page", "0")
 				.param("size", "20")
 				.accept(MediaType.APPLICATION_JSON))
@@ -175,8 +177,8 @@ class TaskApiDocsTest {
 					parameterWithName("assigneeMemberId").description("담당 워크스페이스 멤버 식별자 필터입니다. 미할당 작업만 조회하는 필터는 아직 제공하지 않습니다.").optional(),
 					parameterWithName("tag").description("태그 이름 필터입니다. 서버는 정규화된 태그 이름으로 검색합니다.").optional(),
 					parameterWithName("keyword").description("작업 제목/설명 검색 키워드입니다.").optional(),
-					parameterWithName("dueFrom").description("마감일 검색 시작일입니다. ISO-8601 날짜 형식입니다.").optional(),
-					parameterWithName("dueTo").description("마감일 검색 종료일입니다. ISO-8601 날짜 형식입니다.").optional(),
+					parameterWithName("dueFrom").description("마감 예정일 검색 시작 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+					parameterWithName("dueTo").description("마감 예정일 검색 종료 시각입니다. Unix epoch seconds 기준입니다.").optional(),
 					parameterWithName("page").description("0부터 시작하는 페이지 번호입니다. 생략 시 서버 기본값을 사용합니다.").optional(),
 					parameterWithName("size").description("페이지 크기입니다. 생략 시 서버 기본값을 사용합니다.").optional()
 				),
@@ -195,8 +197,8 @@ class TaskApiDocsTest {
 			TaskStatus.IN_PROGRESS,
 			new TaskAssigneeResponse(3002L, 1002L, "Assignee", "assignee@example.com"),
 			TaskPriority.HIGH,
-			LocalDate.of(2026, 6, 8),
-			LocalDate.of(2026, 6, 12),
+			START_DATE,
+			DUE_DATE,
 			List.of("frontend", "ui"),
 			35,
 			1001L,
@@ -230,8 +232,8 @@ class TaskApiDocsTest {
 			  "status": "DONE",
 			  "assigneeMemberId": 3002,
 			  "priority": "MEDIUM",
-			  "startDate": "2026-06-08",
-			  "dueDate": "2026-06-12",
+			  "startDate": 1780876800,
+			  "dueDate": 1781222400,
 			  "tags": ["frontend", "qa"]
 			}
 			""";
@@ -353,8 +355,8 @@ class TaskApiDocsTest {
 			fieldWithPath("status").type(JsonFieldType.STRING).description("작업 상태입니다. 생성 시 생략하면 ``TO_DO``로 처리됩니다. link:enum-reference.html#task-status[TaskStatus]를 참고합니다.").optional(),
 			fieldWithPath("assigneeMemberId").type(JsonFieldType.NUMBER).description("작업 담당 워크스페이스 멤버 식별자입니다. ``null``이면 미할당 상태입니다.").optional(),
 			fieldWithPath("priority").type(JsonFieldType.STRING).description("작업 우선순위입니다. link:enum-reference.html#task-priority[TaskPriority]를 참고합니다."),
-			fieldWithPath("startDate").type(JsonFieldType.STRING).description("작업 시작 예정일입니다. ISO-8601 날짜 형식입니다.").optional(),
-			fieldWithPath("dueDate").type(JsonFieldType.STRING).description("작업 마감 예정일입니다. ISO-8601 날짜 형식입니다.").optional(),
+			fieldWithPath("startDate").type(JsonFieldType.NUMBER).description("작업 시작 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+			fieldWithPath("dueDate").type(JsonFieldType.NUMBER).description("작업 마감 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
 			fieldWithPath("tags").type(JsonFieldType.ARRAY).description("작업 태그 목록입니다. 최대 10개까지 허용하며 동일 작업 안에서 같은 태그는 정규화 이름 기준으로 중복 제거됩니다.").optional()
 		};
 	}
@@ -391,8 +393,8 @@ class TaskApiDocsTest {
 			fieldWithPath("data.items[].assignee.name").type(JsonFieldType.STRING).description("담당자 표시 이름입니다.").optional(),
 			fieldWithPath("data.items[].assignee.email").type(JsonFieldType.STRING).description("담당자 이메일입니다.").optional(),
 			fieldWithPath("data.items[].priority").type(JsonFieldType.STRING).description("작업 우선순위입니다. link:enum-reference.html#task-priority[TaskPriority]를 참고합니다."),
-			fieldWithPath("data.items[].startDate").type(JsonFieldType.STRING).description("작업 시작 예정일입니다.").optional(),
-			fieldWithPath("data.items[].dueDate").type(JsonFieldType.STRING).description("작업 마감 예정일입니다.").optional(),
+			fieldWithPath("data.items[].startDate").type(JsonFieldType.NUMBER).description("작업 시작 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+			fieldWithPath("data.items[].dueDate").type(JsonFieldType.NUMBER).description("작업 마감 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
 			fieldWithPath("data.items[].tags").type(JsonFieldType.ARRAY).description("작업 태그 목록입니다."),
 			fieldWithPath("data.items[].progress").type(JsonFieldType.NUMBER).description("작업 진행도입니다. 0부터 100까지의 정수입니다."),
 			fieldWithPath("data.items[].createdAt").type(JsonFieldType.NUMBER).description("작업 생성 시각입니다. Unix epoch seconds 기준입니다."),
@@ -417,8 +419,8 @@ class TaskApiDocsTest {
 			fieldWithPath("data.assignee.name").type(JsonFieldType.STRING).description("담당자 표시 이름입니다.").optional(),
 			fieldWithPath("data.assignee.email").type(JsonFieldType.STRING).description("담당자 이메일입니다.").optional(),
 			fieldWithPath("data.priority").type(JsonFieldType.STRING).description("작업 우선순위입니다. link:enum-reference.html#task-priority[TaskPriority]를 참고합니다."),
-			fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("작업 시작 예정일입니다.").optional(),
-			fieldWithPath("data.dueDate").type(JsonFieldType.STRING).description("작업 마감 예정일입니다.").optional(),
+			fieldWithPath("data.startDate").type(JsonFieldType.NUMBER).description("작업 시작 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+			fieldWithPath("data.dueDate").type(JsonFieldType.NUMBER).description("작업 마감 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
 			fieldWithPath("data.tags").type(JsonFieldType.ARRAY).description("작업 태그 목록입니다."),
 			fieldWithPath("data.progress").type(JsonFieldType.NUMBER).description("작업 진행도입니다. 0부터 100까지의 정수입니다."),
 			fieldWithPath("data.createdByUserId").type(JsonFieldType.NUMBER).description("작업 생성 사용자 식별자입니다."),

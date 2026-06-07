@@ -16,7 +16,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -75,10 +74,10 @@ public class Task {
 	private WorkspaceMember assignee;
 
 	@Column(name = "start_date")
-	private LocalDate startDate;
+	private Long startDate;
 
 	@Column(name = "due_date")
-	private LocalDate dueDate;
+	private Long dueDate;
 
 	@Column(name = "progress", nullable = false)
 	@Builder.Default
@@ -107,8 +106,8 @@ public class Task {
 		TaskStatus status,
 		WorkspaceMember assignee,
 		TaskPriority priority,
-		LocalDate startDate,
-		LocalDate dueDate,
+		Long startDate,
+		Long dueDate,
 		Long updatedAt
 	) {
 		this.title = title;

@@ -71,8 +71,8 @@ class TaskControllerTest {
 			  "status": "TO_DO",
 			  "assigneeMemberId": 12,
 			  "priority": "HIGH",
-			  "startDate": "2026-06-08",
-			  "dueDate": "2026-06-12",
+			  "startDate": 1780876800,
+			  "dueDate": 1781222400,
 			  "tags": ["frontend", "ui"]
 			}
 			""";
@@ -116,8 +116,8 @@ class TaskControllerTest {
 				.param("assigneeMemberId", "12")
 				.param("tag", "frontend")
 				.param("keyword", "login")
-				.param("dueFrom", "2026-06-08")
-				.param("dueTo", "2026-06-12")
+				.param("dueFrom", "1780876800")
+				.param("dueTo", "1781222400")
 				.param("page", "2")
 				.param("size", "30")
 				.accept(MediaType.APPLICATION_JSON))
@@ -132,6 +132,8 @@ class TaskControllerTest {
 		assertEquals(12L, query.assigneeMemberId());
 		assertEquals("frontend", query.tag());
 		assertEquals("login", query.keyword());
+		assertEquals(1780876800L, query.dueFrom());
+		assertEquals(1781222400L, query.dueTo());
 		assertEquals(2, query.page());
 		assertEquals(30, query.size());
 	}

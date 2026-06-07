@@ -1,7 +1,6 @@
 package dev.runtime_lab.flowit.domain.task.dto;
 
 import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
-import java.time.LocalDate;
 
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.MAX_SEARCH_PAGE_SIZE;
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.MIN_PAGE_SIZE;
@@ -11,8 +10,8 @@ public record TaskListQuery(
 	Long assigneeMemberId,
 	String tag,
 	String keyword,
-	LocalDate dueFrom,
-	LocalDate dueTo,
+	Long dueFrom,
+	Long dueTo,
 	Integer page,
 	Integer size
 ) {

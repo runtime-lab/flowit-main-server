@@ -1,0 +1,29 @@
+// integration-note-source-sha256: efe4dd465c00fda6603708f73cc65eb4416eac3aa8c4180ee58154e7ac3f2742
+// integration-note-version: 0.2.21-volt
+// integration-note-time: 2026-06-08-0044
+// integration-note-time-human: 2026-06-08 00:44 KST
+// integration-note-impact: Fix
+// integration-note-target: `updates/latest.adoc`
+// integration-note-summary: 작업 API 전역, 프로필 파일 API의 잘못된 날짜 타입을 수정했습니다.
+// integration-note-anchor: integration-note-0-2-21-volt-2026-06-08-0044-api-api
+
+[#integration-note-0-2-21-volt-2026-06-08-0044-api-api]
+=== 작업 API 전역, 프로필 파일 API의 잘못된 날짜 타입을 수정했습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.21-volt`
+|Archived At |2026-06-08 00:44 KST
+|Impact |Fix
+|Target |`updates/latest.adoc`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Fix:: 작업 API 전역, 프로필 파일 API의 잘못된 날짜 타입을 수정했습니다.
+--

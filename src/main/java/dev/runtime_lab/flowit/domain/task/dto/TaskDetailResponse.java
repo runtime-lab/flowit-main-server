@@ -3,7 +3,6 @@ package dev.runtime_lab.flowit.domain.task.dto;
 import dev.runtime_lab.flowit.domain.task.entity.Task;
 import dev.runtime_lab.flowit.domain.task.entity.TaskPriority;
 import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
-import java.time.LocalDate;
 import java.util.List;
 
 public record TaskDetailResponse(
@@ -14,8 +13,8 @@ public record TaskDetailResponse(
 	TaskStatus status,
 	TaskAssigneeResponse assignee,
 	TaskPriority priority,
-	LocalDate startDate,
-	LocalDate dueDate,
+	Long startDate,
+	Long dueDate,
 	List<String> tags,
 	Integer progress,
 	Long createdByUserId,

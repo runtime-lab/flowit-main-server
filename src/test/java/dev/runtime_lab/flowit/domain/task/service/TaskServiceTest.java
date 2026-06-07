@@ -21,7 +21,6 @@ import dev.runtime_lab.flowit.domain.workspace.service.internal.WorkspaceAccessS
 import dev.runtime_lab.flowit.global.security.authentication.CurrentUser;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +39,9 @@ import static org.mockito.Mockito.when;
 import tools.jackson.databind.json.JsonMapper;
 
 class TaskServiceTest {
+
+	private static final Long START_DATE = 1780876800L;
+	private static final Long DUE_DATE = 1781222400L;
 
 	private final WorkspaceAccessService workspaceAccessService = mock(WorkspaceAccessService.class);
 	private final TaskRepository taskRepository = mock(TaskRepository.class);
@@ -71,8 +73,8 @@ class TaskServiceTest {
 			TaskStatus.TO_DO,
 			12L,
 			TaskPriority.HIGH,
-			LocalDate.of(2026, 6, 8),
-			LocalDate.of(2026, 6, 12),
+			START_DATE,
+			DUE_DATE,
 			List.of("Frontend", "frontend", " ui ")
 		);
 		ArgumentCaptor<TaskTag> tagCaptor = ArgumentCaptor.forClass(TaskTag.class);
@@ -113,8 +115,8 @@ class TaskServiceTest {
 			TaskStatus.TO_DO,
 			null,
 			TaskPriority.HIGH,
-			LocalDate.of(2026, 6, 8),
-			LocalDate.of(2026, 6, 12),
+			START_DATE,
+			DUE_DATE,
 			List.of()
 		);
 		ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
@@ -146,8 +148,8 @@ class TaskServiceTest {
 			TaskStatus.TO_DO,
 			null,
 			TaskPriority.HIGH,
-			LocalDate.of(2026, 6, 8),
-			LocalDate.of(2026, 6, 12),
+			START_DATE,
+			DUE_DATE,
 			List.of()
 		);
 		ArgumentCaptor<TaskChangeHistory> historyCaptor = ArgumentCaptor.forClass(TaskChangeHistory.class);
@@ -235,8 +237,8 @@ class TaskServiceTest {
 			.status(TaskStatus.TO_DO)
 			.priority(TaskPriority.HIGH)
 			.assignee(assignee)
-			.startDate(LocalDate.of(2026, 6, 8))
-			.dueDate(LocalDate.of(2026, 6, 12))
+			.startDate(START_DATE)
+			.dueDate(DUE_DATE)
 			.progress(progress)
 			.createdBy(creator)
 			.createdAt(1780916300L)
