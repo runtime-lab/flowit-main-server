@@ -151,7 +151,7 @@ class AuthControllerTest {
 			.andExpect(status().isUnauthorized())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
-			.andExpect(jsonPath("$.error.message").value("Invalid email or password"))
+			.andExpect(jsonPath("$.error.message").value("존재하지 않는 이메일 또는 맞지 않는 비밀번호 입니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -215,7 +215,7 @@ class AuthControllerTest {
 			.andExpect(status().isUnauthorized())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
-			.andExpect(jsonPath("$.error.message").value("Invalid refresh token"))
+			.andExpect(jsonPath("$.error.message").value("잘못된 재인증 토큰입니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 
 		verifyNoInteractions(authenticationService);
@@ -232,7 +232,7 @@ class AuthControllerTest {
 			.andExpect(status().isUnauthorized())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_401_001"))
-			.andExpect(jsonPath("$.error.message").value("Invalid refresh token"))
+			.andExpect(jsonPath("$.error.message").value("잘못된 재인증 토큰입니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 

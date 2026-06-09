@@ -33,6 +33,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.MEMBERSHIP_REQUIRED;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.WORKSPACE_UPDATE_NOT_ALLOWED;
 
 class WorkspaceServiceTest {
 
@@ -254,7 +256,7 @@ class WorkspaceServiceTest {
 			WorkspaceMemberAccessDeniedException.class,
 			() -> workspaceService.update(currentUser, 10L, new WorkspaceUpdateRequest("Flowit", null))
 		);
-		assertEquals("Workspace membership is required.", exception.getMessage());
+		assertEquals(MEMBERSHIP_REQUIRED, exception.getMessage());
 	}
 
 	@Test
@@ -273,7 +275,7 @@ class WorkspaceServiceTest {
 			WorkspaceMemberAccessDeniedException.class,
 			() -> workspaceService.update(currentUser, 10L, new WorkspaceUpdateRequest("Flowit Renamed", null))
 		);
-		assertEquals("Workspace update is not allowed.", exception.getMessage());
+		assertEquals(WORKSPACE_UPDATE_NOT_ALLOWED, exception.getMessage());
 	}
 
 	@Test
@@ -370,7 +372,7 @@ class WorkspaceServiceTest {
 			WorkspaceMemberAccessDeniedException.class,
 			() -> workspaceService.get(currentUser, 10L)
 		);
-		assertEquals("Workspace membership is required.", exception.getMessage());
+		assertEquals(MEMBERSHIP_REQUIRED, exception.getMessage());
 	}
 
 	@Test

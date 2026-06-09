@@ -48,6 +48,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.MEMBERSHIP_REQUIRED;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.WORKSPACE_UPDATE_NOT_ALLOWED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -298,7 +300,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_400_001"))
-			.andExpect(jsonPath("$.error.message").value("Invalid workspace update."))
+			.andExpect(jsonPath("$.error.message").value("허용되지 않은 워크스페이스 업데이트입니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -311,7 +313,7 @@ class WorkspaceControllerTest {
 			""";
 
 		when(workspaceService.update(any(CurrentUser.class), eq(10L), any(WorkspaceUpdateRequest.class)))
-			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace update is not allowed."));
+			.thenThrow(new WorkspaceMemberAccessDeniedException(WORKSPACE_UPDATE_NOT_ALLOWED));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
 		);
@@ -323,7 +325,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace update is not allowed."))
+			.andExpect(jsonPath("$.error.message").value(WORKSPACE_UPDATE_NOT_ALLOWED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -348,7 +350,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
+			.andExpect(jsonPath("$.error.message").value("워크스페이스를 찾을 수 없습니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -470,7 +472,7 @@ class WorkspaceControllerTest {
 	@Test
 	void getReturnsForbiddenWhenCurrentUserIsNotWorkspaceMember() throws Exception {
 		when(workspaceService.get(any(CurrentUser.class), eq(10L)))
-			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace membership is required."));
+			.thenThrow(new WorkspaceMemberAccessDeniedException(MEMBERSHIP_REQUIRED));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
 		);
@@ -480,7 +482,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace membership is required."))
+			.andExpect(jsonPath("$.error.message").value(MEMBERSHIP_REQUIRED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -497,7 +499,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
+			.andExpect(jsonPath("$.error.message").value("워크스페이스를 찾을 수 없습니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -566,7 +568,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace owner permission is required."))
+			.andExpect(jsonPath("$.error.message").value("워크스페이스 소유자의 권한이 필요합니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -584,7 +586,7 @@ class WorkspaceControllerTest {
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
+			.andExpect(jsonPath("$.error.message").value("워크스페이스를 찾을 수 없습니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 

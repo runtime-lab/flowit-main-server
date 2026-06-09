@@ -115,7 +115,7 @@ class UserPublicControllerTest {
 			.andExpect(status().isConflict())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("USER_409_001"))
-			.andExpect(jsonPath("$.error.message").value("Active user email already exists: user@example.com"))
+			.andExpect(jsonPath("$.error.message").value("이미 가입된 이메일입니다.: user@example.com"))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 

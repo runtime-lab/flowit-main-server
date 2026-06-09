@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.JOIN_REQUEST_HISTORY_ACCESS_DENIED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -165,7 +166,7 @@ class WorkspaceJoinRequestControllerTest {
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace invite code not found."))
+			.andExpect(jsonPath("$.error.message").value("초대 코드의 워크스페이스가 존재하지 않습니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -186,7 +187,7 @@ class WorkspaceJoinRequestControllerTest {
 			.andExpect(status().isConflict())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_JOIN_REQUEST_409_001"))
-			.andExpect(jsonPath("$.error.message").value("User already joined this workspace."))
+			.andExpect(jsonPath("$.error.message").value("이미 가입된 워크스페이스입니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -221,7 +222,7 @@ class WorkspaceJoinRequestControllerTest {
 	@Test
 	void requestsReturnsForbiddenWhenRequesterCannotManageJoinRequests() throws Exception {
 		when(workspaceJoinRequestService.requests(any(CurrentUser.class), eq(10L)))
-			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace join request history access is not allowed."));
+			.thenThrow(new WorkspaceMemberAccessDeniedException(JOIN_REQUEST_HISTORY_ACCESS_DENIED));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "member@example.com", "member"), List.of())
 		);
@@ -231,7 +232,7 @@ class WorkspaceJoinRequestControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace join request history access is not allowed."))
+			.andExpect(jsonPath("$.error.message").value(JOIN_REQUEST_HISTORY_ACCESS_DENIED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -248,7 +249,7 @@ class WorkspaceJoinRequestControllerTest {
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("WORKSPACE_404_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace not found."))
+			.andExpect(jsonPath("$.error.message").value("워크스페이스를 찾을 수 없습니다."))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 

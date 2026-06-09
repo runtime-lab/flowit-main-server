@@ -38,6 +38,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.MEMBERSHIP_REQUIRED;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.OWNER_REQUIRED;
+import static dev.runtime_lab.flowit.domain.workspace.exception.WorkspaceAccessMessages.ROLE_UPDATE_NOT_ALLOWED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -132,7 +135,7 @@ class WorkspaceMemberControllerTest {
 	@Test
 	void membersReturnsForbiddenWhenRequesterIsNotWorkspaceMember() throws Exception {
 		when(workspaceMemberService.members(any(CurrentUser.class), eq(10L)))
-			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace membership is required."));
+			.thenThrow(new WorkspaceMemberAccessDeniedException(MEMBERSHIP_REQUIRED));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
 		);
@@ -142,7 +145,7 @@ class WorkspaceMemberControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace membership is required."))
+			.andExpect(jsonPath("$.error.message").value(MEMBERSHIP_REQUIRED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -204,7 +207,7 @@ class WorkspaceMemberControllerTest {
 	@Test
 	void getProfileImageReturnsForbiddenWhenRequesterIsNotWorkspaceMember() throws Exception {
 		when(workspaceMemberService.getProfileImage(any(CurrentUser.class), eq(10L), eq(100L)))
-			.thenThrow(new WorkspaceMemberAccessDeniedException("Workspace membership is required."));
+			.thenThrow(new WorkspaceMemberAccessDeniedException(MEMBERSHIP_REQUIRED));
 		SecurityContextHolder.getContext().setAuthentication(
 			new JwtAuthenticationToken(jwt("1", "user@example.com", "nickname"), List.of())
 		);
@@ -213,7 +216,7 @@ class WorkspaceMemberControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace membership is required."))
+			.andExpect(jsonPath("$.error.message").value(MEMBERSHIP_REQUIRED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -282,7 +285,7 @@ class WorkspaceMemberControllerTest {
 
 	@Test
 	void updateRoleReturnsForbiddenWhenRoleUpdateIsNotAllowed() throws Exception {
-		doThrow(new WorkspaceMemberAccessDeniedException("Workspace member role update is not allowed."))
+		doThrow(new WorkspaceMemberAccessDeniedException(ROLE_UPDATE_NOT_ALLOWED))
 			.when(workspaceMemberService)
 			.updateRole(any(CurrentUser.class), eq(10L), eq(2L), any(WorkspaceMemberRoleUpdateRequest.class));
 		SecurityContextHolder.getContext().setAuthentication(
@@ -296,7 +299,7 @@ class WorkspaceMemberControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace member role update is not allowed."))
+			.andExpect(jsonPath("$.error.message").value(ROLE_UPDATE_NOT_ALLOWED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
@@ -430,7 +433,7 @@ class WorkspaceMemberControllerTest {
 
 	@Test
 	void withdrawReturnsForbiddenWhenWithdrawalIsNotAllowed() throws Exception {
-		doThrow(new WorkspaceMemberAccessDeniedException("Workspace must have at least one owner."))
+		doThrow(new WorkspaceMemberAccessDeniedException(OWNER_REQUIRED))
 			.when(workspaceMemberService)
 			.withdraw(any(CurrentUser.class), eq(10L));
 		SecurityContextHolder.getContext().setAuthentication(
@@ -442,7 +445,7 @@ class WorkspaceMemberControllerTest {
 			.andExpect(status().isForbidden())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.error.code").value("AUTH_403_001"))
-			.andExpect(jsonPath("$.error.message").value("Workspace must have at least one owner."))
+			.andExpect(jsonPath("$.error.message").value(OWNER_REQUIRED))
 			.andExpect(jsonPath("$.extensions").isMap());
 	}
 
