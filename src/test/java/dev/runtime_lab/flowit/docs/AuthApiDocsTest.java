@@ -25,6 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.resourceDetails;
+import static com.epages.restdocs.apispec.Schema.schema;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -34,7 +37,6 @@ import static org.springframework.restdocs.cookies.CookieDocumentation.requestCo
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -107,6 +109,10 @@ class AuthApiDocsTest {
 			.andExpect(status().isOk())
 			.andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("flowit_refresh_token=refresh-token")))
 			.andDo(document("auth-login",
+				resourceDetails()
+					.tag("Auth")
+					.requestSchema(schema("LoginRequest"))
+					.responseSchema(schema("LoginApiResponse")),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
@@ -145,6 +151,9 @@ class AuthApiDocsTest {
 			.andExpect(status().isOk())
 			.andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("flowit_refresh_token=new-refresh-token")))
 			.andDo(document("auth-refresh",
+				resourceDetails()
+					.tag("Auth")
+					.responseSchema(schema("TokenRefreshApiResponse")),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(
@@ -178,6 +187,9 @@ class AuthApiDocsTest {
 			.andExpect(status().isOk())
 			.andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("flowit_refresh_token=")))
 			.andDo(document("auth-logout",
+				resourceDetails()
+					.tag("Auth")
+					.responseSchema(schema("AuthLogoutApiResponse")),
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
 				requestHeaders(

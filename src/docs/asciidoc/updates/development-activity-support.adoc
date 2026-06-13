@@ -7,5 +7,6 @@ Development Activity Support
 Version Stage:: {api-version-stage} (pass:[<a href="version-policy.html">Version Policy</a>])
 API Status:: {api-version-stage-status}
 
-Docs:: Request 설명부에 각 필드의 타입을 추가했습니다.
+Support:: 타입 생성을 지원하기 위해 openapi.yaml 생성을 단계적으로 진행 중 입니다.
+Additional:: ``http://localhost:8080/docs/openapi.yaml`` 에서 다운로드 받을 수 있습니다.
 Etc:: 매일 더 나은 하루를 보냈기를 👍️
