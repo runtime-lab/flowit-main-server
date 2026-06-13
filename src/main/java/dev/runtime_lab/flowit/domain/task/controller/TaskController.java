@@ -29,13 +29,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/workspaces/{workspaceId}")
+@RequestMapping("/v1/workspaces/{workspaceId}/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
 	private final TaskService taskService;
 
-	@PostMapping("/tasks")
+	@PostMapping
 	public ResponseEntity<ApiCreatedData> create(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId,
@@ -48,7 +48,7 @@ public class TaskController {
 			.body(ApiCreatedData.afterCreated(response.id()));
 	}
 
-	@GetMapping("/tasks")
+	@GetMapping
 	public ApiListData<TaskSummaryResponse> tasks(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId,
@@ -57,7 +57,7 @@ public class TaskController {
 		return taskService.tasks(currentUser, workspaceId, request.toQuery());
 	}
 
-	@GetMapping("/tasks/{taskId}")
+	@GetMapping("/{taskId}")
 	public TaskDetailResponse get(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId,
@@ -66,7 +66,7 @@ public class TaskController {
 		return taskService.get(currentUser, workspaceId, taskId);
 	}
 
-	@PatchMapping("/tasks/{taskId}")
+	@PatchMapping("/{taskId}")
 	public ApiEmptyData update(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId,
@@ -78,7 +78,7 @@ public class TaskController {
 		return ApiEmptyData.empty();
 	}
 
-	@PatchMapping("/tasks/{taskId}/progress")
+	@PatchMapping("/{taskId}/progress")
 	public ApiEmptyData updateProgress(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId,
@@ -90,7 +90,7 @@ public class TaskController {
 		return ApiEmptyData.empty();
 	}
 
-	@GetMapping("/tasks/{taskId}/histories")
+	@GetMapping("/{taskId}/histories")
 	public ApiListData<TaskHistoryResponse> taskHistories(
 		@AuthenticatedUser CurrentUser currentUser,
 		@PathVariable Long workspaceId,

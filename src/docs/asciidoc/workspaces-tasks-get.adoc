@@ -25,7 +25,8 @@ include::_breadcrumb.adoc[]
 |목적 |특정 작업의 상세 정보를 조회합니다.
 |인증 |JWT access token이 필요합니다.
 |권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
-|응답 범위 |작업 본문, 담당자, 태그, 진행도, 생성자와 생성/수정 시각을 반환합니다.
+|응답 범위 |작업 본문, 담당자, 태그, 진행도, 생성자와 생성/수정 시각, 댓글 첫 페이지를 반환합니다.
+|댓글 |``commentPage``에는 생성 시각이 오래된 순서의 댓글 첫 페이지가 최대 20개까지 포함됩니다. 이후 페이지는 작업 댓글 목록 조회 API를 호출합니다.
 |응답 |``200 OK``
 |===
 
@@ -70,6 +71,7 @@ include::_api-errors.adoc[]
 * link:workspaces-tasks-list.html[작업 목록 조회 API]
 * link:workspaces-tasks-update.html[작업 수정 API]
 * link:workspaces-tasks-progress-update.html[작업 진행도 수정 API]
+* link:workspaces-tasks-comments-list.html[작업 댓글 목록 조회 API]
 * link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
 * link:api-response.html[공통 응답 포맷]
 * link:error-codes.html[에러 코드]

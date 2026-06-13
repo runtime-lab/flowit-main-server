@@ -133,6 +133,18 @@ ifdef::api-error-task-not-found[]
 |요청한 작업이 존재하지 않거나 삭제되었습니다.
 endif::api-error-task-not-found[]
 
+ifdef::api-error-task-comment-author-required[]
+|``403 Forbidden``
+|``AUTH_403_001``
+|작업 댓글은 작성자만 수정하거나 삭제할 수 있습니다.
+endif::api-error-task-comment-author-required[]
+
+ifdef::api-error-task-comment-not-found[]
+|``404 Not Found``
+|``TASK_COMMENT_404_001``
+|요청한 작업 댓글이 존재하지 않거나 삭제되었습니다.
+endif::api-error-task-comment-not-found[]
+
 ifdef::api-error-workspace-invite-code-generation[]
 |``500 Internal Server Error``
 |``WORKSPACE_500_001``

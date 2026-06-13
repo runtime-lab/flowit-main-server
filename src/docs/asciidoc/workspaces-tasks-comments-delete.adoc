@@ -1,0 +1,77 @@
+= 작업 댓글 삭제 API
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-tasks-comments-delete:
+:breadcrumb-section: 작업 코멘트 API
+:breadcrumb-current: 작업 댓글 삭제 API
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 작업 댓글 삭제
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |``DELETE``
+|경로 |``/v1/workspaces/{workspaceId}/tasks/{taskId}/comments/{commentId}``
+|API 상태 |[.badge.stability.experimental]#Experimental#
+|목적 |작업 댓글을 삭제합니다.
+|인증 |JWT access token이 필요합니다.
+|권한 |댓글 작성자 본인만 삭제할 수 있습니다.
+|삭제 방식 |댓글은 soft delete 처리되며 목록 조회 응답에서는 제외됩니다.
+|최근 활동 |댓글 삭제는 현재 워크스페이스 최근 활동에 기록하지 않습니다.
+|성공 응답 |``200 OK``와 빈 성공 응답 본문을 반환합니다.
+|===
+
+=== HTTP 요청
+
+include::{snippets}/workspaces-tasks-comments-delete/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/workspaces-tasks-comments-delete/curl-request.adoc[]
+
+=== 경로 파라미터
+
+include::{snippets}/workspaces-tasks-comments-delete/path-parameters.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/workspaces-tasks-comments-delete/request-headers.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/workspaces-tasks-comments-delete/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/workspaces-tasks-comments-delete/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/workspaces-tasks-comments-delete/response-fields.adoc[]
+
+:api-error-auth-required:
+:api-error-workspace-member-required:
+:api-error-workspace-not-found:
+:api-error-task-not-found:
+:api-error-task-comment-author-required:
+:api-error-task-comment-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-tasks-comments-list.html[작업 댓글 목록 조회 API]
+* link:workspaces-tasks-comments-update.html[작업 댓글 수정 API]
+* link:workspaces-tasks-get.html[작업 상세 조회 API]
+* link:api-response.html[공통 응답 포맷]
+* link:error-codes.html[에러 코드]

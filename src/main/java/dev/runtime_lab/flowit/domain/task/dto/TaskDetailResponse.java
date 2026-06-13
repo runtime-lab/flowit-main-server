@@ -3,6 +3,7 @@ package dev.runtime_lab.flowit.domain.task.dto;
 import dev.runtime_lab.flowit.domain.task.entity.Task;
 import dev.runtime_lab.flowit.domain.task.entity.TaskPriority;
 import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
+import dev.runtime_lab.flowit.global.web.response.ApiListData;
 import java.util.List;
 
 public record TaskDetailResponse(
@@ -19,10 +20,19 @@ public record TaskDetailResponse(
 	Integer progress,
 	Long createdByUserId,
 	Long createdAt,
-	Long updatedAt
+	Long updatedAt,
+	ApiListData<TaskCommentResponse> commentPage
 ) {
 
 	public static TaskDetailResponse from(Task task, List<String> tags) {
+		return from(task, tags, ApiListData.of(List.of(), 0L));
+	}
+
+	public static TaskDetailResponse from(
+		Task task,
+		List<String> tags,
+		ApiListData<TaskCommentResponse> commentPage
+	) {
 		return new TaskDetailResponse(
 			task.getId(),
 			task.getWorkspace().getId(),
@@ -37,7 +47,8 @@ public record TaskDetailResponse(
 			task.getProgress(),
 			task.getCreatedBy().getId(),
 			task.getCreatedAt(),
-			task.getUpdatedAt()
+			task.getUpdatedAt(),
+			commentPage
 		);
 	}
 }

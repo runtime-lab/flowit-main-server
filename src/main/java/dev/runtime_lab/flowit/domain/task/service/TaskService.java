@@ -3,6 +3,7 @@ package dev.runtime_lab.flowit.domain.task.service;
 import dev.runtime_lab.flowit.domain.activity.service.internal.WorkspaceActivityRecorder;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateResponse;
+import dev.runtime_lab.flowit.domain.task.dto.TaskCommentResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskDetailResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryChangeResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryResponse;
@@ -20,6 +21,7 @@ import dev.runtime_lab.flowit.domain.task.entity.TaskTag;
 import dev.runtime_lab.flowit.domain.task.exception.InvalidTaskRequestException;
 import dev.runtime_lab.flowit.domain.task.exception.TaskNotFoundException;
 import dev.runtime_lab.flowit.domain.task.repository.TaskChangeHistoryRepository;
+import dev.runtime_lab.flowit.domain.task.repository.TaskCommentRepository;
 import dev.runtime_lab.flowit.domain.task.repository.TaskRepository;
 import dev.runtime_lab.flowit.domain.task.repository.TaskTagRepository;
 import dev.runtime_lab.flowit.domain.user.entity.User;
@@ -47,6 +49,7 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.DEFAULT_HISTORY_PAGE_SIZE;
+import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.DEFAULT_COMMENT_PAGE_SIZE;
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.MAX_HISTORY_PAGE_SIZE;
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.TAG_MAX_COUNT;
 import static dev.runtime_lab.flowit.domain.task.validation.TaskConstraints.TAG_MAX_LENGTH;
@@ -58,6 +61,7 @@ public class TaskService {
 	private final TaskRepository taskRepository;
 	private final TaskTagRepository taskTagRepository;
 	private final TaskChangeHistoryRepository taskChangeHistoryRepository;
+	private final TaskCommentRepository taskCommentRepository;
 	private final WorkspaceActivityRecorder workspaceActivityRecorder;
 	private final JsonMapper jsonMapper;
 	private final Clock clock;
@@ -173,14 +177,19 @@ public class TaskService {
 
 	@Transactional(readOnly = true)
 	public TaskDetailResponse get(CurrentUser currentUser, Long workspaceId, Long taskId) {
-		workspaceAccessService.resolveMemberAccess(currentUser, workspaceId);
+		WorkspaceAccessContext access = workspaceAccessService.resolveMemberAccess(currentUser, workspaceId);
 
 		Task task = taskRepository.findActiveByWorkspaceIdAndTaskId(workspaceId, taskId)
 			.orElseThrow(TaskNotFoundException::new);
 
 		List<String> tags = tagNames(taskTagRepository.findByTaskId(task.getId()));
+		ApiListData<TaskCommentResponse> commentPage = initialCommentPage(
+			workspaceId,
+			taskId,
+			access.requester().getId()
+		);
 
-		return TaskDetailResponse.from(task, tags);
+		return TaskDetailResponse.from(task, tags, commentPage);
 	}
 
 	@Transactional
@@ -254,6 +263,17 @@ public class TaskService {
 	private Task findTaskForUpdate(Long workspaceId, Long taskId) {
 		return taskRepository.findActiveByWorkspaceIdAndTaskIdForUpdate(workspaceId, taskId)
 			.orElseThrow(TaskNotFoundException::new);
+	}
+
+	private ApiListData<TaskCommentResponse> initialCommentPage(Long workspaceId, Long taskId, Long requesterUserId) {
+		List<TaskCommentResponse> comments = taskCommentRepository
+			.findActiveByWorkspaceIdAndTaskId(workspaceId, taskId, 0, DEFAULT_COMMENT_PAGE_SIZE)
+			.stream()
+			.map(comment -> TaskCommentResponse.from(comment, requesterUserId))
+			.toList();
+		long totalCount = taskCommentRepository.countActiveByWorkspaceIdAndTaskId(workspaceId, taskId);
+
+		return ApiListData.of(comments, totalCount);
 	}
 
 	private List<TaskHistoryChangeResponse> updateChanges(

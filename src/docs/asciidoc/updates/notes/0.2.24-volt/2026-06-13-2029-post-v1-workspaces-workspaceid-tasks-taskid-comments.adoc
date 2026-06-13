@@ -1,3 +1,27 @@
+// integration-note-source-sha256: 24b01cc153d3c54d62ad5dc86c7eb709273a872513f21201a23eb13ba82da11d
+// integration-note-version: 0.2.24-volt
+// integration-note-time: 2026-06-13-2029
+// integration-note-time-human: 2026-06-13 20:29 KST
+// integration-note-impact: Added
+// integration-note-target: `POST /v1/workspaces/{workspaceId}/tasks/{taskId}/comments`
+// integration-note-summary: `POST /v1/workspaces/{workspaceId}/tasks/{taskId}/comments 댓글 생성` 엔드포인트가 추가되었습니다.
+// integration-note-anchor: integration-note-0-2-24-volt-2026-06-13-2029-post-v1-workspaces-workspaceid-tasks-taskid-comments
+
+[#integration-note-0-2-24-volt-2026-06-13-2029-post-v1-workspaces-workspaceid-tasks-taskid-comments]
+=== `POST /v1/workspaces/{workspaceId}/tasks/{taskId}/comments 댓글 생성` 엔드포인트가 추가되었습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.24-volt`
+|Archived At |2026-06-13 20:29 KST
+|Impact |Added
+|Target |`POST /v1/workspaces/{workspaceId}/tasks/{taskId}/comments`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
 [.update-note-title]
 Integration Note
 
@@ -9,3 +33,4 @@ Added:: ``GET /v1/workspaces/{workspaceId}/tasks/{taskId}`` 응답에 ``data.com
 Carryover:: ``GET /v1/workspaces/{workspaceId}/members`` 응답에 ``data.members[].profileImageUrl`` 필드가 추가되었습니다.
 Carryover:: ``GET /v1/workspaces/{workspaceId}/members/{memberId}/profile-image`` 엔드포인트가 추가되었습니다.
 Carryover:: ``profileImageUrl``은 서버가 제공하는 조회 URL입니다. 해당 엔드포인트에서 워크스페이스 멤버십 권한 검증과 파일 접근 제어를 수행합니다.
+--

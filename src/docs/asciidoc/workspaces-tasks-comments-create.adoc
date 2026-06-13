@@ -1,0 +1,80 @@
+= 작업 댓글 생성 API
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-tasks-comments-create:
+:breadcrumb-section: 작업 코멘트 API
+:breadcrumb-current: 작업 댓글 생성 API
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 작업 댓글 생성
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|메서드 |``POST``
+|경로 |``/v1/workspaces/{workspaceId}/tasks/{taskId}/comments``
+|API 상태 |[.badge.stability.experimental]#Experimental#
+|목적 |특정 작업에 댓글을 생성합니다.
+|인증 |JWT access token이 필요합니다.
+|권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
+|본문 |``contentMarkdown`` 원문을 저장합니다. 서버는 Markdown을 렌더링하지 않습니다. 총 길이 1000자 제한 markdown은 추후 확장성을 고려한 임시적인 필드명 입니다.
+|최근 활동 |댓글 작성은 현재 워크스페이스 최근 활동에 기록하지 않습니다.
+|응답 |``201 Created``
+|===
+
+=== HTTP 요청
+
+include::{snippets}/workspaces-tasks-comments-create/http-request.adoc[]
+
+=== cURL 요청
+
+include::{snippets}/workspaces-tasks-comments-create/curl-request.adoc[]
+
+=== 경로 파라미터
+
+include::{snippets}/workspaces-tasks-comments-create/path-parameters.adoc[]
+
+=== 요청 헤더
+
+include::{snippets}/workspaces-tasks-comments-create/request-headers.adoc[]
+
+=== 요청 필드
+
+include::{snippets}/workspaces-tasks-comments-create/request-fields.adoc[]
+
+=== HTTP 응답
+
+include::{snippets}/workspaces-tasks-comments-create/http-response.adoc[]
+
+=== 응답 헤더
+
+include::{snippets}/workspaces-tasks-comments-create/response-headers.adoc[]
+
+=== 응답 필드
+
+include::{snippets}/workspaces-tasks-comments-create/response-fields.adoc[]
+
+:api-error-auth-required:
+:api-error-validation:
+:api-error-workspace-member-required:
+:api-error-workspace-not-found:
+:api-error-task-not-found:
+:api-error-internal-server:
+include::_api-errors.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-tasks-comments-list.html[작업 댓글 목록 조회 API]
+* link:workspaces-tasks-get.html[작업 상세 조회 API]
+* link:workspaces-tasks-list.html[작업 목록 조회 API]
+* link:api-response.html[공통 응답 포맷]
+* link:error-codes.html[에러 코드]

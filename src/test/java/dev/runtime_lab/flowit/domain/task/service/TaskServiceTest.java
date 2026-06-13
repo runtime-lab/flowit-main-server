@@ -2,6 +2,7 @@ package dev.runtime_lab.flowit.domain.task.service;
 
 import dev.runtime_lab.flowit.domain.activity.service.internal.WorkspaceActivityRecorder;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateRequest;
+import dev.runtime_lab.flowit.domain.task.entity.TaskComment;
 import dev.runtime_lab.flowit.domain.task.dto.TaskProgressUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.entity.Task;
 import dev.runtime_lab.flowit.domain.task.entity.TaskChangeHistory;
@@ -10,6 +11,7 @@ import dev.runtime_lab.flowit.domain.task.entity.TaskPriority;
 import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
 import dev.runtime_lab.flowit.domain.task.entity.TaskTag;
 import dev.runtime_lab.flowit.domain.task.repository.TaskChangeHistoryRepository;
+import dev.runtime_lab.flowit.domain.task.repository.TaskCommentRepository;
 import dev.runtime_lab.flowit.domain.task.repository.TaskRepository;
 import dev.runtime_lab.flowit.domain.task.repository.TaskTagRepository;
 import dev.runtime_lab.flowit.domain.user.entity.User;
@@ -47,6 +49,7 @@ class TaskServiceTest {
 	private final TaskRepository taskRepository = mock(TaskRepository.class);
 	private final TaskTagRepository taskTagRepository = mock(TaskTagRepository.class);
 	private final TaskChangeHistoryRepository taskChangeHistoryRepository = mock(TaskChangeHistoryRepository.class);
+	private final TaskCommentRepository taskCommentRepository = mock(TaskCommentRepository.class);
 	private final WorkspaceActivityRecorder workspaceActivityRecorder = mock(WorkspaceActivityRecorder.class);
 	private final Clock clock = Clock.fixed(Instant.ofEpochSecond(1780916400L), ZoneOffset.UTC);
 	private final TaskService taskService = new TaskService(
@@ -54,6 +57,7 @@ class TaskServiceTest {
 		taskRepository,
 		taskTagRepository,
 		taskChangeHistoryRepository,
+		taskCommentRepository,
 		workspaceActivityRecorder,
 		JsonMapper.builder().build(),
 		clock
@@ -194,6 +198,32 @@ class TaskServiceTest {
 		assertTrue(history.getChangesJson().contains("\"to\":65"));
 	}
 
+	@Test
+	void getIncludesFirstTaskCommentPage() {
+		CurrentUser currentUser = new CurrentUser(1L, "actor@example.com", "Actor");
+		User actor = user(1L, "actor@example.com", "Actor");
+		Workspace workspace = workspace(actor);
+		WorkspaceMember actorMember = workspaceMember(10L, workspace, actor);
+		Task task = task(100L, workspace, null, actor, 0);
+		TaskComment comment = taskComment(500L, workspace, task, actorMember, actor, "확인했습니다.", false);
+
+		when(workspaceAccessService.resolveMemberAccess(currentUser, 1L))
+			.thenReturn(new WorkspaceAccessContext(actor, workspace, actorMember));
+		when(taskRepository.findActiveByWorkspaceIdAndTaskId(1L, 100L)).thenReturn(Optional.of(task));
+		when(taskTagRepository.findByTaskId(100L)).thenReturn(List.of());
+		when(taskCommentRepository.findActiveByWorkspaceIdAndTaskId(1L, 100L, 0, 20))
+			.thenReturn(List.of(comment));
+		when(taskCommentRepository.countActiveByWorkspaceIdAndTaskId(1L, 100L)).thenReturn(1L);
+
+		var response = taskService.get(currentUser, 1L, 100L);
+
+		assertEquals(1L, response.commentPage().getTotalCount());
+		assertEquals(500L, response.commentPage().getItems().get(0).id());
+		assertTrue(response.commentPage().getItems().get(0).editable());
+		assertTrue(response.commentPage().getItems().get(0).ownedByRequester());
+		verify(taskCommentRepository).findActiveByWorkspaceIdAndTaskId(1L, 100L, 0, 20);
+	}
+
 	private User user(Long id, String email, String name) {
 		return User.builder()
 			.id(id)
@@ -243,6 +273,29 @@ class TaskServiceTest {
 			.createdBy(creator)
 			.createdAt(1780916300L)
 			.updatedAt(1780916300L)
+			.build();
+	}
+
+	private TaskComment taskComment(
+		Long id,
+		Workspace workspace,
+		Task task,
+		WorkspaceMember authorMember,
+		User authorUser,
+		String contentMarkdown,
+		boolean edited
+	) {
+		return TaskComment.builder()
+			.id(id)
+			.workspace(workspace)
+			.task(task)
+			.authorWorkspaceMember(authorMember)
+			.authorUser(authorUser)
+			.authorDisplayNameSnapshot(authorUser.getName())
+			.contentMarkdown(contentMarkdown)
+			.edited(edited)
+			.createdAt(1L)
+			.updatedAt(1L)
 			.build();
 	}
 }

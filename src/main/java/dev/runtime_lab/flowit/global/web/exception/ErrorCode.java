@@ -62,6 +62,11 @@ public enum ErrorCode {
 		"작업을 찾을 수 없습니다.",
 		"요청한 작업이 존재하지 않거나 삭제되었습니다."
 	),
+	TASK_COMMENT_404_001(
+		HttpStatus.NOT_FOUND,
+		"작업 댓글을 찾을 수 없습니다.",
+		"요청한 작업 댓글이 존재하지 않거나 삭제되었습니다."
+	),
 	FILE_400_001(
 		HttpStatus.BAD_REQUEST,
 		"프로필 이미지 파일이 올바르지 않습니다.",

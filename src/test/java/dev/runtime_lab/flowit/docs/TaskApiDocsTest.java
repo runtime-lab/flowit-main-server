@@ -2,6 +2,8 @@ package dev.runtime_lab.flowit.docs;
 
 import dev.runtime_lab.flowit.domain.task.controller.TaskController;
 import dev.runtime_lab.flowit.domain.task.dto.TaskAssigneeResponse;
+import dev.runtime_lab.flowit.domain.task.dto.TaskCommentAuthorResponse;
+import dev.runtime_lab.flowit.domain.task.dto.TaskCommentResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskDetailResponse;
@@ -191,6 +193,17 @@ class TaskApiDocsTest {
 
 	@Test
 	void getTask() throws Exception {
+		TaskCommentResponse comment = new TaskCommentResponse(
+			5001L,
+			1001L,
+			new TaskCommentAuthorResponse(3001L, "Actor"),
+			"진행 상황 확인했습니다.",
+			false,
+			true,
+			true,
+			1780917000L,
+			1780917000L
+		);
 		TaskDetailResponse response = new TaskDetailResponse(
 			1001L,
 			2001L,
@@ -205,7 +218,8 @@ class TaskApiDocsTest {
 			35,
 			1001L,
 			1780916400L,
-			1780920000L
+			1780920000L,
+			ApiListData.of(List.of(comment), 2L)
 		);
 
 		when(taskService.get(any(CurrentUser.class), eq(2001L), eq(1001L))).thenReturn(response);
@@ -428,6 +442,20 @@ class TaskApiDocsTest {
 			fieldWithPath("data.createdByUserId").type(JsonFieldType.NUMBER).description("작업 생성 사용자 식별자입니다."),
 			fieldWithPath("data.createdAt").type(JsonFieldType.NUMBER).description("작업 생성 시각입니다. Unix epoch seconds 기준입니다."),
 			fieldWithPath("data.updatedAt").type(JsonFieldType.NUMBER).description("작업 최종 수정 시각입니다. Unix epoch seconds 기준입니다."),
+			fieldWithPath("data.commentPage").type(JsonFieldType.OBJECT).description("작업 상세 초기 로드에 포함되는 댓글 첫 페이지입니다."),
+			fieldWithPath("data.commentPage.items").type(JsonFieldType.ARRAY).description("생성 시각이 오래된 순서로 정렬된 작업 댓글 첫 페이지 목록입니다. 최대 20개까지 포함됩니다."),
+			fieldWithPath("data.commentPage.items[].id").type(JsonFieldType.NUMBER).description("작업 댓글 식별자입니다."),
+			fieldWithPath("data.commentPage.items[].taskId").type(JsonFieldType.NUMBER).description("댓글이 속한 작업 식별자입니다."),
+			fieldWithPath("data.commentPage.items[].author").type(JsonFieldType.OBJECT).description("댓글 작성자 정보입니다."),
+			fieldWithPath("data.commentPage.items[].author.memberId").type(JsonFieldType.NUMBER).description("댓글 작성자의 워크스페이스 멤버 식별자입니다."),
+			fieldWithPath("data.commentPage.items[].author.displayName").type(JsonFieldType.STRING).description("댓글 작성 시점의 작성자 표시 이름 스냅샷입니다."),
+			fieldWithPath("data.commentPage.items[].contentMarkdown").type(JsonFieldType.STRING).description("작업 댓글 Markdown 원문입니다."),
+			fieldWithPath("data.commentPage.items[].edited").type(JsonFieldType.BOOLEAN).description("생성 이후 댓글 내용 수정이 발생했는지 여부입니다."),
+			fieldWithPath("data.commentPage.items[].editable").type(JsonFieldType.BOOLEAN).description("요청자가 이 댓글을 수정하거나 삭제할 수 있는지 여부입니다."),
+			fieldWithPath("data.commentPage.items[].ownedByRequester").type(JsonFieldType.BOOLEAN).description("이 댓글이 현재 요청자가 작성한 댓글인지 여부입니다."),
+			fieldWithPath("data.commentPage.items[].createdAt").type(JsonFieldType.NUMBER).description("작업 댓글 생성 시각입니다. Unix epoch seconds 기준입니다."),
+			fieldWithPath("data.commentPage.items[].updatedAt").type(JsonFieldType.NUMBER).description("작업 댓글 최종 수정 시각입니다. Unix epoch seconds 기준입니다."),
+			fieldWithPath("data.commentPage.totalCount").type(JsonFieldType.NUMBER).description("작업에 달린 전체 활성 댓글 수입니다."),
 			fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 		};
 	}
