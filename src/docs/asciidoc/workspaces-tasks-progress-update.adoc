@@ -1,4 +1,4 @@
-= 작업 진행도 수정 API
+= 작업 진행도 변경 API
 :doctype: book
 :sectanchors:
 :sectlinks:
@@ -9,20 +9,20 @@
 :linkcss:
 :nav-workspaces-tasks-progress-update:
 :breadcrumb-section: 작업 API
-:breadcrumb-current: 작업 진행도 수정 API
+:breadcrumb-current: 작업 진행도 변경 API
 
 include::_navigation.adoc[]
 
 include::_breadcrumb.adoc[]
 
-== 작업 진행도 수정
+== 작업 진행도 변경
 
 [cols="1,4",role="endpoint-summary"]
 |===
 |메서드 |``PATCH``
 |경로 |``/v1/workspaces/{workspaceId}/tasks/{taskId}/progress``
 |API 상태 |[.badge.stability.experimental]#Experimental#
-|목적 |작업 진행도만 별도로 수정합니다.
+|목적 |작업 진행도만 별도로 변경합니다.
 |인증 |JWT access token이 필요합니다.
 |권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
 |진행도 |``0``부터 ``100``까지의 정수를 사용합니다.
@@ -74,7 +74,8 @@ include::_api-errors.adoc[]
 == 관련 문서
 
 * link:workspaces-tasks-get.html[작업 상세 조회 API]
-* link:workspaces-tasks-update.html[작업 수정 API]
+* link:workspaces-tasks-update.html[작업 전체 수정 API]
+* link:workspaces-tasks-status-update.html[작업 상태 변경 API]
 * link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
 * link:workspaces-activity-records.html[워크스페이스 최근 활동 API]
 * link:api-response.html[공통 응답 포맷]

@@ -6,6 +6,7 @@ import dev.runtime_lab.flowit.domain.task.dto.TaskDetailResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskProgressUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskSearchRequest;
+import dev.runtime_lab.flowit.domain.task.dto.TaskStatusUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskSummaryResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.service.TaskService;
@@ -86,6 +87,18 @@ public class TaskController {
 		@Valid @RequestBody TaskProgressUpdateRequest request
 	) {
 		taskService.updateProgress(currentUser, workspaceId, taskId, request);
+
+		return ApiEmptyData.empty();
+	}
+
+	@PatchMapping("/{taskId}/status")
+	public ApiEmptyData updateStatus(
+		@AuthenticatedUser CurrentUser currentUser,
+		@PathVariable Long workspaceId,
+		@PathVariable Long taskId,
+		@Valid @RequestBody TaskStatusUpdateRequest request
+	) {
+		taskService.updateStatus(currentUser, workspaceId, taskId, request);
 
 		return ApiEmptyData.empty();
 	}

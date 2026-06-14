@@ -12,9 +12,7 @@ import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryChangeResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryTargetResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskListQuery;
-import dev.runtime_lab.flowit.domain.task.dto.TaskProgressUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskSummaryResponse;
-import dev.runtime_lab.flowit.domain.task.dto.TaskUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.entity.TaskHistoryAction;
 import dev.runtime_lab.flowit.domain.task.entity.TaskHistoryElement;
 import dev.runtime_lab.flowit.domain.task.entity.TaskPriority;
@@ -264,9 +262,37 @@ class TaskApiDocsTest {
 			.andDo(document("workspaces-tasks-update",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
-				taskPathParameters("작업을 수정할 워크스페이스 식별자입니다.", "수정할 작업 식별자입니다."),
+				taskPathParameters("전체 수정할 작업이 속한 워크스페이스 식별자입니다.", "전체 수정할 작업 식별자입니다."),
 				authRequestHeaders(),
 				requestFields(taskRequestFields()),
+				responseHeaders(contentTypeResponseHeader()),
+				responseFields(emptyResponseFields())
+			));
+	}
+
+	@Test
+	void updateTaskStatus() throws Exception {
+		String requestBody = """
+			{
+			  "status": "IN_PROGRESS"
+			}
+			""";
+		authenticate();
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}/tasks/{taskId}/status", 2001L, 1001L)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer access-token")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isOk())
+			.andDo(document("workspaces-tasks-status-update",
+				preprocessRequest(prettyPrint()),
+				preprocessResponse(prettyPrint()),
+				taskPathParameters("상태를 변경할 작업이 속한 워크스페이스 식별자입니다.", "상태를 변경할 작업 식별자입니다."),
+				authRequestHeaders(),
+				requestFields(
+					fieldWithPath("status").type(JsonFieldType.STRING).description("변경할 작업 상태입니다. link:enum-reference.html#task-status[TaskStatus]를 참고합니다.")
+				),
 				responseHeaders(contentTypeResponseHeader()),
 				responseFields(emptyResponseFields())
 			));
@@ -290,7 +316,7 @@ class TaskApiDocsTest {
 			.andDo(document("workspaces-tasks-progress-update",
 				preprocessRequest(prettyPrint()),
 				preprocessResponse(prettyPrint()),
-				taskPathParameters("진행도를 수정할 워크스페이스 식별자입니다.", "진행도를 수정할 작업 식별자입니다."),
+				taskPathParameters("진행도를 변경할 작업이 속한 워크스페이스 식별자입니다.", "진행도를 변경할 작업 식별자입니다."),
 				authRequestHeaders(),
 				requestFields(
 					fieldWithPath("progress").type(JsonFieldType.NUMBER).description("작업 진행도입니다. 0부터 100까지의 정수입니다.")

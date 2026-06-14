@@ -1,0 +1,24 @@
+[[integration-notes-0-2-26-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.26 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-15 00:30 KST
+|Added
+|`PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status`
+|<<integration-note-0-2-26-volt-2026-06-15-0030-patch-v1-workspaces-workspaceid-tasks-taskid-status,`PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status` 작업 상태만 별도로 변경하는 엔드포인트가 추가되었습니다.>>
+
+|===
+
+include::../notes/0.2.26-volt/2026-06-15-0030-patch-v1-workspaces-workspaceid-tasks-taskid-status.adoc[]
+
+++++
+</div>
+</details>
+++++

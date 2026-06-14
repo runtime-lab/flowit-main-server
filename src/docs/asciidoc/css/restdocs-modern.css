@@ -302,6 +302,19 @@ p {
   color: inherit;
 }
 
+.development-activity-support dd ul,
+.development-activity-support dd ol,
+.update-note dd ul,
+.update-note dd ol {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.development-activity-support dd li,
+.update-note dd li {
+  margin: 3px 0;
+}
+
 .archived-note-snapshot {
   margin: 14px 0 24px;
   overflow: hidden;

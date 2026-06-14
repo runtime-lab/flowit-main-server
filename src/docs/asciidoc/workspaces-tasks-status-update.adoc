@@ -1,4 +1,4 @@
-= 작업 전체 수정 API
+= 작업 상태 변경 API
 :doctype: book
 :sectanchors:
 :sectlinks:
@@ -7,69 +7,66 @@
 :stylesheet: restdocs-modern.css
 :stylesdir: css
 :linkcss:
-:nav-workspaces-tasks-update:
+:nav-workspaces-tasks-status-update:
 :breadcrumb-section: 작업 API
-:breadcrumb-current: 작업 전체 수정 API
+:breadcrumb-current: 작업 상태 변경 API
 
 include::_navigation.adoc[]
 
 include::_breadcrumb.adoc[]
 
-== 작업 전체 수정
+== 작업 상태 변경
 
 [cols="1,4",role="endpoint-summary"]
 |===
 |메서드 |``PATCH``
-|경로 |``/v1/workspaces/{workspaceId}/tasks/{taskId}``
+|경로 |``/v1/workspaces/{workspaceId}/tasks/{taskId}/status``
 |API 상태 |[.badge.stability.experimental]#Experimental#
-|목적 |작업의 제목, 설명, 상태, 담당자, 우선순위, 일정, 태그를 한 번에 수정합니다.
+|목적 |작업 상태만 별도로 변경합니다.
 |인증 |JWT access token이 필요합니다.
 |권한 |요청자는 해당 워크스페이스의 활성 멤버여야 합니다.
 |상태 |``TO_DO``, ``IN_PROGRESS``, ``DONE`` 간 자유 전이를 허용합니다.
-|담당자 |다른 워크스페이스 멤버 또는 미할당 상태로 변경할 수 있습니다.
-|태그 |최대 10개까지 허용하며, 같은 작업 안에서는 정규화된 이름 기준으로 중복 제거됩니다.
-|단독 변경 |상태만 변경할 때는 작업 상태 변경 API를, 진행도만 변경할 때는 작업 진행도 변경 API를 사용합니다.
-|제외 필드 |진행도는 이 API의 수정 대상이 아닙니다.
+|처리 방식 |상태 변경 이력을 별도로 남깁니다.
+|정렬 |보드 안의 작업 순서 변경은 이 API에서 처리하지 않습니다. 정렬 정책은 별도 API로 확장합니다.
 |성공 응답 |``200 OK``와 빈 성공 응답 본문을 반환합니다.
 |===
 
 === HTTP 요청
 
-include::{snippets}/workspaces-tasks-update/http-request.adoc[]
+include::{snippets}/workspaces-tasks-status-update/http-request.adoc[]
 
 === cURL 요청
 
-include::{snippets}/workspaces-tasks-update/curl-request.adoc[]
+include::{snippets}/workspaces-tasks-status-update/curl-request.adoc[]
 
 === 경로 파라미터
 
-include::{snippets}/workspaces-tasks-update/path-parameters.adoc[]
+include::{snippets}/workspaces-tasks-status-update/path-parameters.adoc[]
 
 === 요청 헤더
 
-include::{snippets}/workspaces-tasks-update/request-headers.adoc[]
+include::{snippets}/workspaces-tasks-status-update/request-headers.adoc[]
 
 === 요청 필드
 
-include::{snippets}/workspaces-tasks-update/request-fields.adoc[]
+include::{snippets}/workspaces-tasks-status-update/request-fields.adoc[]
 
 === HTTP 응답
 
-include::{snippets}/workspaces-tasks-update/http-response.adoc[]
+include::{snippets}/workspaces-tasks-status-update/http-response.adoc[]
 
 === 응답 헤더
 
-include::{snippets}/workspaces-tasks-update/response-headers.adoc[]
+include::{snippets}/workspaces-tasks-status-update/response-headers.adoc[]
 
 === 응답 필드
 
-include::{snippets}/workspaces-tasks-update/response-fields.adoc[]
+include::{snippets}/workspaces-tasks-status-update/response-fields.adoc[]
 
 :api-error-auth-required:
 :api-error-validation:
 :api-error-workspace-member-required:
 :api-error-workspace-not-found:
-:api-error-workspace-member-not-found:
 :api-error-task-not-found:
 :api-error-internal-server:
 include::_api-errors.adoc[]
@@ -78,9 +75,10 @@ include::_api-errors.adoc[]
 == 관련 문서
 
 * link:workspaces-tasks-get.html[작업 상세 조회 API]
-* link:workspaces-tasks-status-update.html[작업 상태 변경 API]
+* link:workspaces-tasks-update.html[작업 전체 수정 API]
 * link:workspaces-tasks-progress-update.html[작업 진행도 변경 API]
 * link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
+* link:workspaces-activity-records.html[워크스페이스 최근 활동 API]
 * link:enum-reference.html[Enum Reference]
 * link:api-response.html[공통 응답 포맷]
 * link:error-codes.html[에러 코드]

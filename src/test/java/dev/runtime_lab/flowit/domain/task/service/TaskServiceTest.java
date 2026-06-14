@@ -2,10 +2,11 @@ package dev.runtime_lab.flowit.domain.task.service;
 
 import dev.runtime_lab.flowit.domain.activity.service.internal.WorkspaceActivityRecorder;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateRequest;
-import dev.runtime_lab.flowit.domain.task.entity.TaskComment;
 import dev.runtime_lab.flowit.domain.task.dto.TaskProgressUpdateRequest;
+import dev.runtime_lab.flowit.domain.task.dto.TaskStatusUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.entity.Task;
 import dev.runtime_lab.flowit.domain.task.entity.TaskChangeHistory;
+import dev.runtime_lab.flowit.domain.task.entity.TaskComment;
 import dev.runtime_lab.flowit.domain.task.entity.TaskHistoryAction;
 import dev.runtime_lab.flowit.domain.task.entity.TaskPriority;
 import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
@@ -196,6 +197,53 @@ class TaskServiceTest {
 		assertTrue(history.getChangesJson().contains("\"element\":\"PROGRESS\""));
 		assertTrue(history.getChangesJson().contains("\"from\":10"));
 		assertTrue(history.getChangesJson().contains("\"to\":65"));
+	}
+
+	@Test
+	void updateStatusRecordsStatusChangedHistory() {
+		CurrentUser currentUser = new CurrentUser(1L, "actor@example.com", "김철수");
+		User actor = user(1L, "actor@example.com", "김철수");
+		Workspace workspace = workspace(actor);
+		WorkspaceMember actorMember = workspaceMember(10L, workspace, actor);
+		WorkspaceMember assignee = workspaceMember(12L, workspace, user(2L, "assignee@example.com", "홍길동"));
+		Task task = task(100L, workspace, assignee, actor, 10);
+		ArgumentCaptor<TaskChangeHistory> historyCaptor = ArgumentCaptor.forClass(TaskChangeHistory.class);
+
+		when(workspaceAccessService.resolveMemberAccess(currentUser, 1L))
+			.thenReturn(new WorkspaceAccessContext(actor, workspace, actorMember));
+		when(taskRepository.findActiveByWorkspaceIdAndTaskIdForUpdate(1L, 100L)).thenReturn(Optional.of(task));
+
+		taskService.updateStatus(currentUser, 1L, 100L, new TaskStatusUpdateRequest(TaskStatus.IN_PROGRESS));
+
+		assertEquals(TaskStatus.IN_PROGRESS, task.getStatus());
+		assertEquals(1780916400L, task.getUpdatedAt());
+		verify(taskChangeHistoryRepository).save(historyCaptor.capture());
+		TaskChangeHistory history = historyCaptor.getValue();
+		assertEquals(TaskHistoryAction.STATUS_CHANGED, history.getAction());
+		assertTrue(history.getChangesJson().contains("\"element\":\"STATUS\""));
+		assertTrue(history.getChangesJson().contains("\"from\":\"TO_DO\""));
+		assertTrue(history.getChangesJson().contains("\"to\":\"IN_PROGRESS\""));
+	}
+
+	@Test
+	void updateStatusSkipsWhenStatusUnchanged() {
+		CurrentUser currentUser = new CurrentUser(1L, "actor@example.com", "김철수");
+		User actor = user(1L, "actor@example.com", "김철수");
+		Workspace workspace = workspace(actor);
+		WorkspaceMember actorMember = workspaceMember(10L, workspace, actor);
+		WorkspaceMember assignee = workspaceMember(12L, workspace, user(2L, "assignee@example.com", "홍길동"));
+		Task task = task(100L, workspace, assignee, actor, 10);
+
+		when(workspaceAccessService.resolveMemberAccess(currentUser, 1L))
+			.thenReturn(new WorkspaceAccessContext(actor, workspace, actorMember));
+		when(taskRepository.findActiveByWorkspaceIdAndTaskIdForUpdate(1L, 100L)).thenReturn(Optional.of(task));
+
+		taskService.updateStatus(currentUser, 1L, 100L, new TaskStatusUpdateRequest(TaskStatus.TO_DO));
+
+		assertEquals(TaskStatus.TO_DO, task.getStatus());
+		assertEquals(1780916300L, task.getUpdatedAt());
+		verify(taskChangeHistoryRepository, never()).save(any(TaskChangeHistory.class));
+		verify(workspaceActivityRecorder, never()).recordTask(any(TaskChangeHistory.class), any());
 	}
 
 	@Test

@@ -3,6 +3,7 @@ package dev.runtime_lab.flowit.domain.task.controller;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskCreateResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskListQuery;
+import dev.runtime_lab.flowit.domain.task.dto.TaskStatusUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskSummaryResponse;
 import dev.runtime_lab.flowit.domain.task.entity.TaskStatus;
 import dev.runtime_lab.flowit.domain.task.service.TaskService;
@@ -166,6 +167,53 @@ class TaskControllerTest {
 		);
 
 		mockMvc.perform(patch("/v1/workspaces/{workspaceId}/tasks/{taskId}/progress", 1L, 100L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.error.code").value("VALIDATION_400_001"))
+			.andExpect(jsonPath("$.extensions.fieldErrors").isArray());
+	}
+
+	@Test
+	void updateStatusUpdatesStatus() throws Exception {
+		String requestBody = """
+			{
+			  "status": "IN_PROGRESS"
+			}
+			""";
+		ArgumentCaptor<TaskStatusUpdateRequest> requestCaptor = ArgumentCaptor.forClass(TaskStatusUpdateRequest.class);
+
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("7", "user@example.com", "김철수"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}/tasks/{taskId}/status", 1L, 100L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.data").isMap());
+
+		verify(taskService).updateStatus(any(CurrentUser.class), eq(1L), eq(100L), requestCaptor.capture());
+		assertEquals(TaskStatus.IN_PROGRESS, requestCaptor.getValue().status());
+	}
+
+	@Test
+	void updateStatusRejectsNullStatus() throws Exception {
+		String requestBody = """
+			{
+			  "status": null
+			}
+			""";
+
+		SecurityContextHolder.getContext().setAuthentication(
+			new JwtAuthenticationToken(jwt("7", "user@example.com", "김철수"), List.of())
+		);
+
+		mockMvc.perform(patch("/v1/workspaces/{workspaceId}/tasks/{taskId}/status", 1L, 100L)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.content(requestBody))
