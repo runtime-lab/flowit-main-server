@@ -209,13 +209,17 @@ a|``PUT /v1/users/me/profile-image`` +
 |``GET /v1/workspaces/{workspaceId}/tasks/{taskId}``
 |특정 작업의 상세 정보를 조회하는 API를 설명합니다.
 
-|link:workspaces-tasks-update.html[작업 수정 API]
+|link:workspaces-tasks-update.html[작업 전체 수정 API]
 |``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}``
-|작업의 일반 필드를 수정하는 API를 설명합니다.
+|작업의 제목, 설명, 상태, 담당자, 우선순위, 일정, 태그를 한 번에 수정하는 API를 설명합니다.
 
-|link:workspaces-tasks-progress-update.html[작업 진행도 수정 API]
+|link:workspaces-tasks-status-update.html[작업 상태 변경 API]
+|``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status``
+|작업 상태만 별도로 변경하는 API를 설명합니다.
+
+|link:workspaces-tasks-progress-update.html[작업 진행도 변경 API]
 |``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/progress``
-|작업 진행도만 별도로 수정하는 API를 설명합니다.
+|작업 진행도만 별도로 변경하는 API를 설명합니다.
 
 |link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
 |``GET /v1/workspaces/{workspaceId}/tasks/{taskId}/histories``

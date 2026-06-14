@@ -1,9 +1,10 @@
 [.update-note-title]
 Integration Note
 
-Empty:: API 변경이 없습니다.
-Carryover:: ``POST /v1/workspaces/{workspaceId}/tasks/{taskId}/comments`` ``댓글 생성`` 엔드포인트가 추가되었습니다.
-Carryover:: ``GET /v1/workspaces/{workspaceId}/tasks/{taskId}/comments`` ``댓글 목록`` 엔드포인트가 추가되었습니다.
-Carryover:: ``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/comments/{commentId}`` ``댓글 수정`` 엔드포인트가 추가되었습니다.
-Carryover:: ``DELETE /v1/workspaces/{workspaceId}/tasks/{taskId}/comments/{commentId}`` ``댓글 삭제`` 엔드포인트가 추가되었습니다. 댓글 수정과 삭제는 작성자 본인만 가능합니다.
-Carryover:: ``GET /v1/workspaces/{workspaceId}/tasks/{taskId}`` 응답에 ``data.commentPage`` 필드가 추가되었습니다.
+Added:: ``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status`` 작업 상태만 별도로 변경하는 엔드포인트가 추가되었습니다.
++
+* 이 API는 작업 상태만 변경할 수 있습니다.
+Changes:: 일부 작업 관련 문서의 명칭을 변경했습니다.
++
+* ``작업 수정 API`` -> ``작업 전체 수정 API``
+* ``작업 진행도 수정 API`` -> ``작업 진행도 변경 API``

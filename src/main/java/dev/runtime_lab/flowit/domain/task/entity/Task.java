@@ -124,4 +124,9 @@ public class Task {
 		this.progress = progress;
 		this.updatedAt = updatedAt;
 	}
+
+	public void updateStatus(TaskStatus status, Long updatedAt) {
+		this.status = status;
+		this.updatedAt = updatedAt;
+	}
 }

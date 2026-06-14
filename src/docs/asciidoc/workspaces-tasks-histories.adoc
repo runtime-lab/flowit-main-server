@@ -74,8 +74,9 @@ include::_api-errors.adoc[]
 == 관련 문서
 
 * link:workspaces-tasks-get.html[작업 상세 조회 API]
-* link:workspaces-tasks-update.html[작업 수정 API]
-* link:workspaces-tasks-progress-update.html[작업 진행도 수정 API]
+* link:workspaces-tasks-update.html[작업 전체 수정 API]
+* link:workspaces-tasks-status-update.html[작업 상태 변경 API]
+* link:workspaces-tasks-progress-update.html[작업 진행도 변경 API]
 * link:workspaces-activity-records.html[워크스페이스 최근 활동 API]
 * link:enum-reference.html[Enum Reference]
 * link:api-response.html[공통 응답 포맷]

@@ -1,0 +1,35 @@
+// integration-note-source-sha256: 8c36464015012f16619e377b357761cbbadf638996ec21c336383f6e211b6438
+// integration-note-version: 0.2.26-volt
+// integration-note-time: 2026-06-15-0030
+// integration-note-time-human: 2026-06-15 00:30 KST
+// integration-note-impact: Added
+// integration-note-target: `PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status`
+// integration-note-summary: `PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status` 작업 상태만 별도로 변경하는 엔드포인트가 추가되었습니다.
+// integration-note-anchor: integration-note-0-2-26-volt-2026-06-15-0030-patch-v1-workspaces-workspaceid-tasks-taskid-status
+
+[#integration-note-0-2-26-volt-2026-06-15-0030-patch-v1-workspaces-workspaceid-tasks-taskid-status]
+=== `PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status` 작업 상태만 별도로 변경하는 엔드포인트가 추가되었습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.26-volt`
+|Archived At |2026-06-15 00:30 KST
+|Impact |Added
+|Target |`PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Added:: ``PATCH /v1/workspaces/{workspaceId}/tasks/{taskId}/status`` 작업 상태만 별도로 변경하는 엔드포인트가 추가되었습니다.
++
+* 이 API는 작업 상태만 변경할 수 있습니다.
+Changes:: 일부 작업 관련 문서의 명칭을 변경했습니다.
++
+* ``작업 수정 API`` -> ``작업 전체 수정 API``
+* ``작업 진행도 수정 API`` -> ``작업 진행도 변경 API``
+--

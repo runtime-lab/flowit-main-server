@@ -235,17 +235,24 @@ ifndef::nav-workspaces-tasks-get[]
 endif::nav-workspaces-tasks-get[]
 
 ifdef::nav-workspaces-tasks-update[]
-* [.is-current]#작업 수정 API#
+* [.is-current]#작업 전체 수정 API#
 endif::nav-workspaces-tasks-update[]
 ifndef::nav-workspaces-tasks-update[]
-* link:workspaces-tasks-update.html[작업 수정 API]
+* link:workspaces-tasks-update.html[작업 전체 수정 API]
 endif::nav-workspaces-tasks-update[]
 
+ifdef::nav-workspaces-tasks-status-update[]
+* [.is-current]#작업 상태 변경 API#
+endif::nav-workspaces-tasks-status-update[]
+ifndef::nav-workspaces-tasks-status-update[]
+* link:workspaces-tasks-status-update.html[작업 상태 변경 API]
+endif::nav-workspaces-tasks-status-update[]
+
 ifdef::nav-workspaces-tasks-progress-update[]
-* [.is-current]#작업 진행도 수정 API#
+* [.is-current]#작업 진행도 변경 API#
 endif::nav-workspaces-tasks-progress-update[]
 ifndef::nav-workspaces-tasks-progress-update[]
-* link:workspaces-tasks-progress-update.html[작업 진행도 수정 API]
+* link:workspaces-tasks-progress-update.html[작업 진행도 변경 API]
 endif::nav-workspaces-tasks-progress-update[]
 
 ifdef::nav-workspaces-tasks-histories[]

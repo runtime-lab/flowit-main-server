@@ -9,6 +9,7 @@ import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryChangeResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskHistoryResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskListQuery;
 import dev.runtime_lab.flowit.domain.task.dto.TaskProgressUpdateRequest;
+import dev.runtime_lab.flowit.domain.task.dto.TaskStatusUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.dto.TaskSummaryResponse;
 import dev.runtime_lab.flowit.domain.task.dto.TaskUpdateRequest;
 import dev.runtime_lab.flowit.domain.task.entity.Task;
@@ -220,6 +221,38 @@ public class TaskService {
 			requester,
 			TaskHistoryAction.PROGRESS_CHANGED,
 			List.of(change(TaskHistoryElement.PROGRESS, oldProgress, request.progress())),
+			now
+		);
+	}
+
+	@Transactional
+	public void updateStatus(
+		CurrentUser currentUser,
+		Long workspaceId,
+		Long taskId,
+		TaskStatusUpdateRequest request
+	) {
+		WorkspaceAccessContext access = workspaceAccessService.resolveMemberAccess(currentUser, workspaceId);
+		User requester = access.requester();
+		WorkspaceMember actorMember = access.membership();
+		Task task = findTaskForUpdate(workspaceId, taskId);
+
+		if (task.getStatus() == request.status()) {
+			return;
+		}
+
+		TaskStatus oldStatus = task.getStatus();
+
+		long now = now();
+		task.updateStatus(request.status(), now);
+
+		recordHistory(
+			task.getWorkspace(),
+			task,
+			actorMember,
+			requester,
+			TaskHistoryAction.STATUS_CHANGED,
+			List.of(change(TaskHistoryElement.STATUS, oldStatus, request.status())),
 			now
 		);
 	}
