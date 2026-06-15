@@ -1,3 +1,27 @@
+// integration-note-source-sha256: 83508b6a93eea394be21c4e776d8b1c5a8f6d28ded72dc7372d8524a125ebaa6
+// integration-note-version: 0.2.28-volt
+// integration-note-time: 2026-06-15-2300
+// integration-note-time-human: 2026-06-15 23:00 KST
+// integration-note-impact: Maint
+// integration-note-target: `PATCH /v1/workspaces/{workspaceId}/members/{memberId}/role`
+// integration-note-summary: 작은 CI 분기 업데이트를 추가로 진행했습니다. 이전 문서 내용을 유지합니다.
+// integration-note-anchor: integration-note-0-2-28-volt-2026-06-15-2300-ci
+
+[#integration-note-0-2-28-volt-2026-06-15-2300-ci]
+=== 작은 CI 분기 업데이트를 추가로 진행했습니다. 이전 문서 내용을 유지합니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.28-volt`
+|Archived At |2026-06-15 23:00 KST
+|Impact |Maint
+|Target |`PATCH /v1/workspaces/{workspaceId}/members/{memberId}/role`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
 [.update-note-title]
 Integration Note
 
@@ -23,3 +47,4 @@ Carryover:: 일부 작업 관련 문서의 명칭을 변경했습니다.
 +
 * ``작업 수정 API`` -> ``작업 전체 수정 API``
 * ``작업 진행도 수정 API`` -> ``작업 진행도 변경 API``
+--

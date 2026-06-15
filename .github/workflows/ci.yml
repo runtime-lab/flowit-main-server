@@ -33,5 +33,25 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Security PR Gate
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+          vulnerability-check: true
+          license-check: true
+
       - name: Run checks
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.login != 'dependabot[bot]' }}
         run: ./gradlew --no-daemon check
+
+      - name: Run lightweight checks for Dependabot
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' }}
+        run: >
+          ./gradlew --no-daemon
+          compileJava
+          compileTestJava
+          test
+          --tests 'dev.runtime_lab.flowit.architecture.*'
+          --tests 'dev.runtime_lab.flowit.domain.*'
+          --tests 'dev.runtime_lab.flowit.global.*'
