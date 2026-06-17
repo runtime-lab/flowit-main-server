@@ -1,7 +1,7 @@
 package dev.runtime_lab.flowit.domain.task.entity;
 
 public enum TaskStatus {
-	TO_DO,
+	TODO,
 	IN_PROGRESS,
 	DONE
 }

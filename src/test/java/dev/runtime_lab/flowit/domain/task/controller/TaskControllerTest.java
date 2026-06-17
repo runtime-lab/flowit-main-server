@@ -69,7 +69,7 @@ class TaskControllerTest {
 			{
 			  "title": "로그인 UI 구현",
 			  "descriptionMarkdown": "### 로그인 화면",
-			  "status": "TO_DO",
+			  "status": "TODO",
 			  "assigneeMemberId": 12,
 			  "priority": "HIGH",
 			  "startDate": 1780876800,

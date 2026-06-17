@@ -81,7 +81,7 @@ public class TaskService {
 			.workspace(workspace)
 			.title(request.title().trim())
 			.descriptionMarkdown(request.descriptionMarkdown())
-			.status(request.status() == null ? TaskStatus.TO_DO : request.status())
+			.status(request.status() == null ? TaskStatus.TODO : request.status())
 			.priority(request.priority())
 			.assignee(assignee)
 			.startDate(request.startDate())
