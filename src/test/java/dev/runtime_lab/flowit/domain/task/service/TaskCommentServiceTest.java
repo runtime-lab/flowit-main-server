@@ -299,7 +299,7 @@ class TaskCommentServiceTest {
 			.workspace(workspace)
 			.title("Login UI")
 			.descriptionMarkdown("### Login screen")
-			.status(TaskStatus.TO_DO)
+			.status(TaskStatus.TODO)
 			.priority(TaskPriority.HIGH)
 			.progress(0)
 			.createdBy(creator)

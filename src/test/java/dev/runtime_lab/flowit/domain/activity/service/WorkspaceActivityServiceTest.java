@@ -59,7 +59,7 @@ class WorkspaceActivityServiceTest {
 			.targetId(100L)
 			.targetDisplayNameSnapshot("Login UI")
 			.changesJson("""
-				[{"element":"STATUS","from":"TO_DO","to":"IN_PROGRESS"}]
+				[{"element":"STATUS","from":"TODO","to":"IN_PROGRESS"}]
 				""")
 			.occurredAt(1780916400L)
 			.build();

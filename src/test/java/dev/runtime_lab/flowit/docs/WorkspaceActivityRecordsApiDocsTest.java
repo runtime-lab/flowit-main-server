@@ -93,7 +93,7 @@ class WorkspaceActivityRecordsApiDocsTest {
 			ActivityRecordAction.STATUS_CHANGED,
 			1,
 			List.of(ActivityChangeElement.STATUS),
-			List.of(new ActivityChangeResponse(ActivityChangeElement.STATUS, "TO_DO", "IN_PROGRESS"))
+			List.of(new ActivityChangeResponse(ActivityChangeElement.STATUS, "TODO", "IN_PROGRESS"))
 		);
 
 		when(workspaceActivityService.activityRecords(any(CurrentUser.class), eq(2001L), any(ActivityRecordListQuery.class)))

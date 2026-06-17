@@ -85,7 +85,7 @@ class EnumReferenceDocsTest {
 		Files.writeString(
 			taskStatusSnippetPath,
 			enumTable(TaskStatus.values(), Map.of(
-				TaskStatus.TO_DO, "아직 시작하지 않은 작업 상태입니다.",
+				TaskStatus.TODO, "아직 시작하지 않은 작업 상태입니다.",
 				TaskStatus.IN_PROGRESS, "진행 중인 작업 상태입니다.",
 				TaskStatus.DONE, "완료된 작업 상태입니다."
 			)),

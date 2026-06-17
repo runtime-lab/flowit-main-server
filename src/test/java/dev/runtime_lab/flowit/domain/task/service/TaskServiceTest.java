@@ -75,7 +75,7 @@ class TaskServiceTest {
 		TaskCreateRequest request = new TaskCreateRequest(
 			" 로그인 UI 구현 ",
 			"### 로그인 화면",
-			TaskStatus.TO_DO,
+			TaskStatus.TODO,
 			12L,
 			TaskPriority.HIGH,
 			START_DATE,
@@ -117,7 +117,7 @@ class TaskServiceTest {
 		TaskCreateRequest request = new TaskCreateRequest(
 			"로그인 UI 구현",
 			"### 로그인 화면",
-			TaskStatus.TO_DO,
+			TaskStatus.TODO,
 			null,
 			TaskPriority.HIGH,
 			START_DATE,
@@ -150,7 +150,7 @@ class TaskServiceTest {
 		var request = new dev.runtime_lab.flowit.domain.task.dto.TaskUpdateRequest(
 			"로그인 UI 구현",
 			"### 로그인 화면",
-			TaskStatus.TO_DO,
+			TaskStatus.TODO,
 			null,
 			TaskPriority.HIGH,
 			START_DATE,
@@ -221,7 +221,7 @@ class TaskServiceTest {
 		TaskChangeHistory history = historyCaptor.getValue();
 		assertEquals(TaskHistoryAction.STATUS_CHANGED, history.getAction());
 		assertTrue(history.getChangesJson().contains("\"element\":\"STATUS\""));
-		assertTrue(history.getChangesJson().contains("\"from\":\"TO_DO\""));
+		assertTrue(history.getChangesJson().contains("\"from\":\"TODO\""));
 		assertTrue(history.getChangesJson().contains("\"to\":\"IN_PROGRESS\""));
 	}
 
@@ -238,9 +238,9 @@ class TaskServiceTest {
 			.thenReturn(new WorkspaceAccessContext(actor, workspace, actorMember));
 		when(taskRepository.findActiveByWorkspaceIdAndTaskIdForUpdate(1L, 100L)).thenReturn(Optional.of(task));
 
-		taskService.updateStatus(currentUser, 1L, 100L, new TaskStatusUpdateRequest(TaskStatus.TO_DO));
+		taskService.updateStatus(currentUser, 1L, 100L, new TaskStatusUpdateRequest(TaskStatus.TODO));
 
-		assertEquals(TaskStatus.TO_DO, task.getStatus());
+		assertEquals(TaskStatus.TODO, task.getStatus());
 		assertEquals(1780916300L, task.getUpdatedAt());
 		verify(taskChangeHistoryRepository, never()).save(any(TaskChangeHistory.class));
 		verify(workspaceActivityRecorder, never()).recordTask(any(TaskChangeHistory.class), any());
@@ -312,7 +312,7 @@ class TaskServiceTest {
 			.workspace(workspace)
 			.title("로그인 UI 구현")
 			.descriptionMarkdown("### 로그인 화면")
-			.status(TaskStatus.TO_DO)
+			.status(TaskStatus.TODO)
 			.priority(TaskPriority.HIGH)
 			.assignee(assignee)
 			.startDate(START_DATE)
