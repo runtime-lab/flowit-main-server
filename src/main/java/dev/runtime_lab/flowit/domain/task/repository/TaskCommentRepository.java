@@ -57,6 +57,24 @@ public class TaskCommentRepository extends CustomJpaRepo<TaskComment, Long> {
 		return count == null ? 0L : count;
 	}
 
+	public boolean existsActiveByTaskIdAndContentMarkdown(Long taskId, String contentMarkdown) {
+		return findActiveByTaskIdAndContentMarkdown(taskId, contentMarkdown).isPresent();
+	}
+
+	public Optional<TaskComment> findActiveByTaskIdAndContentMarkdown(Long taskId, String contentMarkdown) {
+		QTaskComment taskComment = QTaskComment.taskComment;
+
+		return Optional.ofNullable(
+			queryFactory.selectFrom(taskComment)
+				.where(
+					taskComment.task.id.eq(taskId),
+					taskComment.contentMarkdown.eq(contentMarkdown),
+					taskComment.deletedAt.isNull()
+				)
+				.fetchFirst()
+		);
+	}
+
 	public Optional<TaskComment> findActiveByWorkspaceIdAndTaskIdAndCommentIdForUpdate(
 		Long workspaceId,
 		Long taskId,

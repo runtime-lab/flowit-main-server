@@ -90,6 +90,20 @@ public class TaskRepository extends CustomJpaRepo<Task, Long> {
 		return count == null ? 0L : count;
 	}
 
+	public Optional<Task> findActiveByWorkspaceIdAndTitle(Long workspaceId, String title) {
+		QTask task = QTask.task;
+
+		return Optional.ofNullable(
+			queryFactory.selectFrom(task)
+				.where(
+					task.workspace.id.eq(workspaceId),
+					task.title.eq(title),
+					task.deletedAt.isNull()
+				)
+				.fetchFirst()
+		);
+	}
+
 	private BooleanBuilder condition(Long workspaceId, TaskListQuery query, String normalizedTag) {
 		QTask task = QTask.task;
 		QTaskTag taskTag = QTaskTag.taskTag;

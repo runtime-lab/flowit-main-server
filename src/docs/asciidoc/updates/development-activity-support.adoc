@@ -7,7 +7,15 @@ Development Activity Support
 Version Stage:: {api-version-stage} (pass:[<a href="version-policy.html">Version Policy</a>])
 API Status:: {api-version-stage-status}
 
-Socket:: 시범적인 소켓 운영 채널을 생성했습니다.
+Provision:: 시나리오 기반 데이터 서플라이 체인 운영이 시작됩니다.
++
+* 이제부터 기동 시점 각 기능의 샘플 데이터를 생성합니다.
+* 샘플 데이터의 생성은 사용자 시나리오의 흐름으로 진행됩니다.
+* 샘플 데이터가 변경된 경우 다음 기동에서 원문으로 복원합니다.
+* 별도로 샘플 워크스페이스에 생성한 데이터는 변경되지 않습니다.
+* Sample ID: local@flowit.dev / Sample PW: localpass123
+* 생성 자원: User, Workspace, Task/Tags, TaskComment
 Support:: 타입 생성을 지원하기 위해 openapi.yaml 생성을 단계적으로 진행 중 입니다.
-Additional:: ``http://localhost:8080/docs/openapi.yaml`` 에서 다운로드 받을 수 있습니다.
++
+* ``http://localhost:8080/docs/openapi.yaml`` 에서 다운로드 받을 수 있습니다.
 Etc:: 매일 더 나은 하루를 보냈기를 👍️

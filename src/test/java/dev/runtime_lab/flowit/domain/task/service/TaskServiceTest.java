@@ -80,6 +80,7 @@ class TaskServiceTest {
 			TaskPriority.HIGH,
 			START_DATE,
 			DUE_DATE,
+			null,
 			List.of("Frontend", "frontend", " ui ")
 		);
 		ArgumentCaptor<TaskTag> tagCaptor = ArgumentCaptor.forClass(TaskTag.class);
@@ -122,6 +123,7 @@ class TaskServiceTest {
 			TaskPriority.HIGH,
 			START_DATE,
 			DUE_DATE,
+			null,
 			List.of()
 		);
 		ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
@@ -134,9 +136,39 @@ class TaskServiceTest {
 		taskService.create(currentUser, 1L, request);
 
 		assertNull(taskCaptor.getValue().getAssignee());
+		assertEquals(0, taskCaptor.getValue().getProgress());
 		verify(workspaceAccessService, never()).findActiveMember(1L, null);
 		verify(taskChangeHistoryRepository).save(historyCaptor.capture());
 		assertTrue(!historyCaptor.getValue().getChangesJson().contains("\"element\":\"ASSIGNEE\""));
+	}
+
+	@Test
+	void createAppliesRequestedProgress() {
+		CurrentUser currentUser = new CurrentUser(1L, "actor@example.com", "김철수");
+		User actor = user(1L, "actor@example.com", "김철수");
+		Workspace workspace = workspace(actor);
+		WorkspaceMember actorMember = workspaceMember(10L, workspace, actor);
+		Task savedTask = task(100L, workspace, null, actor, 35);
+		TaskCreateRequest request = new TaskCreateRequest(
+			"로그인 UI 구현",
+			"### 로그인 화면",
+			TaskStatus.IN_PROGRESS,
+			null,
+			TaskPriority.HIGH,
+			START_DATE,
+			DUE_DATE,
+			35,
+			List.of()
+		);
+		ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
+
+		when(workspaceAccessService.resolveMemberAccess(currentUser, 1L))
+			.thenReturn(new WorkspaceAccessContext(actor, workspace, actorMember));
+		when(taskRepository.save(taskCaptor.capture())).thenReturn(savedTask);
+
+		taskService.create(currentUser, 1L, request);
+
+		assertEquals(35, taskCaptor.getValue().getProgress());
 	}
 
 	@Test

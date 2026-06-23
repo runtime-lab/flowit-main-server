@@ -65,6 +65,9 @@ management:
       show-details: never
 
 flowit:
+  local-dev-data:
+    enabled: ${FLOWIT_LOCAL_DEV_DATA_ENABLED:false}
+
   storage:
     local:
       profile-images:

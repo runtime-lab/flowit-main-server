@@ -105,6 +105,7 @@ class TaskApiDocsTest {
 			  "priority": "HIGH",
 			  "startDate": 1780876800,
 			  "dueDate": 1781222400,
+			  "progress": 35,
 			  "tags": ["frontend", "ui"]
 			}
 			""";
@@ -124,7 +125,7 @@ class TaskApiDocsTest {
 				preprocessResponse(prettyPrint()),
 				workspacePathParameters("작업을 생성할 워크스페이스 식별자입니다."),
 				authRequestHeaders(),
-				requestFields(taskRequestFields()),
+				requestFields(taskCreateRequestFields()),
 				responseHeaders(
 					headerWithName(HttpHeaders.LOCATION).description("생성된 작업 상세 조회 리소스 위치입니다."),
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("응답 본문 미디어 타입입니다.")
@@ -399,6 +400,20 @@ class TaskApiDocsTest {
 			fieldWithPath("priority").type(JsonFieldType.STRING).description("작업 우선순위입니다. link:enum-reference.html#task-priority[TaskPriority]를 참고합니다."),
 			fieldWithPath("startDate").type(JsonFieldType.NUMBER).description("작업 시작 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
 			fieldWithPath("dueDate").type(JsonFieldType.NUMBER).description("작업 마감 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+			fieldWithPath("tags").type(JsonFieldType.ARRAY).description("작업 태그 목록입니다. 최대 10개까지 허용하며 동일 작업 안에서 같은 태그는 정규화 이름 기준으로 중복 제거됩니다.").attributes(stringArrayElements()).optional()
+		};
+	}
+
+	private org.springframework.restdocs.payload.FieldDescriptor[] taskCreateRequestFields() {
+		return new org.springframework.restdocs.payload.FieldDescriptor[] {
+			fieldWithPath("title").type(JsonFieldType.STRING).description("작업 제목입니다. 공백만 전달할 수 없습니다."),
+			fieldWithPath("descriptionMarkdown").type(JsonFieldType.STRING).description("작업 설명 Markdown 원문입니다. 서버는 원문 문자열을 저장하고 렌더링은 클라이언트가 수행합니다.").optional(),
+			fieldWithPath("status").type(JsonFieldType.STRING).description("작업 상태입니다. 생성 시 생략하면 ``TODO``로 처리됩니다. link:enum-reference.html#task-status[TaskStatus]를 참고합니다.").optional(),
+			fieldWithPath("assigneeMemberId").type(JsonFieldType.NUMBER).description("작업 담당 워크스페이스 멤버 식별자입니다. ``null``이면 미할당 상태입니다.").optional(),
+			fieldWithPath("priority").type(JsonFieldType.STRING).description("작업 우선순위입니다. link:enum-reference.html#task-priority[TaskPriority]를 참고합니다."),
+			fieldWithPath("startDate").type(JsonFieldType.NUMBER).description("작업 시작 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+			fieldWithPath("dueDate").type(JsonFieldType.NUMBER).description("작업 마감 예정 시각입니다. Unix epoch seconds 기준입니다.").optional(),
+			fieldWithPath("progress").type(JsonFieldType.NUMBER).description("작업 생성 시 적용할 진행도입니다. 생략하면 0으로 처리되며, 0부터 100까지의 정수입니다.").optional(),
 			fieldWithPath("tags").type(JsonFieldType.ARRAY).description("작업 태그 목록입니다. 최대 10개까지 허용하며 동일 작업 안에서 같은 태그는 정규화 이름 기준으로 중복 제거됩니다.").attributes(stringArrayElements()).optional()
 		};
 	}

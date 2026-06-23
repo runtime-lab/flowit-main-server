@@ -1,0 +1,24 @@
+[[integration-notes-0-2-32-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.32 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-24 01:21 KST
+|Added
+|`POST /v1/workspaces/{workspaceId}/tasks`
+|<<integration-note-0-2-32-volt-2026-06-24-0121-post-v1-workspaces-workspaceid-tasks-api,`POST /v1/workspaces/{workspaceId}/tasks` 작업 생성 API의 요청에 옵셔널 필드를 추가했습니다.>>
+
+|===
+
+include::../notes/0.2.32-volt/2026-06-24-0121-post-v1-workspaces-workspaceid-tasks-api.adoc[]
+
+++++
+</div>
+</details>
+++++

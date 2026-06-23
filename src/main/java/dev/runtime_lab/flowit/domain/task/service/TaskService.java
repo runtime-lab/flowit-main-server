@@ -86,7 +86,7 @@ public class TaskService {
 			.assignee(assignee)
 			.startDate(request.startDate())
 			.dueDate(request.dueDate())
-			.progress(0)
+			.progress(progressOrDefault(request.progress()))
 			.createdBy(requester)
 			.createdAt(now)
 			.updatedAt(now)
@@ -112,6 +112,10 @@ public class TaskService {
 		);
 
 		return TaskCreateResponse.from(task);
+	}
+
+	private Integer progressOrDefault(Integer progress) {
+		return progress == null ? 0 : progress;
 	}
 
 	@Transactional

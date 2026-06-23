@@ -1,0 +1,3 @@
+flowit:
+  local-dev-data:
+    enabled: ${FLOWIT_LOCAL_DEV_DATA_ENABLED:true}

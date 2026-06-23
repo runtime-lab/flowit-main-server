@@ -41,6 +41,20 @@ public class WorkspaceRepository extends CustomJpaRepo<Workspace, Long> {
 		);
 	}
 
+	public Optional<Workspace> findActiveByCreatedByUserIdAndName(Long userId, String name) {
+		QWorkspace workspace = QWorkspace.workspace;
+
+		return Optional.ofNullable(
+			queryFactory.selectFrom(workspace)
+				.where(
+					workspace.createdBy.id.eq(userId),
+					workspace.name.eq(name),
+					workspace.deletedAt.isNull()
+				)
+				.fetchFirst()
+		);
+	}
+
 	public Optional<Workspace> findActiveByIdForUpdate(Long id) {
 		QWorkspace workspace = QWorkspace.workspace;
 
