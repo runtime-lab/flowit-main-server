@@ -29,7 +29,7 @@ public class OutboxEventProcessor {
 		this.handlers = handlersByType(handlers);
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void process(Long outboxEventId) {
 		OutboxEvent event = outboxEventRepository.findPendingByIdForUpdate(outboxEventId)
 			.orElse(null);

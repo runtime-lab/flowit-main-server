@@ -10,6 +10,8 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -21,6 +23,15 @@ class OutboxEventProcessorTest {
 	private final OutboxEventRepository outboxEventRepository = mock(OutboxEventRepository.class);
 	private final Clock clock = Clock.fixed(Instant.ofEpochSecond(1782013400L), ZoneOffset.UTC);
 	private final OutboxEventHandler handler = mock(OutboxEventHandler.class);
+
+	@Test
+	void processesOutboxEventInNewTransactionAfterCommitCallback() throws NoSuchMethodException {
+		Transactional transactional = OutboxEventProcessor.class
+			.getMethod("process", Long.class)
+			.getAnnotation(Transactional.class);
+
+		assertEquals(Propagation.REQUIRES_NEW, transactional.propagation());
+	}
 
 	@Test
 	void processesPendingOutboxEvent() {

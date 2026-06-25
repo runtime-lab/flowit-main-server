@@ -1,0 +1,24 @@
+[[integration-notes-0-2-33-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.33 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-25 22:06 KST
+|Fix
+|`GET /v1/notifications`
+|<<integration-note-0-2-33-volt-2026-06-25-2206-integration-note,알림 생성 및 전파가 정상적으로 수행되지 못하는 현상을 수정했습니다.>>
+
+|===
+
+include::../notes/0.2.33-volt/2026-06-25-2206-integration-note.adoc[]
+
+++++
+</div>
+</details>
+++++
