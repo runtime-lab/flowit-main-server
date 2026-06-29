@@ -164,11 +164,11 @@ class WorkspaceJoinRequestsApiDocsTest {
 					fieldWithPath("data.joinRequests[].memberId").type(JsonFieldType.NUMBER)
 						.description("생성된 워크스페이스 멤버 ID입니다. ``JOINED`` 이전에는 ``null`` 입니다.").optional(),
 					fieldWithPath("data.joinRequests[].method").type(JsonFieldType.STRING)
-						.description("가입 요청 생성 수단입니다. link:enum-reference.html#workspace-join-request-method[WorkspaceJoinRequestMethod]를 참고합니다."),
+						.description("가입 요청 생성 수단입니다. link:workspaces-members-enum-reference.html#workspace-join-request-method[WorkspaceJoinRequestMethod]를 참고합니다."),
 					fieldWithPath("data.joinRequests[].inviteCode").type(JsonFieldType.STRING)
 						.description("요청 시점에 사용된 초대 코드 스냅샷입니다."),
 					fieldWithPath("data.joinRequests[].status").type(JsonFieldType.STRING)
-						.description("현재 가입 요청 상태입니다. link:enum-reference.html#workspace-join-request-status[WorkspaceJoinRequestStatus]를 참고합니다."),
+						.description("현재 가입 요청 상태입니다. link:workspaces-members-enum-reference.html#workspace-join-request-status[WorkspaceJoinRequestStatus]를 참고합니다."),
 					fieldWithPath("data.joinRequests[].requestedAt").type(JsonFieldType.NUMBER)
 						.description("가입 요청 생성 시각입니다. Unix epoch seconds 값입니다."),
 					fieldWithPath("data.joinRequests[].readyAt").type(JsonFieldType.NUMBER)
@@ -213,11 +213,11 @@ class WorkspaceJoinRequestsApiDocsTest {
 			fieldWithPath(prefix + "memberId").type(JsonFieldType.NUMBER)
 				.description("생성된 워크스페이스 멤버 ID입니다."),
 			fieldWithPath(prefix + "method").type(JsonFieldType.STRING)
-				.description("가입 요청 생성 수단입니다. link:enum-reference.html#workspace-join-request-method[WorkspaceJoinRequestMethod]를 참고합니다."),
+				.description("가입 요청 생성 수단입니다. link:workspaces-members-enum-reference.html#workspace-join-request-method[WorkspaceJoinRequestMethod]를 참고합니다."),
 			fieldWithPath(prefix + "inviteCode").type(JsonFieldType.STRING)
 				.description("요청 시점에 사용된 초대 코드 스냅샷입니다."),
 			fieldWithPath(prefix + "status").type(JsonFieldType.STRING)
-				.description("현재 가입 요청 상태입니다. link:enum-reference.html#workspace-join-request-status[WorkspaceJoinRequestStatus]를 참고합니다."),
+				.description("현재 가입 요청 상태입니다. link:workspaces-members-enum-reference.html#workspace-join-request-status[WorkspaceJoinRequestStatus]를 참고합니다."),
 			fieldWithPath(prefix + "joinedAt").type(JsonFieldType.NUMBER)
 				.description("가입 완료 시각입니다. Unix epoch seconds 값입니다."),
 			fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 확장 데이터입니다.")

@@ -1,0 +1,35 @@
+= 유저 Enum Reference
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-users-enum-reference:
+:breadcrumb-section: 유저 API
+:breadcrumb-current: 유저 Enum Reference
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 개요
+
+유저 도메인 응답에서 사용하는 enum 값의 의미를 정리합니다.
+
+[#user-status]
+== UserStatus
+
+사용자 계정 상태입니다.
+
+include::{snippets}/enum-reference/user-status.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:users-me.html[현재 사용자 조회 API]
+* link:users-me-update.html[현재 사용자 수정 API]
+* link:enum-reference.html[Enum Reference]
+* link:api-response.html[공통 응답 포맷]

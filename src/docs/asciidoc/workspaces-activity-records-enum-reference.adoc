@@ -1,0 +1,66 @@
+= 워크스페이스 최근 활동 Enum Reference
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-activity-records-enum-reference:
+:breadcrumb-section: 워크스페이스 API
+:breadcrumb-current: 워크스페이스 최근 활동 Enum Reference
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 개요
+
+워크스페이스 최근 활동 API 응답에서 사용하는 enum 값의 의미를 정리합니다.
+
+Activity의 개념과 Notification과의 차이는 link:workspaces-activity-records.html#activity-concept[워크스페이스 최근 활동 API]와 link:response-socket-composition-guide.html[응답/소켓 조립 가이드]를 기준으로 확인합니다.
+
+[#activity-record-topic]
+== ActivityRecordTopic
+
+워크스페이스 최근 활동 조회에 사용하는 주제 필터입니다.
+
+include::{snippets}/enum-reference/activity-record-topic.adoc[]
+
+[#activity-record-domain]
+== ActivityRecordDomain
+
+워크스페이스 최근 활동이 속한 도메인입니다.
+
+include::{snippets}/enum-reference/activity-record-domain.adoc[]
+
+[#activity-record-action]
+== ActivityRecordAction
+
+워크스페이스 최근 활동의 의미 단위 액션입니다.
+
+include::{snippets}/enum-reference/activity-record-action.adoc[]
+
+[#activity-target-type]
+== ActivityTargetType
+
+워크스페이스 최근 활동의 대상 타입입니다.
+
+include::{snippets}/enum-reference/activity-target-type.adoc[]
+
+[#activity-change-element]
+== ActivityChangeElement
+
+워크스페이스 최근 활동의 변경 요소입니다.
+
+include::{snippets}/enum-reference/activity-change-element.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-activity-records.html[워크스페이스 최근 활동 API]
+* link:response-socket-composition-guide.html[응답/소켓 조립 가이드]
+* link:notifications-enum-reference.html[알림 Enum Reference]
+* link:enum-reference.html[Enum Reference]
+* link:api-response.html[공통 응답 포맷]

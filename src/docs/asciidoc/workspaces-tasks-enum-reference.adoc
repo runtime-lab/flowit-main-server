@@ -1,0 +1,57 @@
+= 작업 Enum Reference
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-workspaces-tasks-enum-reference:
+:breadcrumb-section: 작업 API
+:breadcrumb-current: 작업 Enum Reference
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 개요
+
+작업 상태, 우선순위, 변경 이력에서 사용하는 enum 값의 의미를 정리합니다.
+
+[#task-status]
+== TaskStatus
+
+작업의 현재 상태입니다. 현재는 자유 전이를 허용합니다.
+
+include::{snippets}/enum-reference/task-status.adoc[]
+
+[#task-priority]
+== TaskPriority
+
+작업의 우선순위입니다.
+
+include::{snippets}/enum-reference/task-priority.adoc[]
+
+[#task-history-action]
+== TaskHistoryAction
+
+작업 변경 이력의 의미 단위 액션입니다.
+
+include::{snippets}/enum-reference/task-history-action.adoc[]
+
+[#task-history-element]
+== TaskHistoryElement
+
+작업 변경 이력의 변경 요소입니다.
+
+include::{snippets}/enum-reference/task-history-element.adoc[]
+
+[.related-docs]
+== 관련 문서
+
+* link:workspaces-tasks-create.html[작업 생성 API]
+* link:workspaces-tasks-list.html[작업 목록 조회 API]
+* link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
+* link:enum-reference.html[Enum Reference]
+* link:api-response.html[공통 응답 포맷]

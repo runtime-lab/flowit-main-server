@@ -1,0 +1,71 @@
+= 알림 Enum Reference
+:doctype: book
+:sectanchors:
+:sectlinks:
+:version-label: 버전
+:source-language: http
+:stylesheet: restdocs-modern.css
+:stylesdir: css
+:linkcss:
+:nav-notifications-enum-reference:
+:breadcrumb-section: 알림 API
+:breadcrumb-current: 알림 Enum Reference
+
+include::_navigation.adoc[]
+
+include::_breadcrumb.adoc[]
+
+== 개요
+
+알림 API와 알림 WebSocket payload에서 사용하는 enum 값의 의미를 정리합니다.
+
+Notification의 개념과 Activity와의 차이는 link:notifications-list.html#notification-concept[알림 목록 조회 API]와 link:response-socket-composition-guide.html[응답/소켓 조립 가이드]를 기준으로 확인합니다.
+
+[#notification-alert-type]
+== NotificationAlertType
+
+알림의 의미 단위 유형입니다.
+
+include::{snippets}/enum-reference/notification-alert-type.adoc[]
+
+[#notification-scope-type]
+== NotificationScopeType
+
+알림이 속한 범위 유형입니다.
+
+include::{snippets}/enum-reference/notification-scope-type.adoc[]
+
+[#notification-actor-type]
+== NotificationActorType
+
+알림을 발생시킨 주체 유형입니다.
+
+include::{snippets}/enum-reference/notification-actor-type.adoc[]
+
+[#notification-subject-type]
+== NotificationSubjectType
+
+알림의 대상 유형입니다.
+
+include::{snippets}/enum-reference/notification-subject-type.adoc[]
+
+[#notification-link-type]
+== NotificationLinkType
+
+알림 클릭 또는 후속 이동에 사용하는 링크 힌트 유형입니다.
+
+include::{snippets}/enum-reference/notification-link-type.adoc[]
+
+== 관련 변경 요소
+
+워크스페이스 멤버 알림의 ``changes[].element``는 현재 최근 활동의 변경 요소와 같은 의미 이름을 사용합니다. 값의 원본 설명은 link:workspaces-activity-records-enum-reference.html#activity-change-element[ActivityChangeElement]를 참고합니다.
+
+[.related-docs]
+== 관련 문서
+
+* link:notifications-list.html[알림 목록 조회 API]
+* link:websocket-notifications.html[알림 WebSocket]
+* link:websocket-workspace-members.html[워크스페이스 멤버 WebSocket]
+* link:workspaces-activity-records-enum-reference.html[워크스페이스 최근 활동 Enum Reference]
+* link:enum-reference.html[Enum Reference]
+* link:api-response.html[공통 응답 포맷]

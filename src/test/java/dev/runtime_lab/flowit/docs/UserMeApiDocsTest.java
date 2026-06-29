@@ -126,7 +126,7 @@ class UserMeApiDocsTest {
 					fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("현재 사용자 식별자입니다."),
 					fieldWithPath("data.email").type(JsonFieldType.STRING).description("현재 사용자 이메일입니다."),
 					fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("현재 사용자 닉네임입니다."),
-					fieldWithPath("data.status").type(JsonFieldType.STRING).description("현재 사용자 상태입니다. link:enum-reference.html#user-status[UserStatus]를 참고합니다."),
+					fieldWithPath("data.status").type(JsonFieldType.STRING).description("현재 사용자 상태입니다. link:users-enum-reference.html#user-status[UserStatus]를 참고합니다."),
 					fieldWithPath("data.profileImageFileId").type(JsonFieldType.NUMBER).description("프로필 이미지 파일 식별자입니다. 등록된 이미지가 없으면 ``null``입니다.").optional(),
 					fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 바이너리를 조회할 수 있는 URL입니다. 등록된 이미지가 없으면 ``null``입니다.").optional().attributes(experimental()),
 					fieldWithPath("data.workspaces").type(JsonFieldType.ARRAY).description("현재 사용자가 속한 워크스페이스 목록입니다."),
@@ -134,9 +134,9 @@ class UserMeApiDocsTest {
 					fieldWithPath("data.workspaces[].name").type(JsonFieldType.STRING).description("워크스페이스 이름입니다."),
 					fieldWithPath("data.workspaces[].description").type(JsonFieldType.STRING).description("워크스페이스 설명입니다.").optional(),
 					fieldWithPath("data.workspaces[].memberCount").type(JsonFieldType.NUMBER).description("워크스페이스의 활성 멤버 수입니다."),
-					fieldWithPath("data.workspaces[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
+					fieldWithPath("data.workspaces[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:workspaces-members-enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("data.workspaces[].joinedAt").type(JsonFieldType.NUMBER).description("워크스페이스 참여 시각입니다. Unix epoch seconds 기준입니다."),
-					fieldWithPath("data.notificationAlerts").type(JsonFieldType.ARRAY).description("현재 사용자에게 표시할 알림 목록입니다. 알림 모델링 전까지는 빈 배열입니다.").attributes(experimental()),
+					fieldWithPath("data.notificationAlerts").type(JsonFieldType.ARRAY).description("현재 ``/v1/users/me`` 응답에서는 알림 목록을 제공하지 않아 빈 배열입니다. 알림 목록은 ``GET /v1/notifications``를 사용합니다.").attributes(experimental()),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)
 			));

@@ -134,6 +134,13 @@ ifndef::nav-users-profile-image[]
 * link:users-profile-image.html[유저 프로필 이미지 API]
 endif::nav-users-profile-image[]
 
+ifdef::nav-users-enum-reference[]
+* [.is-current]#유저 Enum Reference#
+endif::nav-users-enum-reference[]
+ifndef::nav-users-enum-reference[]
+* link:users-enum-reference.html[유저 Enum Reference]
+endif::nav-users-enum-reference[]
+
 [.docs-nav-section-title]
 알림 API
 
@@ -157,6 +164,13 @@ endif::nav-notifications-read-all[]
 ifndef::nav-notifications-read-all[]
 * link:notifications-read-all.html[알림 모두 읽음 API]
 endif::nav-notifications-read-all[]
+
+ifdef::nav-notifications-enum-reference[]
+* [.is-current]#알림 Enum Reference#
+endif::nav-notifications-enum-reference[]
+ifndef::nav-notifications-enum-reference[]
+* link:notifications-enum-reference.html[알림 Enum Reference]
+endif::nav-notifications-enum-reference[]
 
 [.docs-nav-section-title]
 WebSocket
@@ -205,6 +219,13 @@ endif::nav-workspaces-activity-records[]
 ifndef::nav-workspaces-activity-records[]
 * link:workspaces-activity-records.html[워크스페이스 최근 활동 API]
 endif::nav-workspaces-activity-records[]
+
+ifdef::nav-workspaces-activity-records-enum-reference[]
+* [.is-current]#워크스페이스 최근 활동 Enum Reference#
+endif::nav-workspaces-activity-records-enum-reference[]
+ifndef::nav-workspaces-activity-records-enum-reference[]
+* link:workspaces-activity-records-enum-reference.html[워크스페이스 최근 활동 Enum Reference]
+endif::nav-workspaces-activity-records-enum-reference[]
 
 ifdef::nav-workspaces-delete[]
 * [.is-current]#워크스페이스 삭제 API#
@@ -258,6 +279,13 @@ ifndef::nav-workspaces-member-withdraw[]
 * link:workspaces-member-withdraw.html[워크스페이스 멤버 탈퇴 API]
 endif::nav-workspaces-member-withdraw[]
 
+ifdef::nav-workspaces-members-enum-reference[]
+* [.is-current]#워크스페이스 멤버 Enum Reference#
+endif::nav-workspaces-members-enum-reference[]
+ifndef::nav-workspaces-members-enum-reference[]
+* link:workspaces-members-enum-reference.html[워크스페이스 멤버 Enum Reference]
+endif::nav-workspaces-members-enum-reference[]
+
 [.docs-nav-section-title]
 작업 API
 
@@ -309,6 +337,13 @@ endif::nav-workspaces-tasks-histories[]
 ifndef::nav-workspaces-tasks-histories[]
 * link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
 endif::nav-workspaces-tasks-histories[]
+
+ifdef::nav-workspaces-tasks-enum-reference[]
+* [.is-current]#작업 Enum Reference#
+endif::nav-workspaces-tasks-enum-reference[]
+ifndef::nav-workspaces-tasks-enum-reference[]
+* link:workspaces-tasks-enum-reference.html[작업 Enum Reference]
+endif::nav-workspaces-tasks-enum-reference[]
 
 [.docs-nav-section-title]
 작업 코멘트 API

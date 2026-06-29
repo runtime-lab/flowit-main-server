@@ -134,8 +134,8 @@ class WorkspaceMembersApiDocsTest {
 					fieldWithPath("data.members[].memberId").type(JsonFieldType.NUMBER).description("워크스페이스 멤버 식별자입니다. 강퇴, 역할 변경 등 멤버십 대상 액션에 사용할 수 있습니다."),
 					fieldWithPath("data.members[].name").type(JsonFieldType.STRING).description("멤버 이름입니다."),
 					fieldWithPath("data.members[].email").type(JsonFieldType.STRING).description("멤버 이메일입니다."),
-					fieldWithPath("data.members[].status").type(JsonFieldType.STRING).description("멤버 사용자 상태입니다. link:enum-reference.html#user-status[UserStatus]를 참고합니다."),
-					fieldWithPath("data.members[].role").type(JsonFieldType.STRING).description("워크스페이스 멤버 역할입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
+					fieldWithPath("data.members[].status").type(JsonFieldType.STRING).description("멤버 사용자 상태입니다. link:users-enum-reference.html#user-status[UserStatus]를 참고합니다."),
+					fieldWithPath("data.members[].role").type(JsonFieldType.STRING).description("워크스페이스 멤버 역할입니다. link:workspaces-members-enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("data.members[].profileImageUrl").type(JsonFieldType.STRING).description("멤버 프로필 이미지 조회 URL입니다. 프로필 이미지가 없으면 ``null``입니다.").optional(),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")
 				)

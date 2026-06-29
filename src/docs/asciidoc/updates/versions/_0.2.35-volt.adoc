@@ -1,0 +1,24 @@
+[[integration-notes-0-2-35-volt]]
+++++
+<details class="integration-note-version">
+<summary><span class="integration-note-version-summary"><span class="integration-note-version-title">0.2.35 volt</span><span class="integration-note-version-meta">Volt / 1 note</span></span></summary>
+<div class="content">
+++++
+
+[cols="18,16,24,42",options="header",role="api-index"]
+|===
+|Time |Impact |Target |Summary
+
+|2026-06-29 22:50 KST
+|Docs
+|`updates/latest.adoc`
+|<<integration-note-0-2-35-volt-2026-06-29-2250-enum-reference,`Enum Reference` 문서를 각 도메인에 맞게 분리했습니다.>>
+
+|===
+
+include::../notes/0.2.35-volt/2026-06-29-2250-enum-reference.adoc[]
+
+++++
+</div>
+</details>
+++++

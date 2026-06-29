@@ -1,6 +1,6 @@
 # Flowit Main Server
 
-API Version: 0.2.34-volt · up-to-date
+API Version: 0.2.35-volt · up-to-date
 
 [English](README.en.md)
 

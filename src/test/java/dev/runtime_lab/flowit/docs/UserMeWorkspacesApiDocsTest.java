@@ -119,7 +119,7 @@ class UserMeWorkspacesApiDocsTest {
 					fieldWithPath("data.items[].name").type(JsonFieldType.STRING).description("워크스페이스 이름입니다."),
 					fieldWithPath("data.items[].description").type(JsonFieldType.STRING).description("워크스페이스 설명입니다.").optional(),
 					fieldWithPath("data.items[].memberCount").type(JsonFieldType.NUMBER).description("워크스페이스의 활성 멤버 수입니다."),
-					fieldWithPath("data.items[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
+					fieldWithPath("data.items[].role").type(JsonFieldType.STRING).description("해당 워크스페이스에서 현재 사용자의 권한입니다. link:workspaces-members-enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다."),
 					fieldWithPath("data.items[].joinedAt").type(JsonFieldType.NUMBER).description("워크스페이스 참여 시각입니다. Unix epoch seconds 기준입니다."),
 					fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER).description("반환된 워크스페이스 수입니다."),
 					fieldWithPath("extensions").type(JsonFieldType.OBJECT).description("응답 보조 정보입니다.")

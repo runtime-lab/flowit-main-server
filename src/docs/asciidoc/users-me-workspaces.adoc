@@ -57,6 +57,7 @@ include::_api-errors.adoc[]
 
 * link:users-me.html[현재 사용자 조회 API]
 * link:workspaces-create.html[워크스페이스 생성 API]
+* link:workspaces-members-enum-reference.html[워크스페이스 멤버 Enum Reference]
 * link:enum-reference.html[Enum Reference]
 * link:api-response.html[공통 응답 포맷]
 * link:error-codes.html[에러 코드]

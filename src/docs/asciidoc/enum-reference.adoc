@@ -17,138 +17,113 @@ include::_breadcrumb.adoc[]
 
 == 개요
 
-API 응답에서 문자열로 전달되는 enum 값의 의미를 정리합니다. 클라이언트는 이 문서의 값을 기준으로 분기 처리와 화면 표시 정책을 구성할 수 있습니다.
+API 응답에서 문자열로 전달되는 enum 값의 의미를 도메인별 문서에서 관리합니다.
 
-[#user-status]
-== UserStatus
+이 페이지는 전체 enum의 색인입니다. 실제 enum 값과 설명은 각 enum을 소유한 도메인 문서에만 둡니다. 다른 도메인에서 같은 값을 참조해야 하는 경우 값을 복제하지 않고 원본 도메인 문서로 연결합니다.
 
-사용자 계정 상태입니다.
+== 도메인별 Enum Reference
 
-include::{snippets}/enum-reference/user-status.adoc[]
+[cols="1,2,4",options="header",role="api-table"]
+|===
+|도메인 |문서 |포함 enum
 
-[#workspace-member-role]
-== WorkspaceMemberRole
+|유저
+|link:users-enum-reference.html[유저 Enum Reference]
+|``UserStatus``
 
-워크스페이스에서 사용자가 가지는 권한입니다.
+|워크스페이스 멤버
+|link:workspaces-members-enum-reference.html[워크스페이스 멤버 Enum Reference]
+|``WorkspaceMemberRole``, ``WorkspaceJoinRequestStatus``, ``WorkspaceJoinRequestMethod``
 
-include::{snippets}/enum-reference/workspace-member-role.adoc[]
+|작업
+|link:workspaces-tasks-enum-reference.html[작업 Enum Reference]
+|``TaskStatus``, ``TaskPriority``, ``TaskHistoryAction``, ``TaskHistoryElement``
 
-[#workspace-join-request-status]
-== WorkspaceJoinRequestStatus
+|워크스페이스 최근 활동
+|link:workspaces-activity-records-enum-reference.html[워크스페이스 최근 활동 Enum Reference]
+|``ActivityRecordTopic``, ``ActivityRecordDomain``, ``ActivityRecordAction``, ``ActivityTargetType``, ``ActivityChangeElement``
 
-워크스페이스 가입 요청의 현재 상태입니다.
+|알림
+|link:notifications-enum-reference.html[알림 Enum Reference]
+|``NotificationAlertType``, ``NotificationScopeType``, ``NotificationActorType``, ``NotificationSubjectType``, ``NotificationLinkType``
+|===
 
-include::{snippets}/enum-reference/workspace-join-request-status.adoc[]
+== 운영 기준
 
-[#workspace-join-request-method]
-== WorkspaceJoinRequestMethod
+[cols="1,4",role="endpoint-summary"]
+|===
+|소유 기준 |enum은 값을 정의하거나 응답 계약의 의미를 결정하는 도메인 문서에 둡니다.
+|참조 기준 |다른 도메인이 같은 값을 사용하더라도 설명을 복제하지 않고 소유 도메인 문서로 링크합니다.
+|링크 기준 |API 필드 설명은 가능하면 이 색인보다 실제 enum 섹션으로 직접 연결합니다.
+|확장 기준 |새 enum이 추가되면 해당 도메인 enum 문서에 먼저 추가하고 이 색인에는 도메인 문서 링크만 보강합니다.
+|===
 
-워크스페이스 가입 요청이 생성된 수단입니다.
+== 기존 앵커 호환 링크
 
-include::{snippets}/enum-reference/workspace-join-request-method.adoc[]
+기존 ``enum-reference.html#...`` 링크는 아래 항목을 거쳐 새 도메인별 원본 문서로 이동합니다. 새 문서에서는 도메인별 원본 링크를 직접 사용하는 것을 권장합니다.
 
-[#task-status]
-== TaskStatus
+[cols="1,3",options="header",role="api-table"]
+|===
+|기존 앵커 |원본 문서
 
-작업의 현재 상태입니다. 현재는 자유 전이를 허용합니다.
+|[[user-status]]``UserStatus``
+|link:users-enum-reference.html#user-status[유저 Enum Reference]
 
-include::{snippets}/enum-reference/task-status.adoc[]
+|[[workspace-member-role]]``WorkspaceMemberRole``
+|link:workspaces-members-enum-reference.html#workspace-member-role[워크스페이스 멤버 Enum Reference]
 
-[#task-priority]
-== TaskPriority
+|[[workspace-join-request-status]]``WorkspaceJoinRequestStatus``
+|link:workspaces-members-enum-reference.html#workspace-join-request-status[워크스페이스 멤버 Enum Reference]
 
-작업의 우선순위입니다.
+|[[workspace-join-request-method]]``WorkspaceJoinRequestMethod``
+|link:workspaces-members-enum-reference.html#workspace-join-request-method[워크스페이스 멤버 Enum Reference]
 
-include::{snippets}/enum-reference/task-priority.adoc[]
+|[[task-status]]``TaskStatus``
+|link:workspaces-tasks-enum-reference.html#task-status[작업 Enum Reference]
 
-[#task-history-action]
-== TaskHistoryAction
+|[[task-priority]]``TaskPriority``
+|link:workspaces-tasks-enum-reference.html#task-priority[작업 Enum Reference]
 
-작업 변경 이력의 의미 단위 액션입니다.
+|[[task-history-action]]``TaskHistoryAction``
+|link:workspaces-tasks-enum-reference.html#task-history-action[작업 Enum Reference]
 
-include::{snippets}/enum-reference/task-history-action.adoc[]
+|[[task-history-element]]``TaskHistoryElement``
+|link:workspaces-tasks-enum-reference.html#task-history-element[작업 Enum Reference]
 
-[#task-history-element]
-== TaskHistoryElement
+|[[activity-record-topic]]``ActivityRecordTopic``
+|link:workspaces-activity-records-enum-reference.html#activity-record-topic[워크스페이스 최근 활동 Enum Reference]
 
-작업 변경 이력의 변경 요소입니다.
+|[[activity-record-domain]]``ActivityRecordDomain``
+|link:workspaces-activity-records-enum-reference.html#activity-record-domain[워크스페이스 최근 활동 Enum Reference]
 
-include::{snippets}/enum-reference/task-history-element.adoc[]
+|[[activity-record-action]]``ActivityRecordAction``
+|link:workspaces-activity-records-enum-reference.html#activity-record-action[워크스페이스 최근 활동 Enum Reference]
 
-[#activity-record-topic]
-== ActivityRecordTopic
+|[[activity-target-type]]``ActivityTargetType``
+|link:workspaces-activity-records-enum-reference.html#activity-target-type[워크스페이스 최근 활동 Enum Reference]
 
-워크스페이스 최근 활동 조회에 사용하는 주제 필터입니다.
+|[[activity-change-element]]``ActivityChangeElement``
+|link:workspaces-activity-records-enum-reference.html#activity-change-element[워크스페이스 최근 활동 Enum Reference]
 
-include::{snippets}/enum-reference/activity-record-topic.adoc[]
+|[[notification-alert-type]]``NotificationAlertType``
+|link:notifications-enum-reference.html#notification-alert-type[알림 Enum Reference]
 
-[#activity-record-domain]
-== ActivityRecordDomain
+|[[notification-scope-type]]``NotificationScopeType``
+|link:notifications-enum-reference.html#notification-scope-type[알림 Enum Reference]
 
-워크스페이스 최근 활동이 속한 도메인입니다.
+|[[notification-actor-type]]``NotificationActorType``
+|link:notifications-enum-reference.html#notification-actor-type[알림 Enum Reference]
 
-include::{snippets}/enum-reference/activity-record-domain.adoc[]
+|[[notification-subject-type]]``NotificationSubjectType``
+|link:notifications-enum-reference.html#notification-subject-type[알림 Enum Reference]
 
-[#activity-record-action]
-== ActivityRecordAction
-
-워크스페이스 최근 활동의 의미 단위 액션입니다.
-
-include::{snippets}/enum-reference/activity-record-action.adoc[]
-
-[#activity-target-type]
-== ActivityTargetType
-
-워크스페이스 최근 활동의 대상 타입입니다.
-
-include::{snippets}/enum-reference/activity-target-type.adoc[]
-
-[#activity-change-element]
-== ActivityChangeElement
-
-워크스페이스 최근 활동의 변경 요소입니다.
-
-include::{snippets}/enum-reference/activity-change-element.adoc[]
-
-[#notification-alert-type]
-== NotificationAlertType
-
-알림의 의미 단위 유형입니다.
-
-include::{snippets}/enum-reference/notification-alert-type.adoc[]
-
-[#notification-scope-type]
-== NotificationScopeType
-
-알림이 속한 범위 유형입니다.
-
-include::{snippets}/enum-reference/notification-scope-type.adoc[]
-
-[#notification-actor-type]
-== NotificationActorType
-
-알림을 발생시킨 주체 유형입니다.
-
-include::{snippets}/enum-reference/notification-actor-type.adoc[]
-
-[#notification-subject-type]
-== NotificationSubjectType
-
-알림의 대상 유형입니다.
-
-include::{snippets}/enum-reference/notification-subject-type.adoc[]
-
-[#notification-link-type]
-== NotificationLinkType
-
-알림 클릭 또는 후속 이동에 사용하는 링크 힌트 유형입니다.
-
-include::{snippets}/enum-reference/notification-link-type.adoc[]
+|[[notification-link-type]]``NotificationLinkType``
+|link:notifications-enum-reference.html#notification-link-type[알림 Enum Reference]
+|===
 
 [.related-docs]
 == 관련 문서
 
 * link:api-response.html[공통 응답 포맷]
-* link:users-me.html[현재 사용자 조회 API]
-* link:users-me-workspaces.html[현재 사용자 워크스페이스 목록 API]
-* link:notifications-list.html[알림 목록 조회 API]
+* link:response-socket-composition-guide.html[응답/소켓 조립 가이드]
+* link:error-codes.html[에러 코드]

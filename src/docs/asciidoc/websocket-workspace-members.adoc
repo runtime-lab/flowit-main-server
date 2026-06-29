@@ -54,89 +54,31 @@ include::_breadcrumb.adoc[]
 |멤버가 스스로 워크스페이스에서 탈퇴했음을 알립니다.
 |===
 
-== enum 상수
+== 사용 enum 참조
 
-=== NotificationAlertType
-
-[cols="1,4",options="header",role="api-table"]
-|===
-|상수 |설명
-
-|``WORKSPACE_MEMBER_JOINED``
-|워크스페이스 멤버 가입 알림입니다.
-
-|``WORKSPACE_MEMBER_ROLE_CHANGED``
-|워크스페이스 멤버 역할 변경 알림입니다.
-
-|``WORKSPACE_MEMBER_REMOVED``
-|구성원 관점의 워크스페이스 멤버 강제 퇴장 알림입니다.
-
-|``WORKSPACE_ACCESS_REVOKED``
-|강제 퇴장 당사자 관점의 워크스페이스 접근 권한 회수 알림입니다.
-
-|``WORKSPACE_MEMBER_WITHDRAWN``
-|워크스페이스 멤버 자진 탈퇴 알림입니다.
-|===
-
-=== NotificationScopeType
+이 문서는 워크스페이스 멤버 알림 payload의 케이스와 해석 기준만 설명합니다. enum 값의 원본 설명은 아래 문서를 기준으로 확인합니다.
 
 [cols="1,4",options="header",role="api-table"]
 |===
-|상수 |설명
+|필드 |참조 문서
 
-|``WORKSPACE``
-|알림 범위가 워크스페이스입니다.
-|===
+|``type``
+|link:notifications-enum-reference.html#notification-alert-type[NotificationAlertType]
 
-=== NotificationActorType
+|``scope.type``
+|link:notifications-enum-reference.html#notification-scope-type[NotificationScopeType]
 
-[cols="1,4",options="header",role="api-table"]
-|===
-|상수 |설명
+|``actor.type``
+|link:notifications-enum-reference.html#notification-actor-type[NotificationActorType]
 
-|``USER``
-|알림을 발생시킨 주체가 사용자입니다.
-|===
+|``subject.type``
+|link:notifications-enum-reference.html#notification-subject-type[NotificationSubjectType]
 
-=== NotificationSubjectType
+|``link.type``
+|link:notifications-enum-reference.html#notification-link-type[NotificationLinkType]
 
-[cols="1,4",options="header",role="api-table"]
-|===
-|상수 |설명
-
-|``WORKSPACE_MEMBER``
-|알림 대상이 워크스페이스 멤버입니다.
-|===
-
-=== NotificationLinkType
-
-[cols="1,4",options="header",role="api-table"]
-|===
-|상수 |설명
-
-|``WORKSPACE_MEMBERS``
-|해당 워크스페이스 멤버 화면으로 이동할 수 있습니다. ``link.workspaceId``가 함께 내려옵니다.
-
-|``NONE``
-|이동 가능한 워크스페이스 내부 링크가 없습니다. 강제 퇴장 당사자는 해당 워크스페이스 안으로 이동할 수 없으므로 이 값을 사용합니다.
-|===
-
-=== ActivityChangeElement
-
-워크스페이스 멤버 WebSocket의 ``changes[].element``에서 사용하는 상수입니다.
-
-[cols="1,4",options="header",role="api-table"]
-|===
-|상수 |설명
-
-|``MEMBERSHIP``
-|워크스페이스 멤버십 상태가 변경되었음을 의미합니다. 가입, 강제 퇴장, 자진 탈퇴에서 사용됩니다.
-
-|``ROLE``
-|워크스페이스 멤버 역할이 변경되었음을 의미합니다. 가입, 역할 변경, 강제 퇴장, 자진 탈퇴에서 사용됩니다.
-
-|``OWNERSHIP_TRANSFER``
-|자진 탈퇴 과정에서 워크스페이스 소유권이 다른 멤버에게 승계되었음을 의미합니다.
+|``changes[].element``
+|link:workspaces-activity-records-enum-reference.html#activity-change-element[ActivityChangeElement]
 |===
 
 == payload 해석 기준
@@ -278,4 +220,6 @@ include::_breadcrumb.adoc[]
 * link:workspaces-member-remove.html[워크스페이스 멤버 강제 퇴장 API]
 * link:workspaces-member-withdraw.html[워크스페이스 멤버 탈퇴 API]
 * link:response-socket-composition-guide.html[응답/소켓 조립 가이드]
+* link:notifications-enum-reference.html[알림 Enum Reference]
+* link:workspaces-activity-records-enum-reference.html[워크스페이스 최근 활동 Enum Reference]
 * link:enum-reference.html[Enum Reference]

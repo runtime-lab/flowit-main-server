@@ -62,8 +62,8 @@ include::updates/latest.adoc[]
 |클라이언트 다국어 처리와 에러 분기에 사용하는 에러 코드 목록을 설명합니다.
 
 |link:enum-reference.html[Enum Reference]
-|공통 enum 값
-|응답 필드에서 참조하는 enum 값과 의미를 설명합니다.
+|도메인별 enum 색인
+|응답 필드에서 참조하는 enum 문서의 소유 도메인과 링크를 설명합니다.
 |===
 
 ====
@@ -123,6 +123,10 @@ include::updates/latest.adoc[]
 a|``PUT /v1/users/me/profile-image`` +
 ``GET /v1/users/me/profile-image``
 |인증된 사용자의 프로필 이미지 교체와 이미지 바이너리 조회 방식을 설명합니다.
+
+|link:users-enum-reference.html[유저 Enum Reference]
+|``UserStatus``
+|유저 도메인 응답에서 사용하는 enum 값을 설명합니다.
 |===
 
 ====
@@ -146,6 +150,10 @@ a|``PUT /v1/users/me/profile-image`` +
 |link:notifications-read-all.html[알림 모두 읽음 API]
 |``PATCH /v1/notifications/read-all``
 |현재 사용자의 읽지 않은 알림을 모두 읽음 처리하는 API를 설명합니다.
+
+|link:notifications-enum-reference.html[알림 Enum Reference]
+|Notification enum 값
+|알림 유형, 범위, 주체, 대상, 링크 힌트 enum 값을 설명합니다.
 |===
 
 ====
@@ -193,6 +201,10 @@ a|``PUT /v1/users/me/profile-image`` +
 |``GET /v1/workspaces/{workspaceId}/activity-records``
 |작업과 멤버십 변경을 통합한 워크스페이스 최근 활동 조회 API를 설명합니다.
 
+|link:workspaces-activity-records-enum-reference.html[워크스페이스 최근 활동 Enum Reference]
+|Activity enum 값
+|워크스페이스 최근 활동의 주제, 도메인, 액션, 대상, 변경 요소 enum 값을 설명합니다.
+
 |link:workspaces-delete.html[워크스페이스 삭제 API]
 |``DELETE /v1/workspaces/{workspaceId}``
 |워크스페이스 OWNER가 워크스페이스와 활성 멤버십을 소프트 삭제하는 요청/응답을 설명합니다.
@@ -231,6 +243,10 @@ a|``PUT /v1/users/me/profile-image`` +
 |link:workspaces-member-withdraw.html[워크스페이스 멤버 탈퇴 API]
 |``DELETE /v1/workspaces/{workspaceId}/members/withdraw``
 |현재 인증된 사용자가 자신이 가입된 워크스페이스에서 스스로 탈퇴하는 요청/응답과 OWNER 탈퇴 시 소유권 이전 정책을 설명합니다.
+
+|link:workspaces-members-enum-reference.html[워크스페이스 멤버 Enum Reference]
+|멤버십 enum 값
+|워크스페이스 멤버 역할과 가입 요청 상태/생성 수단 enum 값을 설명합니다.
 |===
 
 ====
@@ -270,6 +286,10 @@ a|``PUT /v1/users/me/profile-image`` +
 |link:workspaces-tasks-histories.html[작업 변경 이력 조회 API]
 |``GET /v1/workspaces/{workspaceId}/tasks/{taskId}/histories``
 |특정 작업에 대한 변경 이력만 조회하는 API를 설명합니다.
+
+|link:workspaces-tasks-enum-reference.html[작업 Enum Reference]
+|Task enum 값
+|작업 상태, 우선순위, 변경 이력 액션, 변경 요소 enum 값을 설명합니다.
 |===
 
 ====

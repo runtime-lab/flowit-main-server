@@ -101,7 +101,7 @@ class WorkspaceMemberRoleUpdateApiDocsTest {
 					headerWithName(HttpHeaders.ACCEPT).description("클라이언트가 기대하는 응답 미디어 타입입니다.").optional()
 				),
 				requestFields(
-					fieldWithPath("role").type(JsonFieldType.STRING).description("변경할 워크스페이스 멤버 역할입니다. link:enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다.")
+					fieldWithPath("role").type(JsonFieldType.STRING).description("변경할 워크스페이스 멤버 역할입니다. link:workspaces-members-enum-reference.html#workspace-member-role[WorkspaceMemberRole]을 참고합니다.")
 				),
 				responseHeaders(
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("응답 본문 미디어 타입입니다.")

@@ -71,6 +71,7 @@ include::_api-errors.adoc[]
 
 * link:workspaces-join-requests.html[워크스페이스 가입 요청 이력 API]
 * link:workspaces-members.html[워크스페이스 멤버 목록 조회 API]
+* link:workspaces-members-enum-reference.html[워크스페이스 멤버 Enum Reference]
 * link:enum-reference.html[Enum 값 참조]
 * link:api-response.html[공통 응답 포맷]
 * link:error-codes.html[에러 코드]

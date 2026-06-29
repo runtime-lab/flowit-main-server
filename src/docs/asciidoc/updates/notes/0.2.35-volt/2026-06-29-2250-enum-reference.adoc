@@ -1,0 +1,35 @@
+// integration-note-source-sha256: 650aa7026b3f42921841ffc9de79ecfd84f93ce951caf8dc6efe7fb6b57332bf
+// integration-note-version: 0.2.35-volt
+// integration-note-time: 2026-06-29-2250
+// integration-note-time-human: 2026-06-29 22:50 KST
+// integration-note-impact: Docs
+// integration-note-target: `updates/latest.adoc`
+// integration-note-summary: `Enum Reference` 문서를 각 도메인에 맞게 분리했습니다.
+// integration-note-anchor: integration-note-0-2-35-volt-2026-06-29-2250-enum-reference
+
+[#integration-note-0-2-35-volt-2026-06-29-2250-enum-reference]
+=== `Enum Reference` 문서를 각 도메인에 맞게 분리했습니다.
+
+[cols="1,4",role="endpoint-summary"]
+|===
+|Version |`0.2.35-volt`
+|Archived At |2026-06-29 22:50 KST
+|Impact |Docs
+|Target |`updates/latest.adoc`
+|Source |`updates/latest.adoc`
+|===
+
+.Archived integration note
+[.archived-note-snapshot]
+--
+[.update-note-title]
+Integration Note
+
+Docs:: ``Enum Reference`` 문서를 각 도메인에 맞게 분리했습니다.
++
+* 도메인 별 Enum 값을 더 쉽게 식별할 수 있도록 문서를 나누고 경량화했습니다.
+Docs:: ``Activity``와 ``Notification``문서에 각 도메인의 명시적인 설명을 추가했습니다.
++
+* ``Activity``는 사이트 내에서 발생한 활동을 원장 개념으로 기록하는 아카이브입니다.
+* ``Notification``은 단발성 이벤트에 대해 사용자에게 알림을 전송했거나 전송하려 한 사실을 기록합니다.
+--
